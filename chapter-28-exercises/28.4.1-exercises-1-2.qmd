@@ -1,0 +1,52 @@
+---
+title: "Mardan Mirzaguliyev"
+format: html
+editor: source
+---
+# 28.4.1 EXERCISES
+
+## EXERCISE 1
+
+Data analyst
+
+# EDUCATION
+
+-   ***Master's degree of Business and Strategic Management (2019 - 2021)***
+
+**University of Economics and Human Sciences in Warsaw**
+
+------------------------------------------------------------------------
+
+-   ***Bachelor's degree of English Language Teaching (2010 - 2017)***
+
+**Azerbaijan University of Languages**
+
+# WORK EXPERIENCE
+
+## *Cashier-Receptionist - Caspian Entertainment LLC*
+
+**July, 2023 - Present**
+
+-   Leveraging strong communication and interpersonal skills to explain complex safety regulations to diverse customer groups, fostering a safe and enjoyable experience
+-   Utilizing organizational skills to manage multiple bookings, track availability, streamlining booking processes and improving data accuracy in reservation management software
+
+## *Book recommendation agent - Ali&Nino book store*
+
+**Sep, 2022 - July, 2023**
+
+-   Leveraged active listening and analytical skills to identify customer reading preferences and recommend books exploring relevant themes, fostering deeper engagement with literature.
+-   Demonstrated strong communication and persuasion skills to effectively convey the appeal of various themes within different genres, influencing customer purchasing decisions
+
+## Exercise - 2 [^1]
+
+[^1]: a\) Add a footnote
+
+------------------------------------------------------------------------
+
+b\) Add a horizontal rule
+
+------------------------------------------------------------------------
+
+c\) Add a block quote
+
+> Blockquote

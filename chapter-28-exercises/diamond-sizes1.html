@@ -1,0 +1,3079 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2022-09-12">
+
+<title>Diamond sizes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="diamond-sizes1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="diamond-sizes1_files/libs/quarto-html/quarto.js"></script>
+<script src="diamond-sizes1_files/libs/quarto-html/popper.min.js"></script>
+<script src="diamond-sizes1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="diamond-sizes1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="diamond-sizes1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="diamond-sizes1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="diamond-sizes1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="diamond-sizes1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="diamond-sizes1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Diamond sizes</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 12, 2022</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>We have data about 53940 diamonds. Only 126 are larger than 2.5 carats. The distribution of the remainder is shown below:</p>
+<p><a href="#fig-larger">Figure&nbsp;2</a></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-smaller" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="diamond-sizes1_files/figure-html/fig-smaller-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;1: Diamonds less than 2.5 carat</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><p>Most diamonds is between 0.25 and 0.5 carat.</p></li>
+<li><p>The second most populated diamonds are 1 carat</p></li>
+</ul>
+<section id="exercises" class="level1">
+<h1><strong>28.5.5 Exercises</strong></h1>
+<section id="exercise-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1">Exercise 1</h2>
+<section id="sizes-by-cut-color-and-clarity" class="level3">
+<h3 class="anchored" data-anchor-id="sizes-by-cut-color-and-clarity">Sizes by cut, color and clarity</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 276 × 7
+   cut   color clarity   min   max  mean median
+   &lt;ord&gt; &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Fair  D     I1       0.91  3.4  1.88   1.6  
+ 2 Fair  D     SI2      0.3   2.07 1.02   1    
+ 3 Fair  D     SI1      0.4   2.02 0.914  0.905
+ 4 Fair  D     VS2      0.29  1.51 0.844  0.9  
+ 5 Fair  D     VS1      0.25  1    0.63   0.71 
+ 6 Fair  D     VVS2     0.3   1.01 0.591  0.5  
+ 7 Fair  D     VVS1     0.32  1    0.607  0.5  
+ 8 Fair  D     IF       0.3   0.47 0.38   0.37 
+ 9 Fair  E     I1       0.7   1.3  0.969  1.01 
+10 Fair  E     SI2      0.41  2.04 1.02   1    
+# ℹ 266 more rows</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="exercise-2" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2">Exercise 2</h2>
+<section id="largest-diamonds" class="level3">
+<h3 class="anchored" data-anchor-id="largest-diamonds">20 largest diamonds</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 10
+   carat cut       color clarity depth table price     x     y     z
+   &lt;dbl&gt; &lt;ord&gt;     &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1  5.01 Fair      J     I1       65.5    59 18018 10.7  10.5   6.98
+ 2  4.5  Fair      J     I1       65.8    58 18531 10.2  10.2   6.72
+ 3  4.13 Fair      H     I1       64.8    61 17329 10     9.85  6.43
+ 4  4.01 Premium   I     I1       61      61 15223 10.1  10.1   6.17
+ 5  4.01 Premium   J     I1       62.5    62 15223 10.0   9.94  6.24
+ 6  4    Very Good I     I1       63.3    58 15984 10.0   9.94  6.31
+ 7  3.67 Premium   I     I1       62.4    56 16193  9.86  9.81  6.13
+ 8  3.65 Fair      H     I1       67.1    53 11668  9.53  9.48  6.38
+ 9  3.51 Premium   J     VS2      62.5    59 18701  9.66  9.63  6.03
+10  3.5  Ideal     H     I1       62.8    57 12587  9.65  9.59  6.03
+11  3.4  Fair      D     I1       66.8    52 15964  9.42  9.34  6.27
+12  3.24 Premium   H     I1       62.1    58 12300  9.44  9.4   5.85
+13  3.22 Ideal     I     I1       62.6    55 12545  9.49  9.42  5.92
+14  3.11 Fair      J     I1       65.9    57  9823  9.15  9.02  5.98
+15  3.05 Premium   E     I1       60.9    58 10453  9.26  9.25  5.66
+16  3.04 Very Good I     SI2      63.2    59 15354  9.14  9.07  5.75
+17  3.04 Premium   I     SI2      59.3    60 18559  9.51  9.46  5.62
+18  3.02 Fair      I     I1       65.2    56 10577  9.11  9.02  5.91
+19  3.01 Premium   I     I1       62.7    58  8040  9.1   8.97  5.67
+20  3.01 Premium   F     I1       62.2    56  9925  9.24  9.13  5.73</code></pre>
+</div>
+</div>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 14%">
+<col style="width: 9%">
+<col style="width: 11%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">carat</th>
+<th style="text-align: right;">cut</th>
+<th style="text-align: right;">color</th>
+<th style="text-align: right;">clarity</th>
+<th style="text-align: right;">depth</th>
+<th style="text-align: right;">table</th>
+<th style="text-align: right;">price</th>
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">5.01</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">J</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">65.5</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">18018</td>
+<td style="text-align: right;">10.74</td>
+<td style="text-align: right;">10.54</td>
+<td style="text-align: right;">6.98</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.50</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">J</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">65.8</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">18531</td>
+<td style="text-align: right;">10.23</td>
+<td style="text-align: right;">10.16</td>
+<td style="text-align: right;">6.72</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4.13</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">H</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">64.8</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">17329</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: right;">9.85</td>
+<td style="text-align: right;">6.43</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.01</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">61.0</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">15223</td>
+<td style="text-align: right;">10.14</td>
+<td style="text-align: right;">10.10</td>
+<td style="text-align: right;">6.17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4.01</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">J</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.5</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">15223</td>
+<td style="text-align: right;">10.02</td>
+<td style="text-align: right;">9.94</td>
+<td style="text-align: right;">6.24</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.00</td>
+<td style="text-align: right;">Very Good</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">63.3</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">15984</td>
+<td style="text-align: right;">10.01</td>
+<td style="text-align: right;">9.94</td>
+<td style="text-align: right;">6.31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.67</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.4</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">16193</td>
+<td style="text-align: right;">9.86</td>
+<td style="text-align: right;">9.81</td>
+<td style="text-align: right;">6.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.65</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">H</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">67.1</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">11668</td>
+<td style="text-align: right;">9.53</td>
+<td style="text-align: right;">9.48</td>
+<td style="text-align: right;">6.38</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.51</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">J</td>
+<td style="text-align: right;">VS2</td>
+<td style="text-align: right;">62.5</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">18701</td>
+<td style="text-align: right;">9.66</td>
+<td style="text-align: right;">9.63</td>
+<td style="text-align: right;">6.03</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.50</td>
+<td style="text-align: right;">Ideal</td>
+<td style="text-align: right;">H</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.8</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">12587</td>
+<td style="text-align: right;">9.65</td>
+<td style="text-align: right;">9.59</td>
+<td style="text-align: right;">6.03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.40</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">D</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">66.8</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">15964</td>
+<td style="text-align: right;">9.42</td>
+<td style="text-align: right;">9.34</td>
+<td style="text-align: right;">6.27</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.24</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">H</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.1</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">12300</td>
+<td style="text-align: right;">9.44</td>
+<td style="text-align: right;">9.40</td>
+<td style="text-align: right;">5.85</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.22</td>
+<td style="text-align: right;">Ideal</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.6</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">12545</td>
+<td style="text-align: right;">9.49</td>
+<td style="text-align: right;">9.42</td>
+<td style="text-align: right;">5.92</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.11</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">J</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">65.9</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">9823</td>
+<td style="text-align: right;">9.15</td>
+<td style="text-align: right;">9.02</td>
+<td style="text-align: right;">5.98</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.05</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">E</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">60.9</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">10453</td>
+<td style="text-align: right;">9.26</td>
+<td style="text-align: right;">9.25</td>
+<td style="text-align: right;">5.66</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.04</td>
+<td style="text-align: right;">Very Good</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">SI2</td>
+<td style="text-align: right;">63.2</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">15354</td>
+<td style="text-align: right;">9.14</td>
+<td style="text-align: right;">9.07</td>
+<td style="text-align: right;">5.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.04</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">SI2</td>
+<td style="text-align: right;">59.3</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">18559</td>
+<td style="text-align: right;">9.51</td>
+<td style="text-align: right;">9.46</td>
+<td style="text-align: right;">5.62</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.02</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">65.2</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">10577</td>
+<td style="text-align: right;">9.11</td>
+<td style="text-align: right;">9.02</td>
+<td style="text-align: right;">5.91</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.7</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">8040</td>
+<td style="text-align: right;">9.10</td>
+<td style="text-align: right;">8.97</td>
+<td style="text-align: right;">5.67</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">F</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.2</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">9925</td>
+<td style="text-align: right;">9.24</td>
+<td style="text-align: right;">9.13</td>
+<td style="text-align: right;">5.73</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="exercise-3" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3">Exercise 3</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 143</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 53940</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>0.27% of the diamonds are larger than 2.5 carat.</p>
+</blockquote>
+</section>
+</section>
+</section>
+<section id="exercises-1" class="level1">
+<h1><strong>28.6.3 Exercises</strong></h1>
+<section id="exercise-1-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1-1">Exercise 1</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-4271202987.png" class="img-fluid figure-img" width="309"></p>
+<figcaption class="figure-caption">Koh-i-Noor diamond (also Koh-i-Nur or Kūh-e Nūr) (Replica))</figcaption>
+</figure>
+</div>
+</section>
+<section id="exercise-2-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2-1">Exercise 2</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-larger" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="diamond-sizes1_files/figure-html/fig-larger-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;2: Diamonds smaller than 2.5 carat</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Diamonds smaller than 2.5 carat</p>
+<p><a href="#fig-smaller">Figure&nbsp;1</a></p>
+</section>
+<section id="exercise-3-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-3-1">Exercise 3</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-larger-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="diamond-sizes1_files/figure-html/fig-larger-2-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3: Diamonds smaller than 2.5 carat</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="exercises-2" class="level1">
+<h1><strong>28.7.1 Exercises</strong></h1>
+<section id="exercise-1-2" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1-2">Exercise 1</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">carat</th>
+<th style="text-align: left;">cut</th>
+<th style="text-align: left;">color</th>
+<th style="text-align: left;">clarity</th>
+<th style="text-align: right;">depth</th>
+<th style="text-align: right;">table</th>
+<th style="text-align: right;">price</th>
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.23</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">61.5</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">326</td>
+<td style="text-align: right;">3.95</td>
+<td style="text-align: right;">3.98</td>
+<td style="text-align: right;">2.43</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.21</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">59.8</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">326</td>
+<td style="text-align: right;">3.89</td>
+<td style="text-align: right;">3.84</td>
+<td style="text-align: right;">2.31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.23</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">VS1</td>
+<td style="text-align: right;">56.9</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">327</td>
+<td style="text-align: right;">4.05</td>
+<td style="text-align: right;">4.07</td>
+<td style="text-align: right;">2.31</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.29</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">VS2</td>
+<td style="text-align: right;">62.4</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">4.20</td>
+<td style="text-align: right;">4.23</td>
+<td style="text-align: right;">2.63</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.31</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.3</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">335</td>
+<td style="text-align: right;">4.34</td>
+<td style="text-align: right;">4.35</td>
+<td style="text-align: right;">2.75</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="exercise-2-2" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2-2">Exercise 2</h2>
+<div class="cell">
+<div class="cell-output-display">
+
+<div id="wminlvjplj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wminlvjplj table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#wminlvjplj thead, #wminlvjplj tbody, #wminlvjplj tfoot, #wminlvjplj tr, #wminlvjplj td, #wminlvjplj th {
+  border-style: none;
+}
+
+#wminlvjplj p {
+  margin: 0;
+  padding: 0;
+}
+
+#wminlvjplj .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#wminlvjplj .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#wminlvjplj .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#wminlvjplj .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#wminlvjplj .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wminlvjplj .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wminlvjplj .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wminlvjplj .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#wminlvjplj .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#wminlvjplj .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#wminlvjplj .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#wminlvjplj .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#wminlvjplj .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#wminlvjplj .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#wminlvjplj .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wminlvjplj .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#wminlvjplj .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#wminlvjplj .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#wminlvjplj .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wminlvjplj .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#wminlvjplj .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#wminlvjplj .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#wminlvjplj .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wminlvjplj .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#wminlvjplj .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#wminlvjplj .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wminlvjplj .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wminlvjplj .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#wminlvjplj .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wminlvjplj .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#wminlvjplj .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wminlvjplj .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wminlvjplj .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wminlvjplj .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wminlvjplj .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wminlvjplj .gt_left {
+  text-align: left;
+}
+
+#wminlvjplj .gt_center {
+  text-align: center;
+}
+
+#wminlvjplj .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#wminlvjplj .gt_font_normal {
+  font-weight: normal;
+}
+
+#wminlvjplj .gt_font_bold {
+  font-weight: bold;
+}
+
+#wminlvjplj .gt_font_italic {
+  font-style: italic;
+}
+
+#wminlvjplj .gt_super {
+  font-size: 65%;
+}
+
+#wminlvjplj .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#wminlvjplj .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#wminlvjplj .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#wminlvjplj .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#wminlvjplj .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#wminlvjplj .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#wminlvjplj .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="carat">carat</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="cut">cut</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="color">color</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="clarity">clarity</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="depth">depth</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="table">table</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="price">price</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="x">x</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="y">y</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="z">z</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="carat" class="gt_row gt_right">0.23</td>
+<td headers="cut" class="gt_row gt_center">Ideal</td>
+<td headers="color" class="gt_row gt_center">E</td>
+<td headers="clarity" class="gt_row gt_center">SI2</td>
+<td headers="depth" class="gt_row gt_right">61.5</td>
+<td headers="table" class="gt_row gt_right">55</td>
+<td headers="price" class="gt_row gt_right">326</td>
+<td headers="x" class="gt_row gt_right">3.95</td>
+<td headers="y" class="gt_row gt_right">3.98</td>
+<td headers="z" class="gt_row gt_right">2.43</td></tr>
+    <tr><td headers="carat" class="gt_row gt_right">0.21</td>
+<td headers="cut" class="gt_row gt_center">Premium</td>
+<td headers="color" class="gt_row gt_center">E</td>
+<td headers="clarity" class="gt_row gt_center">SI1</td>
+<td headers="depth" class="gt_row gt_right">59.8</td>
+<td headers="table" class="gt_row gt_right">61</td>
+<td headers="price" class="gt_row gt_right">326</td>
+<td headers="x" class="gt_row gt_right">3.89</td>
+<td headers="y" class="gt_row gt_right">3.84</td>
+<td headers="z" class="gt_row gt_right">2.31</td></tr>
+    <tr><td headers="carat" class="gt_row gt_right">0.23</td>
+<td headers="cut" class="gt_row gt_center">Good</td>
+<td headers="color" class="gt_row gt_center">E</td>
+<td headers="clarity" class="gt_row gt_center">VS1</td>
+<td headers="depth" class="gt_row gt_right">56.9</td>
+<td headers="table" class="gt_row gt_right">65</td>
+<td headers="price" class="gt_row gt_right">327</td>
+<td headers="x" class="gt_row gt_right">4.05</td>
+<td headers="y" class="gt_row gt_right">4.07</td>
+<td headers="z" class="gt_row gt_right">2.31</td></tr>
+    <tr><td headers="carat" class="gt_row gt_right">0.29</td>
+<td headers="cut" class="gt_row gt_center">Premium</td>
+<td headers="color" class="gt_row gt_center">I</td>
+<td headers="clarity" class="gt_row gt_center">VS2</td>
+<td headers="depth" class="gt_row gt_right">62.4</td>
+<td headers="table" class="gt_row gt_right">58</td>
+<td headers="price" class="gt_row gt_right">334</td>
+<td headers="x" class="gt_row gt_right">4.20</td>
+<td headers="y" class="gt_row gt_right">4.23</td>
+<td headers="z" class="gt_row gt_right">2.63</td></tr>
+    <tr><td headers="carat" class="gt_row gt_right">0.31</td>
+<td headers="cut" class="gt_row gt_center">Good</td>
+<td headers="color" class="gt_row gt_center">J</td>
+<td headers="clarity" class="gt_row gt_center">SI2</td>
+<td headers="depth" class="gt_row gt_right">63.3</td>
+<td headers="table" class="gt_row gt_right">58</td>
+<td headers="price" class="gt_row gt_right">335</td>
+<td headers="x" class="gt_row gt_right">4.34</td>
+<td headers="y" class="gt_row gt_right">4.35</td>
+<td headers="z" class="gt_row gt_right">2.75</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-3-2" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-3-2">Exercise 3</h2>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vitae volutpat metus. Suspendisse efficitur purus ac metus auctor lobortis. Duis et odio at quam pretium venenatis. Vivamus vel condimentum nunc, sit amet rutrum dolor. Aenean id quam massa. Fusce pharetra magna a tellus congue, nec sollicitudin nibh maximus. Nunc luctus augue mattis leo accumsan, a vestibulum dolor sodales. Vivamus malesuada non tortor et volutpat. Cras quis eleifend turpis, suscipit pellentesque lectus. Aenean et sagittis velit. Maecenas ac accumsan lacus. Pellentesque tristique augue sed vulputate aliquam.</p>
+<p><a href="#tbl-bigger-diamonds">Table&nbsp;1</a></p>
+<p>Sed mollis faucibus ante non posuere. Donec et leo eu massa iaculis aliquam id vitae urna. Sed auctor finibus mi et eleifend. Mauris accumsan blandit consequat. Donec varius elit nibh, non lobortis nunc pretium quis. Mauris pharetra tempor hendrerit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed mattis justo a auctor luctus. Aenean quis bibendum risus. Praesent vitae est auctor, commodo neque id, ultricies metus. Nulla aliquam posuere volutpat. Sed fringilla, nibh vel pharetra porttitor, arcu ligula rhoncus ipsum, sed laoreet velit mi ut arcu. Pellentesque ac dui tristique, tempor arcu at, volutpat sapien. Ut faucibus eros elit, pharetra commodo velit fringilla quis.</p>
+<p>Fusce sit amet blandit quam, eu ultricies dolor. Nulla consectetur euismod erat sit amet feugiat. Duis venenatis, dui nec molestie posuere, diam turpis sagittis sapien, in suscipit enim neque non nisl. Vivamus volutpat interdum sem ac molestie. Etiam lorem nibh, pulvinar non velit vitae, faucibus placerat ipsum. Pellentesque in ullamcorper sem. Integer fringilla consequat sapien, non pretium risus condimentum id. Duis nec sodales dolor, et eleifend orci. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-bigger-diamonds" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;1: Diamonds smaller than 2.5 carat</caption>
+<colgroup>
+<col style="width: 9%">
+<col style="width: 15%">
+<col style="width: 9%">
+<col style="width: 12%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">carat</th>
+<th style="text-align: left;">cut</th>
+<th style="text-align: left;">color</th>
+<th style="text-align: left;">clarity</th>
+<th style="text-align: right;">depth</th>
+<th style="text-align: right;">table</th>
+<th style="text-align: right;">price</th>
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">3.00</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">63.1</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">6512</td>
+<td style="text-align: right;">9.23</td>
+<td style="text-align: right;">9.10</td>
+<td style="text-align: right;">5.77</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.72</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">68.2</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">6870</td>
+<td style="text-align: right;">8.46</td>
+<td style="text-align: right;">8.43</td>
+<td style="text-align: right;">5.76</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">64.7</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">7854</td>
+<td style="text-align: right;">8.48</td>
+<td style="text-align: right;">8.44</td>
+<td style="text-align: right;">5.47</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">62.7</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">8040</td>
+<td style="text-align: right;">9.10</td>
+<td style="text-align: right;">8.97</td>
+<td style="text-align: right;">5.67</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.00</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">67.1</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">8044</td>
+<td style="text-align: right;">8.93</td>
+<td style="text-align: right;">8.84</td>
+<td style="text-align: right;">5.97</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.68</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">58.6</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">8419</td>
+<td style="text-align: right;">9.11</td>
+<td style="text-align: right;">9.07</td>
+<td style="text-align: right;">5.33</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">59.9</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">8467</td>
+<td style="text-align: right;">8.75</td>
+<td style="text-align: right;">8.67</td>
+<td style="text-align: right;">5.22</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">65.1</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">8711</td>
+<td style="text-align: right;">8.55</td>
+<td style="text-align: right;">8.39</td>
+<td style="text-align: right;">5.53</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.74</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">64.9</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">8807</td>
+<td style="text-align: right;">8.76</td>
+<td style="text-align: right;">8.66</td>
+<td style="text-align: right;">5.65</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.68</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">63.5</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">9665</td>
+<td style="text-align: right;">8.81</td>
+<td style="text-align: right;">8.77</td>
+<td style="text-align: right;">5.58</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.11</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">65.9</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">9823</td>
+<td style="text-align: right;">9.15</td>
+<td style="text-align: right;">9.02</td>
+<td style="text-align: right;">5.98</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">62.2</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">9925</td>
+<td style="text-align: right;">9.24</td>
+<td style="text-align: right;">9.13</td>
+<td style="text-align: right;">5.73</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.52</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">66.9</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">10076</td>
+<td style="text-align: right;">8.39</td>
+<td style="text-align: right;">8.33</td>
+<td style="text-align: right;">5.60</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.77</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">62.6</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">10424</td>
+<td style="text-align: right;">8.93</td>
+<td style="text-align: right;">8.83</td>
+<td style="text-align: right;">5.56</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.63</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">62.3</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">10437</td>
+<td style="text-align: right;">8.76</td>
+<td style="text-align: right;">8.81</td>
+<td style="text-align: right;">5.47</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.05</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">60.9</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">10453</td>
+<td style="text-align: right;">9.26</td>
+<td style="text-align: right;">9.25</td>
+<td style="text-align: right;">5.66</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.02</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">65.2</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">10577</td>
+<td style="text-align: right;">9.11</td>
+<td style="text-align: right;">9.02</td>
+<td style="text-align: right;">5.91</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.63</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">62.3</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">10628</td>
+<td style="text-align: right;">8.81</td>
+<td style="text-align: right;">8.76</td>
+<td style="text-align: right;">5.47</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">56.1</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">10761</td>
+<td style="text-align: right;">9.54</td>
+<td style="text-align: right;">9.38</td>
+<td style="text-align: right;">5.31</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.00</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">57.0</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">10863</td>
+<td style="text-align: right;">9.38</td>
+<td style="text-align: right;">9.31</td>
+<td style="text-align: right;">5.33</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.00</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">64.2</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">11548</td>
+<td style="text-align: right;">9.08</td>
+<td style="text-align: right;">8.96</td>
+<td style="text-align: right;">5.79</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.72</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">59.6</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">11594</td>
+<td style="text-align: right;">9.17</td>
+<td style="text-align: right;">9.13</td>
+<td style="text-align: right;">5.45</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.65</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">67.1</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">11668</td>
+<td style="text-align: right;">9.53</td>
+<td style="text-align: right;">9.48</td>
+<td style="text-align: right;">6.38</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.7</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">12071</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">8.61</td>
+<td style="text-align: right;">5.41</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.54</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.4</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">12095</td>
+<td style="text-align: right;">8.68</td>
+<td style="text-align: right;">8.64</td>
+<td style="text-align: right;">5.49</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.24</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">62.1</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">12300</td>
+<td style="text-align: right;">9.44</td>
+<td style="text-align: right;">9.40</td>
+<td style="text-align: right;">5.85</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.58</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">65.2</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">12500</td>
+<td style="text-align: right;">8.58</td>
+<td style="text-align: right;">8.51</td>
+<td style="text-align: right;">5.57</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.22</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">62.6</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">12545</td>
+<td style="text-align: right;">9.49</td>
+<td style="text-align: right;">9.42</td>
+<td style="text-align: right;">5.92</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.50</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">62.8</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">12587</td>
+<td style="text-align: right;">9.65</td>
+<td style="text-align: right;">9.59</td>
+<td style="text-align: right;">6.03</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.54</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">61.4</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">12687</td>
+<td style="text-align: right;">8.83</td>
+<td style="text-align: right;">8.78</td>
+<td style="text-align: right;">5.41</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.75</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">60.9</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">13156</td>
+<td style="text-align: right;">9.04</td>
+<td style="text-align: right;">8.98</td>
+<td style="text-align: right;">5.49</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.00</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">59.7</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">13203</td>
+<td style="text-align: right;">9.42</td>
+<td style="text-align: right;">9.26</td>
+<td style="text-align: right;">5.58</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">64.9</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">13278</td>
+<td style="text-align: right;">8.46</td>
+<td style="text-align: right;">8.43</td>
+<td style="text-align: right;">5.48</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">64.9</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">13278</td>
+<td style="text-align: right;">8.46</td>
+<td style="text-align: right;">8.43</td>
+<td style="text-align: right;">5.48</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.61</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">64.2</td>
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">13784</td>
+<td style="text-align: right;">8.66</td>
+<td style="text-align: right;">8.57</td>
+<td style="text-align: right;">5.53</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.52</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">65.4</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">13846</td>
+<td style="text-align: right;">8.49</td>
+<td style="text-align: right;">8.42</td>
+<td style="text-align: right;">5.53</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">67.0</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">14194</td>
+<td style="text-align: right;">8.36</td>
+<td style="text-align: right;">8.29</td>
+<td style="text-align: right;">5.58</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.7</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">14209</td>
+<td style="text-align: right;">8.51</td>
+<td style="text-align: right;">8.48</td>
+<td style="text-align: right;">5.41</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">59.8</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">14220</td>
+<td style="text-align: right;">9.44</td>
+<td style="text-align: right;">9.37</td>
+<td style="text-align: right;">5.62</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">59.5</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">14251</td>
+<td style="text-align: right;">8.87</td>
+<td style="text-align: right;">8.74</td>
+<td style="text-align: right;">5.24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.70</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.1</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">14341</td>
+<td style="text-align: right;">8.84</td>
+<td style="text-align: right;">8.78</td>
+<td style="text-align: right;">5.56</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.55</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.9</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">14351</td>
+<td style="text-align: right;">8.70</td>
+<td style="text-align: right;">8.59</td>
+<td style="text-align: right;">5.44</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.54</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.5</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">14421</td>
+<td style="text-align: right;">8.75</td>
+<td style="text-align: right;">8.69</td>
+<td style="text-align: right;">5.45</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">64.0</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">14502</td>
+<td style="text-align: right;">8.56</td>
+<td style="text-align: right;">8.48</td>
+<td style="text-align: right;">5.46</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">59.3</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">14543</td>
+<td style="text-align: right;">8.81</td>
+<td style="text-align: right;">8.77</td>
+<td style="text-align: right;">5.21</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">60.6</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">14543</td>
+<td style="text-align: right;">8.88</td>
+<td style="text-align: right;">8.68</td>
+<td style="text-align: right;">5.29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">66.9</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">14652</td>
+<td style="text-align: right;">8.36</td>
+<td style="text-align: right;">8.22</td>
+<td style="text-align: right;">5.55</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.53</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.6</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">14659</td>
+<td style="text-align: right;">8.66</td>
+<td style="text-align: right;">8.55</td>
+<td style="text-align: right;">5.39</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.54</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">61.3</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">14717</td>
+<td style="text-align: right;">8.80</td>
+<td style="text-align: right;">8.70</td>
+<td style="text-align: right;">5.36</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.58</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">58.9</td>
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">14749</td>
+<td style="text-align: right;">9.08</td>
+<td style="text-align: right;">9.01</td>
+<td style="text-align: right;">5.33</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.55</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.7</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">14775</td>
+<td style="text-align: right;">8.66</td>
+<td style="text-align: right;">8.57</td>
+<td style="text-align: right;">5.49</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.00</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">59.3</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">14918</td>
+<td style="text-align: right;">9.32</td>
+<td style="text-align: right;">9.19</td>
+<td style="text-align: right;">5.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.80</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">61.1</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">15030</td>
+<td style="text-align: right;">9.03</td>
+<td style="text-align: right;">8.98</td>
+<td style="text-align: right;">5.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.53</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">61.1</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">15148</td>
+<td style="text-align: right;">8.82</td>
+<td style="text-align: right;">8.76</td>
+<td style="text-align: right;">5.37</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4.01</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">61.0</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">15223</td>
+<td style="text-align: right;">10.14</td>
+<td style="text-align: right;">10.10</td>
+<td style="text-align: right;">6.17</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.01</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">62.5</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">15223</td>
+<td style="text-align: right;">10.02</td>
+<td style="text-align: right;">9.94</td>
+<td style="text-align: right;">6.24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.56</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.6</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">15231</td>
+<td style="text-align: right;">8.62</td>
+<td style="text-align: right;">8.57</td>
+<td style="text-align: right;">5.47</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.8</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">15246</td>
+<td style="text-align: right;">8.56</td>
+<td style="text-align: right;">8.50</td>
+<td style="text-align: right;">5.45</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">62.9</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">15324</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">8.61</td>
+<td style="text-align: right;">5.43</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.04</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.2</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">15354</td>
+<td style="text-align: right;">9.14</td>
+<td style="text-align: right;">9.07</td>
+<td style="text-align: right;">5.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.54</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.5</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">15394</td>
+<td style="text-align: right;">8.67</td>
+<td style="text-align: right;">8.56</td>
+<td style="text-align: right;">5.47</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.75</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">60.5</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">15415</td>
+<td style="text-align: right;">8.99</td>
+<td style="text-align: right;">8.97</td>
+<td style="text-align: right;">5.48</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.52</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">65.1</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">15776</td>
+<td style="text-align: right;">8.51</td>
+<td style="text-align: right;">8.43</td>
+<td style="text-align: right;">5.51</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.4</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">15934</td>
+<td style="text-align: right;">8.61</td>
+<td style="text-align: right;">8.54</td>
+<td style="text-align: right;">5.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.40</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">66.8</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">15964</td>
+<td style="text-align: right;">9.42</td>
+<td style="text-align: right;">9.34</td>
+<td style="text-align: right;">6.27</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.00</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">63.3</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">15984</td>
+<td style="text-align: right;">10.01</td>
+<td style="text-align: right;">9.94</td>
+<td style="text-align: right;">6.31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">60.7</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">15990</td>
+<td style="text-align: right;">8.80</td>
+<td style="text-align: right;">8.66</td>
+<td style="text-align: right;">5.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.53</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">61.5</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">15993</td>
+<td style="text-align: right;">8.78</td>
+<td style="text-align: right;">8.74</td>
+<td style="text-align: right;">5.39</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">61.7</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">16037</td>
+<td style="text-align: right;">9.25</td>
+<td style="text-align: right;">9.20</td>
+<td style="text-align: right;">5.69</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.67</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">62.4</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">16193</td>
+<td style="text-align: right;">9.86</td>
+<td style="text-align: right;">9.81</td>
+<td style="text-align: right;">6.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.58</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.6</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">16195</td>
+<td style="text-align: right;">8.77</td>
+<td style="text-align: right;">8.73</td>
+<td style="text-align: right;">5.48</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.66</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.8</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">16239</td>
+<td style="text-align: right;">8.71</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">5.54</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.66</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.8</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">16239</td>
+<td style="text-align: right;">8.71</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">5.54</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">59.3</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">16278</td>
+<td style="text-align: right;">8.83</td>
+<td style="text-align: right;">8.87</td>
+<td style="text-align: right;">5.25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.65</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.0</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">16314</td>
+<td style="text-align: right;">8.82</td>
+<td style="text-align: right;">8.75</td>
+<td style="text-align: right;">5.45</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.54</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.5</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">16353</td>
+<td style="text-align: right;">8.68</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">5.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.54</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.5</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">16353</td>
+<td style="text-align: right;">8.68</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">5.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">59.3</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">16427</td>
+<td style="text-align: right;">8.87</td>
+<td style="text-align: right;">8.83</td>
+<td style="text-align: right;">5.25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.59</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">VS1</td>
+<td style="text-align: right;">61.7</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">16465</td>
+<td style="text-align: right;">8.83</td>
+<td style="text-align: right;">8.77</td>
+<td style="text-align: right;">5.43</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">65.4</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">16538</td>
+<td style="text-align: right;">8.99</td>
+<td style="text-align: right;">8.93</td>
+<td style="text-align: right;">5.86</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.53</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">62.4</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">16709</td>
+<td style="text-align: right;">8.68</td>
+<td style="text-align: right;">8.59</td>
+<td style="text-align: right;">5.39</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.1</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">16717</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">8.60</td>
+<td style="text-align: right;">5.44</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">63.8</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">16842</td>
+<td style="text-align: right;">8.51</td>
+<td style="text-align: right;">8.60</td>
+<td style="text-align: right;">5.46</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.63</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.1</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">16914</td>
+<td style="text-align: right;">8.83</td>
+<td style="text-align: right;">8.88</td>
+<td style="text-align: right;">5.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.53</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.6</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">16934</td>
+<td style="text-align: right;">8.77</td>
+<td style="text-align: right;">8.67</td>
+<td style="text-align: right;">5.46</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">VS2</td>
+<td style="text-align: right;">61.9</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">16955</td>
+<td style="text-align: right;">8.70</td>
+<td style="text-align: right;">8.68</td>
+<td style="text-align: right;">5.38</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.00</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">60.7</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">16970</td>
+<td style="text-align: right;">9.30</td>
+<td style="text-align: right;">9.14</td>
+<td style="text-align: right;">5.60</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.00</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">64.8</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">16970</td>
+<td style="text-align: right;">8.93</td>
+<td style="text-align: right;">8.73</td>
+<td style="text-align: right;">5.72</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.60</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">64.6</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">17027</td>
+<td style="text-align: right;">8.60</td>
+<td style="text-align: right;">8.55</td>
+<td style="text-align: right;">5.54</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">62.8</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">17028</td>
+<td style="text-align: right;">8.58</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">5.41</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.53</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">64.6</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">17103</td>
+<td style="text-align: right;">8.54</td>
+<td style="text-align: right;">8.45</td>
+<td style="text-align: right;">5.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.57</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">61.3</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">17116</td>
+<td style="text-align: right;">8.82</td>
+<td style="text-align: right;">8.73</td>
+<td style="text-align: right;">5.38</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.71</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">60.4</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">17146</td>
+<td style="text-align: right;">9.13</td>
+<td style="text-align: right;">9.03</td>
+<td style="text-align: right;">5.48</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.0</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">17162</td>
+<td style="text-align: right;">8.72</td>
+<td style="text-align: right;">8.67</td>
+<td style="text-align: right;">5.39</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.74</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">61.5</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">17164</td>
+<td style="text-align: right;">8.87</td>
+<td style="text-align: right;">8.90</td>
+<td style="text-align: right;">5.46</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.74</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.3</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">17184</td>
+<td style="text-align: right;">8.88</td>
+<td style="text-align: right;">8.84</td>
+<td style="text-align: right;">5.61</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.56</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">61.4</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">17186</td>
+<td style="text-align: right;">8.76</td>
+<td style="text-align: right;">8.73</td>
+<td style="text-align: right;">5.37</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.60</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">58.3</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">17209</td>
+<td style="text-align: right;">9.05</td>
+<td style="text-align: right;">8.94</td>
+<td style="text-align: right;">5.24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.61</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">64.6</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">17209</td>
+<td style="text-align: right;">8.61</td>
+<td style="text-align: right;">8.57</td>
+<td style="text-align: right;">5.55</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.52</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">61.5</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">17231</td>
+<td style="text-align: right;">8.76</td>
+<td style="text-align: right;">8.69</td>
+<td style="text-align: right;">5.37</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4.13</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">64.8</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">17329</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: right;">9.85</td>
+<td style="text-align: right;">6.43</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.54</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.7</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">17339</td>
+<td style="text-align: right;">8.75</td>
+<td style="text-align: right;">8.67</td>
+<td style="text-align: right;">5.46</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">65.8</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">17405</td>
+<td style="text-align: right;">8.38</td>
+<td style="text-align: right;">8.31</td>
+<td style="text-align: right;">5.49</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.64</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.3</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">17407</td>
+<td style="text-align: right;">8.88</td>
+<td style="text-align: right;">8.83</td>
+<td style="text-align: right;">5.52</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">59.6</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">17452</td>
+<td style="text-align: right;">8.84</td>
+<td style="text-align: right;">8.79</td>
+<td style="text-align: right;">5.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.52</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.4</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">17522</td>
+<td style="text-align: right;">8.72</td>
+<td style="text-align: right;">8.66</td>
+<td style="text-align: right;">5.43</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.53</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">59.6</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">17591</td>
+<td style="text-align: right;">8.90</td>
+<td style="text-align: right;">8.82</td>
+<td style="text-align: right;">5.29</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.52</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.7</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">17608</td>
+<td style="text-align: right;">8.57</td>
+<td style="text-align: right;">8.52</td>
+<td style="text-align: right;">5.44</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.52</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.2</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">17689</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">8.61</td>
+<td style="text-align: right;">5.45</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.56</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">61.4</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">17753</td>
+<td style="text-align: right;">8.73</td>
+<td style="text-align: right;">8.76</td>
+<td style="text-align: right;">5.37</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.72</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.1</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">17801</td>
+<td style="text-align: right;">8.97</td>
+<td style="text-align: right;">8.93</td>
+<td style="text-align: right;">5.56</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.57</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">58.9</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">17924</td>
+<td style="text-align: right;">8.99</td>
+<td style="text-align: right;">8.94</td>
+<td style="text-align: right;">5.28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.54</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.4</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">17996</td>
+<td style="text-align: right;">8.58</td>
+<td style="text-align: right;">8.73</td>
+<td style="text-align: right;">5.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5.01</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">65.5</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">18018</td>
+<td style="text-align: right;">10.74</td>
+<td style="text-align: right;">10.54</td>
+<td style="text-align: right;">6.98</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">VS2</td>
+<td style="text-align: right;">62.2</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">18020</td>
+<td style="text-align: right;">8.73</td>
+<td style="text-align: right;">8.67</td>
+<td style="text-align: right;">5.41</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.6</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">18029</td>
+<td style="text-align: right;">8.51</td>
+<td style="text-align: right;">8.59</td>
+<td style="text-align: right;">5.44</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">58.4</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">18037</td>
+<td style="text-align: right;">8.87</td>
+<td style="text-align: right;">8.79</td>
+<td style="text-align: right;">5.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.3</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">18090</td>
+<td style="text-align: right;">8.69</td>
+<td style="text-align: right;">8.76</td>
+<td style="text-align: right;">5.44</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.52</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">60.6</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">18179</td>
+<td style="text-align: right;">8.78</td>
+<td style="text-align: right;">8.70</td>
+<td style="text-align: right;">5.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">60.2</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">18242</td>
+<td style="text-align: right;">9.36</td>
+<td style="text-align: right;">9.31</td>
+<td style="text-align: right;">5.62</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">65.8</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">18242</td>
+<td style="text-align: right;">8.99</td>
+<td style="text-align: right;">8.94</td>
+<td style="text-align: right;">5.90</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">65.8</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">18242</td>
+<td style="text-align: right;">8.99</td>
+<td style="text-align: right;">8.94</td>
+<td style="text-align: right;">5.90</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.9</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">18242</td>
+<td style="text-align: right;">9.06</td>
+<td style="text-align: right;">9.01</td>
+<td style="text-align: right;">5.77</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.9</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">18242</td>
+<td style="text-align: right;">9.06</td>
+<td style="text-align: right;">9.01</td>
+<td style="text-align: right;">5.77</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.52</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">58.5</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">18252</td>
+<td style="text-align: right;">8.90</td>
+<td style="text-align: right;">8.87</td>
+<td style="text-align: right;">5.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.53</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">62.1</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">18254</td>
+<td style="text-align: right;">8.83</td>
+<td style="text-align: right;">8.73</td>
+<td style="text-align: right;">5.45</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.3</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">18255</td>
+<td style="text-align: right;">8.76</td>
+<td style="text-align: right;">8.69</td>
+<td style="text-align: right;">5.44</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.51</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">64.7</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">18308</td>
+<td style="text-align: right;">8.44</td>
+<td style="text-align: right;">8.50</td>
+<td style="text-align: right;">5.48</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">VS2</td>
+<td style="text-align: right;">62.0</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">18325</td>
+<td style="text-align: right;">8.63</td>
+<td style="text-align: right;">8.60</td>
+<td style="text-align: right;">5.34</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.60</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.5</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">18369</td>
+<td style="text-align: right;">8.81</td>
+<td style="text-align: right;">8.76</td>
+<td style="text-align: right;">5.49</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.50</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">59.0</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">18447</td>
+<td style="text-align: right;">8.76</td>
+<td style="text-align: right;">8.89</td>
+<td style="text-align: right;">5.21</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.57</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">63.0</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">18485</td>
+<td style="text-align: right;">8.77</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">5.49</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.66</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">64.3</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">18495</td>
+<td style="text-align: right;">8.71</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">5.58</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.50</td>
+<td style="text-align: left;">Fair</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">I1</td>
+<td style="text-align: right;">65.8</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">18531</td>
+<td style="text-align: right;">10.23</td>
+<td style="text-align: right;">10.16</td>
+<td style="text-align: right;">6.72</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.04</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">59.3</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">18559</td>
+<td style="text-align: right;">9.51</td>
+<td style="text-align: right;">9.46</td>
+<td style="text-align: right;">5.62</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">57.6</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">18593</td>
+<td style="text-align: right;">9.44</td>
+<td style="text-align: right;">9.38</td>
+<td style="text-align: right;">5.42</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.67</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.8</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">18686</td>
+<td style="text-align: right;">8.69</td>
+<td style="text-align: right;">8.64</td>
+<td style="text-align: right;">5.54</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.51</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">VS2</td>
+<td style="text-align: right;">62.5</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">18701</td>
+<td style="text-align: right;">9.66</td>
+<td style="text-align: right;">9.63</td>
+<td style="text-align: right;">6.03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">60.7</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">18710</td>
+<td style="text-align: right;">9.35</td>
+<td style="text-align: right;">9.22</td>
+<td style="text-align: right;">5.64</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">59.7</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">18710</td>
+<td style="text-align: right;">9.41</td>
+<td style="text-align: right;">9.32</td>
+<td style="text-align: right;">5.59</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.61</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">62.1</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">18756</td>
+<td style="text-align: right;">8.85</td>
+<td style="text-align: right;">8.73</td>
+<td style="text-align: right;">5.46</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.55</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">VS1</td>
+<td style="text-align: right;">61.8</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">18766</td>
+<td style="text-align: right;">8.70</td>
+<td style="text-align: right;">8.65</td>
+<td style="text-align: right;">5.36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.80</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.8</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">18788</td>
+<td style="text-align: right;">8.90</td>
+<td style="text-align: right;">8.85</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

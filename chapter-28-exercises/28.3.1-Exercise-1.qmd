@@ -1,0 +1,108 @@
+---
+title: "28.3.1 Exercises"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+bibliography: references.bib
+---
+
+```{r warning=FALSE}
+library(tidyverse)
+```
+
+# Exercise 1
+
+**Text formatting**
+
+*italic* **bold** [underline]{.underline} ~~strikeout~~ [SMAIL CAPS]{.smallcaps} `code` superscript^2^ and superscript~2~
+
+**Headings**
+
+# 1st Level Header
+
+## 2nd Level Header
+
+### 3rd Level Header
+
+**Lists**
+
+-   Bulleted list item 1
+
+-   Item 2
+
+    -   Item 2a
+
+    -   Item 2b
+
+1.  Numbered list item 1
+
+2.  Item 2. The numbers are incremented automatically in the output
+
+Links and images
+
+<https://quarto.org>
+
+<https://www.google.com>
+
+![](quarto.png){width="330"}
+
+**Tables**
+
+| First Header | Second Header |
+|--------------|---------------|
+| Content Cell | Content Cell  |
+| Content Cell | Content Cell  |
+
+# Exercise 2
+
+```{r}
+mpg |> 
+  ggplot(aes(
+    x = displ,
+    y = hwy, 
+    color = class)
+    ) +
+  geom_point() +
+  labs(
+    x = "Engine displacement, in litres",
+    y = "Highway miles per gallon",
+    color = "Class"
+  )
+```
+
+```{r}
+mpg |> 
+  ggplot(aes(
+    x = displ,
+    y = hwy, 
+    color = class)
+    ) +
+  geom_point() +
+  labs(
+    x = "Engine displacement, in litres",
+    y = "Highway miles per gallon",
+    color = "Class"
+  )
+```
+
+# Exercise 3
+
+a[^1]
+
+[^1]: First exercise
+
+b
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+c
+
+> A Markdown-formatted document should be publishable as-is, as plain text, without looking like it’s been marked up with tags or formatting instructions. – [John Gruber](https://daringfireball.net/projects/markdown/syntax#philosophy)
+
+> Blockquote 2
+
+# Exercise 4
+
+[@wickham2019]

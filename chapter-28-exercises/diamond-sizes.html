@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2022-09-12">
+
+<title>Diamond sizes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="diamond-sizes_files/libs/clipboard/clipboard.min.js"></script>
+<script src="diamond-sizes_files/libs/quarto-html/quarto.js"></script>
+<script src="diamond-sizes_files/libs/quarto-html/popper.min.js"></script>
+<script src="diamond-sizes_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="diamond-sizes_files/libs/quarto-html/anchor.min.js"></script>
+<link href="diamond-sizes_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="diamond-sizes_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="diamond-sizes_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="diamond-sizes_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="diamond-sizes_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Diamond sizes</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 12, 2022</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>We have data about 53940 diamonds. Only 126 are larger than 2.5 carats. The distribution of the remainder is shown below:</p>
+<p><a href="#fig-larger">Figure&nbsp;2</a></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-smaller" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="diamond-sizes_files/figure-html/fig-smaller-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;1: Diamonds less than 2.5 carat</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><p>Most diamonds is between 0.25 and 0.5 carat.</p></li>
+<li><p>The second most populated diamonds are 1 carat</p></li>
+</ul>
+<section id="exercises" class="level1">
+<h1><strong>28.5.5 Exercises</strong></h1>
+<section id="exercise-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1">Exercise 1</h2>
+<section id="sizes-by-cut-color-and-clarity" class="level3">
+<h3 class="anchored" data-anchor-id="sizes-by-cut-color-and-clarity">Sizes by cut, color and clarity</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 276 × 7
+   cut   color clarity   min   max  mean median
+   &lt;ord&gt; &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Fair  D     I1       0.91  3.4  1.88   1.6  
+ 2 Fair  D     SI2      0.3   2.07 1.02   1    
+ 3 Fair  D     SI1      0.4   2.02 0.914  0.905
+ 4 Fair  D     VS2      0.29  1.51 0.844  0.9  
+ 5 Fair  D     VS1      0.25  1    0.63   0.71 
+ 6 Fair  D     VVS2     0.3   1.01 0.591  0.5  
+ 7 Fair  D     VVS1     0.32  1    0.607  0.5  
+ 8 Fair  D     IF       0.3   0.47 0.38   0.37 
+ 9 Fair  E     I1       0.7   1.3  0.969  1.01 
+10 Fair  E     SI2      0.41  2.04 1.02   1    
+# ℹ 266 more rows</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="exercise-2" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2">Exercise 2</h2>
+<section id="largest-diamonds" class="level3">
+<h3 class="anchored" data-anchor-id="largest-diamonds">20 largest diamonds</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 10
+   carat cut       color clarity depth table price     x     y     z
+   &lt;dbl&gt; &lt;ord&gt;     &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1  5.01 Fair      J     I1       65.5    59 18018 10.7  10.5   6.98
+ 2  4.5  Fair      J     I1       65.8    58 18531 10.2  10.2   6.72
+ 3  4.13 Fair      H     I1       64.8    61 17329 10     9.85  6.43
+ 4  4.01 Premium   I     I1       61      61 15223 10.1  10.1   6.17
+ 5  4.01 Premium   J     I1       62.5    62 15223 10.0   9.94  6.24
+ 6  4    Very Good I     I1       63.3    58 15984 10.0   9.94  6.31
+ 7  3.67 Premium   I     I1       62.4    56 16193  9.86  9.81  6.13
+ 8  3.65 Fair      H     I1       67.1    53 11668  9.53  9.48  6.38
+ 9  3.51 Premium   J     VS2      62.5    59 18701  9.66  9.63  6.03
+10  3.5  Ideal     H     I1       62.8    57 12587  9.65  9.59  6.03
+11  3.4  Fair      D     I1       66.8    52 15964  9.42  9.34  6.27
+12  3.24 Premium   H     I1       62.1    58 12300  9.44  9.4   5.85
+13  3.22 Ideal     I     I1       62.6    55 12545  9.49  9.42  5.92
+14  3.11 Fair      J     I1       65.9    57  9823  9.15  9.02  5.98
+15  3.05 Premium   E     I1       60.9    58 10453  9.26  9.25  5.66
+16  3.04 Very Good I     SI2      63.2    59 15354  9.14  9.07  5.75
+17  3.04 Premium   I     SI2      59.3    60 18559  9.51  9.46  5.62
+18  3.02 Fair      I     I1       65.2    56 10577  9.11  9.02  5.91
+19  3.01 Premium   I     I1       62.7    58  8040  9.1   8.97  5.67
+20  3.01 Premium   F     I1       62.2    56  9925  9.24  9.13  5.73</code></pre>
+</div>
+</div>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 14%">
+<col style="width: 9%">
+<col style="width: 11%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">carat</th>
+<th style="text-align: right;">cut</th>
+<th style="text-align: right;">color</th>
+<th style="text-align: right;">clarity</th>
+<th style="text-align: right;">depth</th>
+<th style="text-align: right;">table</th>
+<th style="text-align: right;">price</th>
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">5.01</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">J</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">65.5</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">18018</td>
+<td style="text-align: right;">10.74</td>
+<td style="text-align: right;">10.54</td>
+<td style="text-align: right;">6.98</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.50</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">J</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">65.8</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">18531</td>
+<td style="text-align: right;">10.23</td>
+<td style="text-align: right;">10.16</td>
+<td style="text-align: right;">6.72</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4.13</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">H</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">64.8</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">17329</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: right;">9.85</td>
+<td style="text-align: right;">6.43</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.01</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">61.0</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">15223</td>
+<td style="text-align: right;">10.14</td>
+<td style="text-align: right;">10.10</td>
+<td style="text-align: right;">6.17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4.01</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">J</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.5</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">15223</td>
+<td style="text-align: right;">10.02</td>
+<td style="text-align: right;">9.94</td>
+<td style="text-align: right;">6.24</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.00</td>
+<td style="text-align: right;">Very Good</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">63.3</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">15984</td>
+<td style="text-align: right;">10.01</td>
+<td style="text-align: right;">9.94</td>
+<td style="text-align: right;">6.31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.67</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.4</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">16193</td>
+<td style="text-align: right;">9.86</td>
+<td style="text-align: right;">9.81</td>
+<td style="text-align: right;">6.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.65</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">H</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">67.1</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">11668</td>
+<td style="text-align: right;">9.53</td>
+<td style="text-align: right;">9.48</td>
+<td style="text-align: right;">6.38</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.51</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">J</td>
+<td style="text-align: right;">VS2</td>
+<td style="text-align: right;">62.5</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">18701</td>
+<td style="text-align: right;">9.66</td>
+<td style="text-align: right;">9.63</td>
+<td style="text-align: right;">6.03</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.50</td>
+<td style="text-align: right;">Ideal</td>
+<td style="text-align: right;">H</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.8</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">12587</td>
+<td style="text-align: right;">9.65</td>
+<td style="text-align: right;">9.59</td>
+<td style="text-align: right;">6.03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.40</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">D</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">66.8</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">15964</td>
+<td style="text-align: right;">9.42</td>
+<td style="text-align: right;">9.34</td>
+<td style="text-align: right;">6.27</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.24</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">H</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.1</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">12300</td>
+<td style="text-align: right;">9.44</td>
+<td style="text-align: right;">9.40</td>
+<td style="text-align: right;">5.85</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.22</td>
+<td style="text-align: right;">Ideal</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.6</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">12545</td>
+<td style="text-align: right;">9.49</td>
+<td style="text-align: right;">9.42</td>
+<td style="text-align: right;">5.92</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.11</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">J</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">65.9</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">9823</td>
+<td style="text-align: right;">9.15</td>
+<td style="text-align: right;">9.02</td>
+<td style="text-align: right;">5.98</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.05</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">E</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">60.9</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">10453</td>
+<td style="text-align: right;">9.26</td>
+<td style="text-align: right;">9.25</td>
+<td style="text-align: right;">5.66</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.04</td>
+<td style="text-align: right;">Very Good</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">SI2</td>
+<td style="text-align: right;">63.2</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">15354</td>
+<td style="text-align: right;">9.14</td>
+<td style="text-align: right;">9.07</td>
+<td style="text-align: right;">5.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.04</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">SI2</td>
+<td style="text-align: right;">59.3</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">18559</td>
+<td style="text-align: right;">9.51</td>
+<td style="text-align: right;">9.46</td>
+<td style="text-align: right;">5.62</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.02</td>
+<td style="text-align: right;">Fair</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">65.2</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">10577</td>
+<td style="text-align: right;">9.11</td>
+<td style="text-align: right;">9.02</td>
+<td style="text-align: right;">5.91</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.7</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">8040</td>
+<td style="text-align: right;">9.10</td>
+<td style="text-align: right;">8.97</td>
+<td style="text-align: right;">5.67</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.01</td>
+<td style="text-align: right;">Premium</td>
+<td style="text-align: right;">F</td>
+<td style="text-align: right;">I1</td>
+<td style="text-align: right;">62.2</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">9925</td>
+<td style="text-align: right;">9.24</td>
+<td style="text-align: right;">9.13</td>
+<td style="text-align: right;">5.73</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="exercise-3" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3">Exercise 3</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 143</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 53940</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>0.27% of the diamonds are larger than 2.5 carat.</p>
+</blockquote>
+</section>
+</section>
+</section>
+<section id="exercises-1" class="level1">
+<h1><strong>28.6.3 Exercises</strong></h1>
+<section id="exercise-1-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1-1">Exercise 1</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-4271202987.png" class="img-fluid figure-img" width="309"></p>
+<figcaption class="figure-caption">Koh-i-Noor diamond (also Koh-i-Nur or Kūh-e Nūr) (Replica))</figcaption>
+</figure>
+</div>
+</section>
+<section id="exercise-2-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2-1">Exercise 2</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-larger" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="diamond-sizes_files/figure-html/fig-larger-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;2: Diamonds smaller than 2.5 carat</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Diamonds smaller than 2.5 carat</p>
+<p><a href="#fig-smaller">Figure&nbsp;1</a></p>
+</section>
+<section id="exercise-3-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-3-1">Exercise 3</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-larger-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="diamond-sizes_files/figure-html/fig-larger-2-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3: Diamonds smaller than 2.5 carat</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

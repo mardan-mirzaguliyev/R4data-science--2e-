@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mardan Mirzaguliyev">
+
+<title>28.4.1 Exercises</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="28.4.1-exercises-exercise-4_files/libs/clipboard/clipboard.min.js"></script>
+<script src="28.4.1-exercises-exercise-4_files/libs/quarto-html/quarto.js"></script>
+<script src="28.4.1-exercises-exercise-4_files/libs/quarto-html/popper.min.js"></script>
+<script src="28.4.1-exercises-exercise-4_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="28.4.1-exercises-exercise-4_files/libs/quarto-html/anchor.min.js"></script>
+<link href="28.4.1-exercises-exercise-4_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="28.4.1-exercises-exercise-4_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="28.4.1-exercises-exercise-4_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="28.4.1-exercises-exercise-4_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="28.4.1-exercises-exercise-4_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">28.4.1 Exercises</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Mardan Mirzaguliyev </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="hands-on-programming-with-r-garrett-grolemund" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-programming-with-r-garrett-grolemund"><a href="https://rstudio-education.github.io/hopr/index.html"><strong>Hands-On Programming with R Garrett Grolemund</strong></a></h2>
+<p>Jul 28, 2023</p>
+<p>INSTRUCTOR: Garrett Grolemund<img src="https://lh7-us.googleusercontent.com/HN9kblML9oBCYEJ8qI-QMW5PaGgz8UkCuiWbY0sO0GbuKxRAAP6uaeTMNJ_oK873whUWe0qV4KWvD_i8oCdcrrHMJDQ3hCZML7ZtJNHI-N0gnAqBmgpO6P1Yj9gpz38JWoX7cj1pM9Wuu_nY9ncVdW4.png" title="horizontal line" class="img-fluid"></p>
+<ol type="1">
+<li><p>You type R code into the bottom line of the RStudio console pane and then click Enter to run it.&nbsp;</p>
+<ol type="1">
+<li><p>The code you type is called a command, because it will command your computer to do something for you.&nbsp;</p></li>
+<li><p>The line you type it into is called the command line.</p></li>
+</ol></li>
+</ol>
+<p>Aug 1, 2023</p>
+<ol type="1">
+<li><p>The hashtag is known as the commenting symbol in R.</p></li>
+<li><p>The : operator returns its results as a vector, a one-dimensional set of numbers.</p></li>
+<li><p>You can name an object in R almost anything you want, but there are a few rules. First, a name cannot start with a number. Second, a name cannot use some special symbols, like ^, !, $, @, +, -, /, or *.</p></li>
+<li><p>R is case-sensitive, so name and Name will refer to different objects.</p></li>
+<li><p>You can see which object names you have already used with the function ls.</p></li>
+<li><p>R does not always follow the rules of matrix multiplication. Instead, R uses element-wise execution.</p></li>
+<li><p>When R performs element-wise execution, it matches up vectors and then manipulates each pair of elements independently.</p></li>
+<li><p>If you give R two vectors of unequal lengths, R will repeat the shorter vector until it is as long as the longer vector, and then do the math.</p></li>
+<li><p>This isn’t a permanent change–the shorter vector will be its original size after R does the math.&nbsp;</p></li>
+<li><p>If the length of the short vector does not divide evenly into the length of the long vector, R will return a warning message.&nbsp;</p></li>
+<li><p>This behavior is known as vector recycling, and it helps R do element-wise operations.</p></li>
+<li><p>R will repeat a short vector to do element-wise operations with two vectors of uneven lengths.</p></li>
+<li><p>R has not given up on traditional matrix multiplication.&nbsp;</p></li>
+<li><p>You can do inner multiplication with the %*% operator and outer multiplication with the %o% operator.</p></li>
+<li><p>You can also do things like transpose a matrix with t and take its determinant with det.</p></li>
+<li><p>The data that you pass into the function is called the function’s argument. The argument can be raw data, an R object, or even the results of another R function.</p></li>
+<li><p>When you link functions together, R will resolve them from the innermost operation to the outermost.&nbsp;</p></li>
+<li><p>Here R first looks up the die, then calculates the mean of one through six, then rounds the mean.</p></li>
+<li><p>If you’re not sure which names to use with a function, you can look up the function’s arguments with args. To do this, place the name of the function in the parentheses behind args.</p></li>
+</ol>
+<p>Aug 2, 2023</p>
+<ol type="1">
+<li>Every function in R has three basic parts: a name, a body of code, and a set of arguments.</li>
+</ol>
+<p>Aug 5, 2023</p>
+<ol type="1">
+<li>If a function comes in an R package, R won’t be able to find its help page unless the package is loaded.</li>
+</ol>
+<p>Aug 7, 2023</p>
+<ol type="1">
+<li><p>R recognizes six basic types of atomic vectors:</p>
+<ol type="1">
+<li><p>Doubles</p></li>
+<li><p>Integers</p></li>
+<li><p>Characters</p></li>
+<li><p>Logicals</p></li>
+<li><p>Complex</p></li>
+<li><p>Raw&nbsp;</p></li>
+</ol></li>
+<li><p>Note that R won’t save a number as an integer unless you include the L:</p>
+<ol type="1">
+<li><p>Integer numbers without the L will be saved as doubles.&nbsp;</p></li>
+<li><p>The only difference between 4 and 4L is how R saves the number in your computer’s memory.</p></li>
+<li><p>Integers are defined more precisely in your computer’s memory than doubles (unless the integer is very large or small).</p></li>
+</ol></li>
+<li><p>The square root of two cannot be expressed exactly in 16 significant digits. As a result, R has to round the quantity, and the expression resolves to something very close to—but not quite—zero.</p></li>
+<li><p>These errors are known as floating-point errors, and doing arithmetic in these conditions is known as floating-point arithmetic. Floating-point arithmetic is not a feature of R; it is a feature of computer programming. Usually floating-point errors won’t be enough to ruin your day. Just keep in mind that they may be the cause of surprising results.</p></li>
+</ol>
+<p>Aug 10, 2023</p>
+<ol type="1">
+<li><p>A character vector stores small pieces of text. You can create a character vector in R by typing a character or string of characters surrounded by quotes.</p></li>
+<li><p>The individual elements of a character vector are known as strings. Note that a string can contain more than just letters. You can assemble a character string from numbers or symbols as well.</p></li>
+<li><p>Logical vectors store TRUEs and FALSEs, R’s form of Boolean data. Logicals are very helpful for doing things like comparisons.</p></li>
+<li><p>Any time you type TRUE or FALSE in capital letters (without quotation marks), R will treat your input as logical data.</p></li>
+<li><p>R also assumes that T and F are shorthand for TRUE and FALSE, unless they are defined elsewhere (e.g.&nbsp;T &lt;- 500). Since the meaning of T and F can change, its best to stick with TRUE and FALSE.</p></li>
+<li><p>Doubles, integers, characters, and logicals are the most common types of atomic vectors in R, but R also recognizes two more types: complex and raw.</p></li>
+<li><p>Complex vectors store complex numbers. To create a complex vector, add an imaginary term to a number with i.</p></li>
+<li><p>Raw vectors store raw bytes of data. Making raw vectors gets complicated, but you can make an empty raw vector of length n with raw(n).</p></li>
+<li><p>An attribute is a piece of information that you can attach to an atomic vector (or any R object).</p></li>
+<li><p>R uses NULL to represent the null set, an empty object. NULL is often returned by functions whose values are undefined. You can create a NULL object by typing NULL in capital letters.</p></li>
+<li><p>The most common attributes to give an atomic vector are names, dimensions (dim), and classes.</p></li>
+</ol>
+<p>Aug 12, 2023</p>
+<ol type="1">
+<li><p>You can transform an atomic vector into an n-dimensional array by giving it a dimensions attribute with dim.</p></li>
+<li><p>To do this, set the dim attribute to a numeric vector of length n.&nbsp;R will reorganize the elements of the vector into n dimensions.</p></li>
+<li><p>Each dimension will have as many rows (or columns, etc.) as the nth value of the dim vector.</p></li>
+<li><p>R will always use the first value in dim for the number of rows and the second value for the number of columns.</p></li>
+<li><p>In general, rows always come first in R operations that deal with both rows and columns.</p></li>
+<li><p>Matrices store values in a two-dimensional array, just like a matrix from linear algebra.</p></li>
+<li><p>To create one, first give matrix() an atomic vector to reorganize into a matrix.</p></li>
+<li><p>Then, define how many rows should be in the matrix by setting the nrow argument to a number. matrix will organize your vector of values into a matrix with the specified number of rows.</p></li>
+<li><p>Alternatively, you can set the ncol argument, which tells R how many columns to include in the matrix.</p></li>
+<li><p>The array function creates an n-dimensional array.</p></li>
+<li><p>For example, you could use an array to sort values into a cube of three dimensions or a hypercube in 4, 5, or n dimensions. array is not as customizable as matrix and basically does the same thing as setting the dim attribute.</p></li>
+<li><p>To use array, provide an atomic vector as the first argument, and a vector of dimensions as the second argument, now called dim.</p></li>
+</ol>
+<p>Aug 13, 2023</p>
+<ol type="1">
+<li><p>Notice that changing the dimensions of your object will not change the type of the object, but it will change the object’s class attribute.</p></li>
+<li><p>A matrix is a special case of an atomic vector. For example, the die matrix is a special case of a double vector.&nbsp;</p></li>
+<li><p>Every element in the matrix is still a double, but the elements have been arranged into a new structure. R added a class attribute to die when you changed its dimensions.</p></li>
+<li><p>This class describes die’s new format. Many R functions will specifically look for an object’s class attribute, and then handle the object in a predetermined way based on the attribute.</p></li>
+<li><p>The attribute system lets R represent more types of data than just doubles, integers, characters, logicals, complexes, and raws. The time looks like a character string when you display it, but its data type is actually “double”, and its class is “POSIXct” “POSIXt” (it has two classes).</p></li>
+<li><p>POSIXct is a widely used framework for representing dates and times. In the POSIXct framework, each time is represented by the number of seconds that have passed between the time and 12:00 AM January 1st 1970 (in the Universal Time Coordinated (UTC) zone). For example, the time above occurs 1,395,057,600 seconds after then. So in the POSIXct system, the time would be saved as 1395057600.</p></li>
+<li><p>R then gives the double vector a class attribute that contains two classes, “POSIXct” and “POSIXt”.&nbsp;</p></li>
+<li><p>This attribute alerts R functions that they are dealing with a POSIXct time, so they can treat it in a special way. For example, R functions will use the POSIXct standard to convert the time into a user-friendly character string before displaying it.</p></li>
+<li><p>Factors are R’s way of storing categorical information, like ethnicity or eye color.</p></li>
+<li><p>Think of a factor as something like a gender; it can only have certain values (male or female), and these values may have their own idiosyncratic order (ladies first).</p></li>
+<li><p>This arrangement makes factors very useful for recording the treatment levels of a study and other categorical variables.</p></li>
+<li><p>R uses the levels attribute when it displays the factor, as you will see.</p></li>
+<li><p>R will display each 1 as female, the first label in the levels vector, and each 2 as male, the second label. If the factor included 3s, they would be displayed as the third label.</p></li>
+<li><p>Factors make it easy to put categorical variables into a statistical model because the variables are already coded as numbers.</p></li>
+<li><p>Data types in vectors: If you try to put multiple types of data into a vector, R will convert the elements to a single type of data.</p></li>
+<li><p>R always uses the same rules to coerce data to a single type. If character strings are present, everything will be coerced to a character string. Otherwise, logicals are coerced to numerics.</p></li>
+</ol>
+<p>Aug 14, 2023</p>
+<ol type="1">
+<li><p>Lists are like atomic vectors because they group data into a one-dimensional set</p></li>
+<li><p>However, lists do not group together individual values; lists group together R objects, such as atomic vectors and other lists</p></li>
+<li><p>Lists are a basic type of object in R, on par with atomic vectors.&nbsp;</p></li>
+<li><p>Like atomic vectors, they are used as building blocks to create many more sophisticated types of R objects</p></li>
+<li><p>Data frames are the two-dimensional version of a list</p></li>
+<li><p>They are far and away the most useful storage structure for data analysis</p></li>
+<li><p>&nbsp;Data frames store data as a sequence of columns</p></li>
+<li><p>Each column can be a different data type&nbsp;</p></li>
+<li><p>Every column in a data frame must be the same length</p></li>
+<li><p>You can also give names to a list or vector when you create one of these objects. Use the same syntax as with data.frame</p></li>
+<li><p>The names will be stored in the object’s names attribute</p></li>
+<li><p>If you look at the type of a data frame, you will see that it is a list. In fact, each data frame is a list with class data.frame</p></li>
+<li><p>R’s most common data structures are vectors, matrices, arrays, lists, and data frames</p></li>
+<li><p>R treats positive integers just like ij notation in linear algebra: deck[i,j] will return the value of deck that is in the ith row and the jth column</p></li>
+<li><p>If you repeat a number in your index, R will return the corresponding value(s) more than once in your “subset”</p></li>
+<li><p>Indexing in R behaves just like indexing in linear algebra. The first element is always indexed by 1</p></li>
+</ol>
+<p>Aug 20, 2023</p>
+<ol type="1">
+<li><p>Negative integers do the exact opposite of positive integers when indexing</p></li>
+<li><p>R will return every element except the elements in a negative index</p></li>
+<li><p>Negative integers are a more efficient way to subset than positive integers if you want to include the majority of a data frame’s rows or columns</p></li>
+<li><p>&nbsp;Zero is neither a positive integer nor a negative integer, but R will still use it to do a type of subsetting&nbsp;</p></li>
+<li><p>R will return nothing from a dimension when you use zero as an index. This creates an empty object</p></li>
+<li><p>You can use a blank space to tell R to extract every value in a dimension.&nbsp;</p></li>
+<li><p>This lets you subset an object on one dimension but not the others, which is useful for extracting entire rows or columns from a data frame</p></li>
+<li><p>If you supply a vector of TRUEs and FALSEs as your index, R will match each TRUE and FALSE to a row in your data frame (or a column depending on where you place the index)</p></li>
+<li><p>R will then return each row that corresponds to a TRUE</p></li>
+<li><p>You can use vectors of TRUEs and FALSEs to tell R exactly which values you want to extract and which you do not</p></li>
+</ol>
+<p>Aug 21, 2023</p>
+<ol type="1">
+<li><p>You can extract values from data frames and lists with the $ syntax</p></li>
+<li><p>R will return all of the values in the column as a vector</p></li>
+<li><p>If you subset a list with single-bracket notation, R will return a smaller list</p></li>
+<li><p>If you subset a list with double-bracket or dollar sign notation , R will return just the values that were inside an element of the list</p></li>
+<li><p>You can use R’s notation system to modify values within an R object</p></li>
+<li><p>First, describe the value (or values) you wish to modify</p></li>
+<li><p>Then use the assignment operator &lt;- to overwrite those values. R will update the selected values in the original object</p></li>
+<li><p>You can also create values that do not yet exist in your object. R will expand the object to accommodate the new values</p></li>
+<li><p>The same technique will work whether you store your data in a vector, matrix, array, list, or data frame</p></li>
+<li><p>Just describe the values that you want to change with R’s notation system, then assign over those values with R’s assignment operator</p></li>
+<li><p>A logical test is a comparison like “is one less than two?”, 1 &lt; 2, or “is three greater than four?”, 3 &gt; 4</p></li>
+<li><p>Each operator returns a TRUE or a FALSE.</p></li>
+<li><p>If you use an operator to compare vectors, R will do element-wise comparisons—just like it does with the arithmetic operators</p></li>
+<li><p>%in% is the only operator that does not do normal element-wise execution</p></li>
+<li><p>%in% tests whether the value(s) on the left side are in the vector on the right side</p></li>
+<li><p>If you provide a vector on the left side, %in% will not pair up the values on the left with the values on the right and then do element-wise tests</p></li>
+<li><p>Instead, %in% will independently test whether each value on the left is somewhere in the vector on the right</p></li>
+<li><p>When used with vectors, Boolean operators will follow the same element-wise execution as arithmetic and logical operators</p></li>
+<li><p>Missing information problems happen frequently in data science</p></li>
+<li><p>Usually, they are more straightforward: you don’t know a value because the measurement was lost, corrupted, or never taken to begin with</p></li>
+<li><p>R has a way to help you manage these missing values</p></li>
+<li><p>The NA character is a special symbol in R. It stands for “not available” and can be used as a placeholder for missing information</p></li>
+</ol>
+<p>Sep 3, 2023</p>
+<ol type="1">
+<li><p>&nbsp;Your computer arranges files into a hierarchy of folders and subfolders. To look at a file, you need to find where it is saved in the file system.</p></li>
+<li><p>R uses a similar system to save R objects. Each object is saved inside of an environment, a list-like object that resembles a folder on your computer.&nbsp;</p></li>
+<li><p>Each environment is connected to a parent environment, a higher-level environment, which creates a hierarchy of environments.</p></li>
+<li><p>The lowest-level environment is named R_GlobalEnv and is saved inside an environment named package:pryr, which is saved inside the environment named 0x7fff3321c388, and so on, until you get to the final, highest-level environment, R_EmptyEnv. R_EmptyEnv is the only R environment that does not have a parent environment.</p></li>
+<li><p>R’s environments exist in your RAM memory, and not in your file system. Also, R environments aren’t technically saved inside one another. Each environment is connected to a parent environment, which makes it easy to search up R’s environment tree. But this connection is one-way: there’s no way to look at one environment and tell what its “children” are. So you cannot search down R’s environment tree. In other ways, though, R’s environment system works similar to a file system.</p></li>
+<li><p>Three environments in your tree also come with their own accessor functions. These are the global environment (R_GlobalEnv), the base environment (base), and the empty environment (R_EmptyEnv).</p></li>
+<li><p>The empty environment is—not surprisingly—empty; the base environment has too many objects to list here; and the global environment has some familiar faces. It is where R has saved all of the objects that you’ve created so far.</p></li>
+<li><p>RStudio’s environment pane displays all of the objects in your global environment.</p></li>
+<li><p>You can use R’s $ syntax to access an object in a specific environment.</p></li>
+<li><p>You can use the assign function to save an object into a particular environment.</p></li>
+</ol>
+<p>Sep 4, 2023</p>
+<ol type="1">
+<li><p>At any moment of time, R is working closely with a single environment. R will store new objects in this environment (if you create any), and R will use this environment as a starting point to look up existing objects (if you call any).&nbsp;</p></li>
+<li><p>I’ll call this special environment the active environment.&nbsp;</p></li>
+<li><p>The active environment is usually the global environment, but this may change when you run a function.</p></li>
+<li><p>R follows a special set of rules to look up objects. These rules are known as R’s scoping rules, and you’ve already met a couple of them:</p>
+<ol type="1">
+<li><p>R looks for objects in the current active environment.</p></li>
+<li><p>When you work at the command line, the active environment is the global environment. Hence, R looks up objects that you call at the command line in the global environment.</p></li>
+<li><p>When R does not find an object in an environment, R looks in the environment’s parent environment, then the parent of the parent, and so on, until R finds the object or reaches the empty environment.</p></li>
+</ol></li>
+<li><p>Remember that functions are a type of object in R. R will store and look up functions the same way it stores and looks up other objects, by searching for them by name in the environment tree.</p></li>
+<li><p>Every time R runs a function, it creates a new active environment to evaluate the function in.</p></li>
+<li><p>R creates a new environment each time it evaluates a function. R will use the new environment as the active environment while it runs the function, and then R will return to the environment that you called the function from, bringing the function’s result with it. Let’s call these new environments runtime environments because R creates them at runtime to evaluate functions.</p></li>
+<li><p>&nbsp;R creates a new environment each time you run a function.</p></li>
+<li><p>This is how R ensures that a function does not overwrite anything that it shouldn’t. Any objects created by the function are stored in a safe, out-of-the-way runtime environment.</p></li>
+<li><p>R will connect a function’s runtime environment to the environment that the function was first created in. This environment plays an important role in the function’s life—because all of the function’s runtime environments will use it as a parent. Let’s call this environment the origin environment.</p></li>
+<li><p>The parent of a runtime environment will not always be the global environment; it will be whichever environment the function was first created in.</p></li>
+<li><p>Let’s put this all together to see how R evaluates a function. Before you call a function, R is working in an active environment; let’s call this the calling environment. It is the environment R calls the function from.</p></li>
+<li><p>Then you call the function. R responds by setting up a new runtime environment. This environment will be a child of the function’s origin enviornment. R will copy each of the function’s arguments into the runtime environment and then make the runtime environment the new active environment.</p></li>
+<li><p>Next, R runs the code in the body of the function. If the code creates any objects, R stores them in the active, that is, runtime environment. If the code calls any objects, R uses its scoping rules to look them up. R will search the runtime environment, then the parent of the runtime environment (which will be the origin environment), then the parent of the origin environment, and so on. Notice that the calling environment might not be on the search path. Usually, a function will only call its arguments, which R can find in the active runtime environment.</p></li>
+<li><p>Finally, R finishes running the function. It switches the active environment back to the calling environment. Now R executes any other commands in the line of code that called the function. So if you save the result of the function to an object with &lt;-, the new object will be stored in the calling environment.</p></li>
+</ol>
+<p>Sep 11, 2023</p>
+<ol type="1">
+<li><p>Scoring slot-machine results is a complex task that will require a complex algorithm. You can make this, and other coding tasks, easier by using a simple strategy:\</p>
+<ol type="1">
+<li><p>Break complex tasks into simple subtasks.</p></li>
+<li><p>Use concrete examples.</p></li>
+<li><p>Describe your solutions in English, then convert them to R.</p></li>
+</ol></li>
+<li><p>A program is a set of step-by-step instructions for your computer to follow. Taken together, these instructions may accomplish something very sophisticated. Taken apart, each individual step will likely be simple and straightforward.</p></li>
+<li><p>One way to subdivide a program is into a series of sequential steps. The play function takes the approach, shown in Figure <a href="https://rstudio-education.github.io/hopr/programs.html#fig:subdivide1">9.1</a>. First, it generates three symbols (step 1), then it displays them in the console window (step 2), and then it scores them (step 3).</p></li>
+<li><p>Another way to divide a task is to spot groups of similar cases within the task. Some tasks require different algorithms for different groups of input. If you can identify those groups, you can work out their algorithms one at a time.</p></li>
+<li><p>For example, score will need to calculate the prize one way if symbols contains three of a kind (In that case, score will need to match the common symbol to a prize). score will need to calculate the prize a second way if the symbols are all bars (In that case, score can just assign a prize of $5). And, finally, score will need to calculate the prize in a third way if the symbols do not contain three of a kind or all bars (In that case, score must count the number of cherries present). score will never use all three of these algorithms at once; it will always choose just one algorithm to run based on the combination of symbols.</p></li>
+<li><p>Linking cases together in parallel requires a bit of structure; your program faces a fork in the road whenever it must choose between cases. You can help the program navigate this fork with an if statement.</p></li>
+<li><p>An if statement tells R to do a certain task for a certain case. In English you would say something like, “If this is true, do that.” In R, you would say</p></li>
+<li><p>if statements tell R what to do when your condition is true, but you can also tell R what to do when the condition is false. else is a counterpart to if that extends an if statement to include a second case. In English, you would say, “If this is true, do plan A; else do plan B.”</p></li>
+<li><p>If your situation has more than two mutually exclusive cases, you can string multiple if and else statements together by adding a new if statement immediately after else.</p></li>
+<li><p>R will work through the if conditions until one evaluates to TRUE, then R will ignore any remaining if and else clauses in the tree. If no conditions evaluate to TRUE, R will run the final else statement.</p></li>
+<li><p>If two if statements describe mutually exclusive events, it is better to join the if statements with an else if than to list them separately. This lets R ignore the second if statement whenever the first returns a TRUE, which saves work.</p></li>
+</ol>
+<p>Sep 13, 2023</p>
+<ol type="1">
+<li><p>if trees have a couple of drawbacks. First, they require R to run multiple tests as it works its way down the if tree, which can create unnecessary work. Second, as you’ll see in <a href="https://rstudio-education.github.io/hopr/speed.html#speed">Speed</a>, it can be difficult to use if trees in vectorized code, a style of code that takes advantage of R’s programming strengths to create fast programs. Lookup tables do not suffer from either of these drawbacks.</p></li>
+<li><p>As a general rule, use an if tree if each branch of the tree runs different code. Use a lookup table if each branch of the tree only assigns a different value.</p></li>
+<li><p>To convert an if tree to a lookup table, identify the values to be assigned and store them in a vector. Next, identify the selection criteria used in the conditions of the if tree. If the conditions use character strings, give your vector names and use name-based subsetting. If the conditions use integers, use integer-based subsetting.</p></li>
+</ol>
+<p>Sep 14, 2023</p>
+<ol type="1">
+<li><p>S3 refers to a class system built into R. The system governs how R handles objects of different classes.</p></li>
+<li><p>R’s S3 system is built around three components: attributes (especially the class attribute), generic functions, and methods.</p></li>
+<li><p>many R objects come with attributes, pieces of extra information that are given a name and appended to the object. Attributes do not affect the values of the object, but stick to the object as a type of metadata that R can use to handle the object.</p></li>
+</ol>
+<p>Sep 16, 2023</p>
+<ol type="1">
+<li><p>print.POSIXct and print.factor are called methods of print.</p></li>
+<li><p>This system of generic functions, methods, and class-based dispatch is known as S3 because it originated in the third version of S, the programming language that would evolve into S-PLUS and R.</p></li>
+<li><p>Many common R functions are S3 generics that work with a set of class methods. For example, summary and head also call UseMethod. More basic functions, like c, +, -, &lt; and others also behave like generic functions, although they call .primitive instead of UseMethod.</p></li>
+<li><p>The S3 system allows R functions to behave in different ways for different classes.</p></li>
+</ol>
+<p>Sep 17, 2023</p>
+<ol type="1">
+<li><p>Every S3 method has a two-part name. The first part of the name will refer to the function that the method works with. The second part will refer to the class. These two parts will be separated by a period. So for example, the print method that works with functions will be called print.function. The summary method that works with matrices will be called summary.matrix.</p></li>
+<li><p>You can use the S3 system to make a robust new class of objects in R. Then R will treat objects of your class in a consistent, sensible manner. To make a class:</p>
+<ol type="1">
+<li><p>Choose a name for your class.</p></li>
+<li><p>Assign each instance of your class a +class+ attribute.</p></li>
+<li><p>Write class methods for any generic function likely to use objects of your class.</p></li>
+</ol></li>
+</ol>
+<p>Sep 18, 2023</p>
+<ol type="1">
+<li>Loops are R’s method for repeating a task, which makes them a useful tool for programming simulations.</li>
+</ol>
+<!-- -->
+<ol start="3" type="1">
+<li><p>Expected values: Notice that we did the same three things to calculate both of these expected values. We have:</p>
+<ol type="1">
+<li><p>Listed out all of the possible outcomes</p></li>
+<li><p>Determined the value of each outcome (here just the value of the die)</p></li>
+<li><p>Calculated the probability that each outcome occurred</p></li>
+</ol></li>
+<li><p>The expand.grid function in R provides a quick way to write out every combination of the elements in n vectors.</p></li>
+<li><p>Basic rule of probability: The probability that n independent, random events all occur is equal to the product of the probabilities that each random event occurs.</p></li>
+<li><p>Now that you’ve warmed up, let’s use our method to calculate the expected value of the slot machine prize. We will follow the same steps we just took:</p>
+<ol type="1">
+<li><p>We will list out every possible outcome of playing the machine. This will be a list of every combination of three slot symbols.</p></li>
+<li><p>We will calculate the probability of getting each combination when you play the machine.</p></li>
+<li><p>We will determine the prize that we would win for each combination.</p></li>
+</ol></li>
+<li><p>A for loop repeats a chunk of code many times, once for each element in a set of input. for loops provide a way to tell R, “Do this for every value of that.”&nbsp;</p></li>
+<li><p>The value symbol in a for loop acts like an argument in a function. The for loop will create an object named value and assign it a new value on each run of the loop. The code in your loop can access this value by calling the value object.</p></li>
+<li><p>for loops do not return output.</p></li>
+<li><p>Instead of executing on a set of objects, execute on a set of integers that you can use to index both your object and your storage vector. This approach is very common in R. You’ll find in practice that you use for loops not so much to run code, but to fill up vectors and lists with the results of code.</p></li>
+<li><p>R has two companions to the for loop: the while loop and the repeat loop. A while loop reruns a chunk while a certain condition remains TRUE.</p></li>
+<li><p>while will rerun condition, which should be a logical test, at the start of each loop. If condition evaluates to TRUE, while will run the code between its braces. If condition evaluates to FALSE, while will finish the loop.</p></li>
+<li><p>Like for loops, while loops do not return a result, so you must think about what you want the loop to return and save it to an object during the loop.</p></li>
+<li><p>repeat loops are even more basic than while loops. They will repeat a chunk of code until you tell them to stop (by hitting Escape) or until they encounter the command break, which will stop the loop.</p></li>
+<li><p>You can write a piece of code in many different ways, but the fastest R code will usually take advantage of three things: logical tests, subsetting, and element-wise execution.</p></li>
+<li><p>These are the things that R does best. Code that uses these things usually has a certain quality: it is vectorized; the code can take a vector of values as input and manipulate each value in the vector at the same time.</p></li>
+</ol>
+<p>Sep 19, 2023</p>
+<ol type="1">
+<li><p>Vectorized code is easy to write in R because most R functions are already vectorized. Code based on these functions can easily be made vectorized and therefore fast. To create vectorized code:</p>
+<ol type="1">
+<li><p>Use vectorized functions to complete the sequential steps in your program.</p></li>
+<li><p>Use logical subsetting to handle parallel cases. Try to manipulate every element in a case at once.</p></li>
+</ol></li>
+<li><p>All of R’s arithmetic operators are vectorized, so you can use * to complete this step in vectorized fashion. * will multiply each number in vec[vec &lt; 0] by negative one at the same time.</p></li>
+<li><p>You can dramatically increase the speed of your for loops by doing two things to optimize each loop. First, do as much as you can outside of the for loop. Every line of code that you place inside of the for loop will be run many, many times. If a line of code only needs to be run once, place it outside of the loop to avoid repetition.</p></li>
+<li><p>Second, make sure that any storage objects that you use with the loop are large enough to contain all of the results of the loop.&nbsp;</p></li>
+<li><p>The authors of R use low-level languages like C and Fortran to write basic R functions, many of which use for loops. These functions are compiled and optimized before they become a part of R, which makes them quite fast.</p></li>
+<li><p>Whenever you see .Primitive, .Internal, or .Call written in a function’s definition, you can be confident the function is calling code from another language. You’ll get all of the speed advantages of that language by using the function.</p></li>
+</ol>
+<p>Sep 20, 2023</p>
+<ol type="1">
+<li><p>This project completes the education you began in <a href="https://rstudio-education.github.io/hopr/basics.html#basics">The Very Basics</a>. You can now use R to handle data, which has augmented your ability to analyze data. You can:</p>
+<ol type="1">
+<li><p>Load and store data in your computer—not on paper or in your mind</p></li>
+<li><p>Accurately recall and change individual values without relying on your memory</p></li>
+<li><p>Instruct your computer to do tedious, or complex, tasks on your behalf</p></li>
+</ol></li>
+<li><p>These skills solve an important logistical problem faced by every data scientist: how can you store and manipulate data without making errors? However, this is not the only problem that you will face as a data scientist. The next problem will appear when you try to understand the information contained in your data. It is nearly impossible to spot insights or to discover patterns in raw data. A third problem will appear when you try to use your data set to reason about reality, which includes things not contained in your data set. What exactly does your data imply about things outside of the data set? How certain can you be? You’ll face them whenever you try to learn from data:</p>
+<ol type="1">
+<li><p>A logistical problem: - How can you store and manipulate data without making errors?</p></li>
+<li><p>A tactical problem - How can you discover the information contained in your data?</p></li>
+<li><p>A strategic problem - How can you use the data to draw conclusions about the world at large?</p></li>
+</ol></li>
+</ol>
+<p>Sep 24, 2023</p>
+<ol type="1">
+<li><p>Debugging code can take as much creativity and insight as writing code. There is no guarantee that you will find a bug or be able to fix it when you do. However, you can help yourself by using R’s debugging tools. These include the traceback, browser, debug, debugonce, trace, and recover functions.</p></li>
+<li><p>Using these tools is usually a two-step process. First, you locate where an error occurred. Then you try to determine why it occurred. You can do the first step with R’s traceback function.</p></li>
+</ol>
+<p><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

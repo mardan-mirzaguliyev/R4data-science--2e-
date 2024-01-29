@@ -1,0 +1,183 @@
+---
+title: "Diamond sizes"
+date: 2022-09-12
+format: html
+execute:
+  echo: false
+---
+
+```{r}
+# install.packages("gt")
+```
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(gt)
+```
+
+```{r}
+smaller <- diamonds |> 
+  filter(carat <= 2.5)
+```
+
+We have data about `r nrow(diamonds)` diamonds. Only `r nrow(diamonds) - nrow(smaller)` are larger than 2.5 carats. The distribution of the remainder is shown below:
+
+@fig-larger
+
+```{r}
+#| label: fig-smaller
+#| echo: false
+#| fig-cap: Diamonds less than 2.5 carat
+
+smaller |> 
+  ggplot(aes(x = carat)) + 
+  geom_freqpoly(binwidth = 0.01)
+```
+
+-   Most diamonds is between 0.25 and 0.5 carat.
+
+-   The second most populated diamonds are 1 carat
+
+# **28.5.5 Exercises**
+
+## Exercise 1
+
+### Sizes by cut, color and clarity
+
+```{r}
+diamonds |> 
+  group_by(cut, color, clarity) |> 
+  summarize(
+    min = min(carat),
+    max = max(carat),
+    mean = mean(carat),
+    median = median(carat),
+    .groups = "drop"
+  )
+```
+
+## Exercise 2
+
+### 20 largest diamonds
+
+```{r}
+larger <- diamonds |> 
+  arrange(desc(carat)) |> 
+  slice_head(n = 20)
+
+larger
+```
+
+| carat |       cut | color | clarity | depth | table | price |     x |     y |    z |
+|------:|----------:|------:|--------:|------:|------:|------:|------:|------:|-----:|
+|  5.01 |      Fair |     J |      I1 |  65.5 |    59 | 18018 | 10.74 | 10.54 | 6.98 |
+|  4.50 |      Fair |     J |      I1 |  65.8 |    58 | 18531 | 10.23 | 10.16 | 6.72 |
+|  4.13 |      Fair |     H |      I1 |  64.8 |    61 | 17329 | 10.00 |  9.85 | 6.43 |
+|  4.01 |   Premium |     I |      I1 |  61.0 |    61 | 15223 | 10.14 | 10.10 | 6.17 |
+|  4.01 |   Premium |     J |      I1 |  62.5 |    62 | 15223 | 10.02 |  9.94 | 6.24 |
+|  4.00 | Very Good |     I |      I1 |  63.3 |    58 | 15984 | 10.01 |  9.94 | 6.31 |
+|  3.67 |   Premium |     I |      I1 |  62.4 |    56 | 16193 |  9.86 |  9.81 | 6.13 |
+|  3.65 |      Fair |     H |      I1 |  67.1 |    53 | 11668 |  9.53 |  9.48 | 6.38 |
+|  3.51 |   Premium |     J |     VS2 |  62.5 |    59 | 18701 |  9.66 |  9.63 | 6.03 |
+|  3.50 |     Ideal |     H |      I1 |  62.8 |    57 | 12587 |  9.65 |  9.59 | 6.03 |
+|  3.40 |      Fair |     D |      I1 |  66.8 |    52 | 15964 |  9.42 |  9.34 | 6.27 |
+|  3.24 |   Premium |     H |      I1 |  62.1 |    58 | 12300 |  9.44 |  9.40 | 5.85 |
+|  3.22 |     Ideal |     I |      I1 |  62.6 |    55 | 12545 |  9.49 |  9.42 | 5.92 |
+|  3.11 |      Fair |     J |      I1 |  65.9 |    57 |  9823 |  9.15 |  9.02 | 5.98 |
+|  3.05 |   Premium |     E |      I1 |  60.9 |    58 | 10453 |  9.26 |  9.25 | 5.66 |
+|  3.04 | Very Good |     I |     SI2 |  63.2 |    59 | 15354 |  9.14 |  9.07 | 5.75 |
+|  3.04 |   Premium |     I |     SI2 |  59.3 |    60 | 18559 |  9.51 |  9.46 | 5.62 |
+|  3.02 |      Fair |     I |      I1 |  65.2 |    56 | 10577 |  9.11 |  9.02 | 5.91 |
+|  3.01 |   Premium |     I |      I1 |  62.7 |    58 |  8040 |  9.10 |  8.97 | 5.67 |
+|  3.01 |   Premium |     F |      I1 |  62.2 |    56 |  9925 |  9.24 |  9.13 | 5.73 |
+
+### Exercise 3
+
+```{r}
+label_comma <- function(x) format(x, digits = 2, big.mark = ",")
+```
+
+```{r}
+larger_2.5 <- diamonds |> 
+  filter(carat >= 2.5)
+
+nrow(larger_2.5)
+```
+
+```{r}
+nrow(diamonds)
+```
+
+> `r label_comma((nrow(larger_2.5) / nrow(diamonds) * 100))`% of the diamonds are larger than 2.5 carat.
+
+# **28.6.3 Exercises**
+
+## Exercise 1
+
+![Koh-i-Noor diamond (also Koh-i-Nur or Kūh-e Nūr) (Replica))](images/clipboard-4271202987.png){width="309"}
+
+## Exercise 2
+
+```{r}
+#| label: fig-larger
+#| fig-cap: Diamonds smaller than 2.5 carat
+
+larger_2.5 |> 
+  ggplot(aes(x = carat)) + 
+  geom_freqpoly(binwidth = 0.01)
+```
+
+Diamonds smaller than 2.5 carat
+
+@fig-smaller
+
+## Exercise 3
+
+```{r}
+#| label: fig-larger-2
+#| fig-cap: Diamonds smaller than 2.5 carat
+# #| fig-width: 10
+# #| fig-height: 3
+# #| out-width: "100%"
+# #| out-width: "20%"
+
+
+smaller |> 
+  ggplot(aes(x = carat)) + 
+  geom_freqpoly(binwidth = 0.01)
+```
+
+# **28.7.1 Exercises**
+
+## Exercise 1
+
+```{r}
+knitr::kable(diamonds[1:5, ])
+```
+
+## Exercise 2
+
+```{r}
+gt::gt(diamonds[1:5, ])
+```
+
+## Exercise 3
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vitae volutpat metus. Suspendisse efficitur purus ac metus auctor lobortis. Duis et odio at quam pretium venenatis. Vivamus vel condimentum nunc, sit amet rutrum dolor. Aenean id quam massa. Fusce pharetra magna a tellus congue, nec sollicitudin nibh maximus. Nunc luctus augue mattis leo accumsan, a vestibulum dolor sodales. Vivamus malesuada non tortor et volutpat. Cras quis eleifend turpis, suscipit pellentesque lectus. Aenean et sagittis velit. Maecenas ac accumsan lacus. Pellentesque tristique augue sed vulputate aliquam.
+
+@tbl-bigger-diamonds
+
+Sed mollis faucibus ante non posuere. Donec et leo eu massa iaculis aliquam id vitae urna. Sed auctor finibus mi et eleifend. Mauris accumsan blandit consequat. Donec varius elit nibh, non lobortis nunc pretium quis. Mauris pharetra tempor hendrerit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed mattis justo a auctor luctus. Aenean quis bibendum risus. Praesent vitae est auctor, commodo neque id, ultricies metus. Nulla aliquam posuere volutpat. Sed fringilla, nibh vel pharetra porttitor, arcu ligula rhoncus ipsum, sed laoreet velit mi ut arcu. Pellentesque ac dui tristique, tempor arcu at, volutpat sapien. Ut faucibus eros elit, pharetra commodo velit fringilla quis.
+
+Fusce sit amet blandit quam, eu ultricies dolor. Nulla consectetur euismod erat sit amet feugiat. Duis venenatis, dui nec molestie posuere, diam turpis sagittis sapien, in suscipit enim neque non nisl. Vivamus volutpat interdum sem ac molestie. Etiam lorem nibh, pulvinar non velit vitae, faucibus placerat ipsum. Pellentesque in ullamcorper sem. Integer fringilla consequat sapien, non pretium risus condimentum id. Duis nec sodales dolor, et eleifend orci. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+
+```{r}
+#| label: tbl-bigger-diamonds
+#| tbl-cap: Diamonds smaller than 2.5 carat
+
+knitr::kable(diamonds |> 
+  filter(carat >= 2.5))
+```
