@@ -1,0 +1,271 @@
+---
+title: "Chapter 22 - Arrow"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2024/01/02
+---
+
+# Arrow
+
+```{r}
+library(tidyverse)
+library(arrow)
+```
+
+## Getting the data
+
+```{r}
+# dir.create("data", showWarnings = FALSE)
+```
+
+```{r}
+# curl::multi_download(
+#  "https://r4ds.s3.us-west-2.amazonaws.com/seattle-library-checkouts.csv",
+#  "data/seattle-library-checkouts.csv",
+#  resume = TRUE
+#)
+```
+
+## Opening a dataset
+
+```{r}
+seattle_csv <- open_dataset(
+  sources = "data/seattle-library-checkouts.csv",
+  col_types = schema(ISBN = string()),
+  format = "csv"
+)
+```
+
+```{r}
+seattle_csv
+```
+
+```{r}
+seattle_csv |> glimpse()
+```
+
+```{r}
+seattle_csv |> 
+  group_by(CheckoutYear) |> 
+  summarize(Checkouts = sum(Checkouts)) |> 
+  arrange(CheckoutYear) |> 
+  collect()
+```
+
+## The parquet format
+
+### Advantages of parquet
+
+Like CSV, parquet is used for rectangular data, but instead of being a text format that you can read with any file editor, it’s a custom binary format designed specifically for the needs of big data. This means that:
+
+-   Parquet files are usually smaller than the equivalent CSV file. Parquet relies on [efficient encodings](https://parquet.apache.org/docs/file-format/data-pages/encodings/) to keep file size down, and supports file compression. This helps make parquet files fast because there’s less data to move from disk to memory.
+
+-   Parquet files have a rich type system. As we talked about in [Section 7.3](#0), a CSV file does not provide any information about column types. For example, a CSV reader has to guess whether `"08-10-2022"` should be parsed as a string or a date. In contrast, parquet files store data in a way that records the type along with the data.
+
+-   Parquet files are “column-oriented”. This means that they’re organized column-by-column, much like R’s data frame. This typically leads to better performance for data analysis tasks compared to CSV files, which are organized row-by-row.
+
+-   Parquet files are “chunked”, which makes it possible to work on different parts of the file at the same time, and, if you’re lucky, to skip some chunks altogether.
+
+There’s one primary disadvantage to parquet files: they are no longer “human readable”, i.e. if you look at a parquet file using `readr::read_file()`, you’ll just see a bunch of gibberish.
+
+### Paritioning
+
+As datasets get larger and larger, storing all the data in a single file gets increasingly painful and it’s often useful to split large datasets across many files. When this structuring is done intelligently, this strategy can lead to significant improvements in performance because many analyses will only require a subset of the files.
+
+There are no hard and fast rules about how to partition your dataset: the results will depend on your data, access patterns, and the systems that read the data. You’re likely to need to do some experimentation before you find the ideal partitioning for your situation. As a rough guide, arrow suggests that you avoid files smaller than 20MB and larger than 2GB and avoid partitions that produce more than 10,000 files. You should also try to partition by variables that you filter by; as you’ll see shortly, that allows arrow to skip a lot of work by reading only the relevant files.
+
+#### Rewriting the Seattle library data
+
+```{r}
+pq_path <- "data/seattle-library-checkouts"
+```
+
+```{r}
+# seattle_csv |> 
+#  group_by(CheckoutYear) |> 
+#  write_dataset(
+#    path = pq_path, 
+#    format = "parquet"
+#    )
+```
+
+```{r}
+tibble(
+  files = list.files(pq_path, recursive = TRUE),
+  size_MB = file.size(
+    file.path(pq_path, files)
+    ) / 1024^2
+)
+```
+
+## Using dplyr with arrow
+
+```{r}
+seattle_pq <- open_dataset(pq_path)
+```
+
+```{r}
+query <- seattle_pq |> 
+  filter(
+    CheckoutYear >= 2018, 
+    MaterialType == "BOOK"
+    ) |> 
+  group_by(CheckoutYear, CheckoutMonth) |> 
+  summarize(TotalCheckouts = sum(Checkouts)) |> 
+  arrange(CheckoutYear, CheckoutMonth)
+```
+
+```{r}
+query
+```
+
+```{r}
+query |> collect()
+```
+
+### Performance
+
+```{r}
+seattle_csv |> 
+  filter(
+    CheckoutYear == 2021,
+    MaterialType == "BOOK"
+    ) |> 
+  group_by(CheckoutMonth) |> 
+  summarize(TotalCheckouts = sum(Checkouts)) |> 
+  arrange(desc(CheckoutMonth)) |> 
+  collect() |> 
+  system.time()
+```
+
+```{r}
+seattle_pq |> 
+  filter(
+    CheckoutYear == 2021,
+    MaterialType == "BOOK"
+    ) |> 
+  group_by(CheckoutMonth) |> 
+  summarize(TotalCheckouts = sum(Checkouts)) |> 
+  arrange(desc(CheckoutMonth)) |> 
+  collect() |> 
+  system.time()
+```
+
+The \~100x speedup in performance is attributable to two factors: the multi-file partitioning, and the format of individual files:
+
+-   Partitioning improves performance because this query uses `CheckoutYear == 2021` to filter the data, and arrow is smart enough to recognize that it only needs to read 1 of the 18 parquet files.
+
+-   The parquet format improves performance by storing data in a binary format that can be read more directly into memory. The column-wise format and rich metadata means that arrow only needs to read the four columns actually used in the query (`CheckoutYear`, `MaterialType`, `CheckoutMonth`, and `Checkouts`).
+
+### Using duckdb with arrow
+
+```{r}
+seattle_pq |> 
+  to_duckdb() |>
+  filter(
+    CheckoutYear >= 2018,
+    MaterialType == "BOOK"
+    ) |>
+  group_by(CheckoutYear) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  arrange(desc(CheckoutYear)) |>
+  collect()
+```
+
+### Exercises
+
+```{r}
+# 1
+seattle_pq
+```
+
+```{r}
+seattle_pq |> 
+  filter(
+    CheckoutYear == 2018,
+    MaterialType == "BOOK",
+    ) |> 
+  group_by(Title) |> 
+  summarize(
+    checkouts = sum(Checkouts),
+    n = n()
+  ) |> 
+  arrange(desc(checkouts)) |>
+  head(n = 1) |> 
+  collect()
+```
+
+```{r}
+seattle_pq |> 
+  filter(
+    MaterialType == "BOOK"
+    ) |> 
+  group_by(Title) |> 
+  summarize(
+    checkouts = max(Checkouts),
+    n = n()
+  ) |> 
+  arrange(desc(checkouts)) |>
+  collect() |> 
+  View()
+```
+
+```{r}
+# 2
+seattle_pq |> 
+  group_by(Creator) |> 
+  summarize(n = n()) |> 
+  arrange(desc(n)) |> 
+  collect() |> 
+  View()
+```
+
+```{r}
+# 3
+options(scipen = 999)
+seattle_pq |> 
+  filter(
+    MaterialType == "BOOK",
+    CheckoutYear >= 2012 & CheckoutYear <= 2022 
+    ) |> 
+  group_by(CheckoutYear) |> 
+  summarize(
+    checkouts = sum(Checkouts)
+  ) |> 
+  arrange(CheckoutYear, desc(checkouts)) |>
+  collect() |> 
+  ggplot(
+    aes(CheckoutYear, checkouts)
+    ) +
+  scale_x_continuous() +
+  geom_point() +
+  geom_line() +
+  labs(
+    title = "Yearly checkouts of paper books mostly decreased sharply in 2020",
+    x = "Year",
+    y = "Checkouts"
+    )
+```
+
+```{r}
+seattle_pq |> 
+  filter(
+    MaterialType == "EBOOK",
+    CheckoutYear >= 2012 & CheckoutYear <= 2022 
+    ) |> 
+  group_by(CheckoutYear) |> 
+  summarize(
+    checkouts = sum(Checkouts)
+  ) |> 
+  arrange(CheckoutYear, desc(checkouts)) |>
+  collect() |> 
+  ggplot(aes(CheckoutYear, checkouts)) +
+  geom_point() +
+  geom_line() +
+  labs(
+    title = "Yearly checkouts of E-books mostly increased in 10 years",
+    x = "Year",
+    y = "Checkouts"
+    )
+```

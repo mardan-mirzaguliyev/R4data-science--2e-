@@ -1,0 +1,618 @@
+---
+title: "Chapter 16 - Factors"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 12/04/2023
+---
+
+# Factors
+
+```{r}
+library(tidyverse)
+```
+
+## Factor basics
+
+```{r}
+x1 <- c("Dec", "Apr", "Jan", "Mar")
+```
+
+Using a string to record this variable has two problems:
+
+1.  There are only twelve possible months, and there's nothing saving you from typos:
+
+```{r}
+x2 <- c("Dec", "Apr", "Jam", "Mar")
+```
+
+It doesn't sort in a useful way:
+
+```{r}
+sort(x1)
+```
+
+```{r}
+month_levels <- c(
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+)
+```
+
+```{r}
+y1 <- factor(x1, levels = month_levels)
+y1
+```
+
+```{r}
+sort(y1)
+```
+
+```{r}
+y2 <- factor(x2, levels = month_levels)
+y2
+```
+
+```{r}
+# y2 <- fct(x2, levels = month_levels)
+
+# Error in `fct()`:
+# ! All values of `x` must appear in `levels` or # `na`
+# ℹ Missing level: "Jam"
+```
+
+```{r}
+# If you omit the levels, they’ll be taken from the data in alphabetical order
+factor(x1)
+```
+
+```{r}
+# Sorting alphabetically is slightly risky because not every computer will sort strings in the same way. So forcats::fct() orders by first appearance
+fct(x1)
+```
+
+```{r}
+levels(y2)
+```
+
+```{r}
+csv <- "
+month, value
+Jan,12
+Feb,56
+Mar,12"
+
+df <- read_csv(
+  csv, 
+  col_types = cols(
+    month = col_factor(month_levels)
+                   )
+  )
+```
+
+## General Social Survey
+
+```{r}
+gss_cat
+```
+
+```{r}
+gss_cat |> 
+  count(race)
+```
+
+## Exercises
+
+```{r}
+# 1
+ggplot(
+  gss_cat,
+  aes(y = fct_relevel(rincome, "Not applicable"))
+  ) +
+  geom_bar() +
+  labs(
+    x = "Number of respondents",
+    y = "Reported income"
+    )
+```
+
+```{r}
+# 2
+# a
+gss_cat |> 
+  group_by(relig) |> 
+  summarize(n = n()) |> 
+  arrange(desc(n)) |> 
+  ggplot(aes(x = n, y = relig, fill = n)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Number of believers",
+    y = "Religion"
+  ) +
+  theme(legend.position = "none")
+```
+
+```{r}
+gss_cat |> 
+  group_by(partyid) |> 
+  summarize(n = n()) |> 
+  arrange(desc(n)) |> 
+  ggplot(
+    aes(
+      x = n, 
+      y = fct_reorder(partyid, desc(n)), 
+      fill = n
+      ) 
+    ) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Number of supporters",
+    y = "Party"
+  ) +
+  theme(legend.position = "none")
+```
+
+```{r}
+# 3
+religion_denom <- gss_cat |> 
+  group_by(relig) |> 
+  summarize(n = n()) |> 
+  arrange(desc(n))
+
+religion_denom
+```
+
+```{r}
+ggplot(
+  religion_denom, 
+  aes(x = n, y = relig, fill = n)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Number of believers",
+    y = "Religion"
+  ) +
+  theme(legend.position = "none")
+```
+
+Christianity has Protestant, Catholic, Orthodox-christian denominations. Additionally, some respondents when asked about religion responded "Christian" without any denomination.
+
+## Modifying factor order
+
+```{r}
+relig_summary <- gss_cat |> 
+  group_by(relig) |> 
+  summarize(
+    tvhours = mean(tvhours, na.rm = TRUE),
+    n = n()
+  )
+
+ggplot(
+  relig_summary, 
+  aes(x = tvhours, y = relig)
+  ) +
+  geom_point()
+```
+
+### `fct_reorder()`
+
+```{r}
+ggplot(
+  relig_summary, 
+  aes(
+    x = tvhours, 
+    y = fct_reorder(relig, tvhours)
+    ) 
+  ) +
+  geom_point()
+```
+
+```{r}
+relig_summary |> 
+  mutate(relig = fct_reorder(relig, tvhours)) |> 
+  ggplot(aes(x = tvhours, y = relig)) +
+  geom_point()
+```
+
+```{r}
+rincome_summary <- gss_cat |> 
+  group_by(rincome) |> 
+  summarize(
+    age = mean(age, na.rm = TRUE),
+    n = n()
+  )
+```
+
+```{r}
+ggplot(
+  rincome_summary, 
+  aes(x = age, y = fct_reorder(rincome, age))
+  ) + 
+  geom_point()
+```
+
+### `fcr_relevel()`
+
+```{r}
+ggplot(
+  rincome_summary,
+  aes(
+    x = age, 
+    y = fct_relevel(rincome, "Not applicable")
+    )
+       ) +
+  geom_point()
+```
+
+**Question:** Why do you think the average age for "Not applicable" is so high?
+
+**Answer:** Here are a few potential reasons:
+
+1.  **Missing Values:** The category "Not applicable" could be used to represent cases where age information is not available or not applicable. If many records with missing age values are categorized as "Not applicable," it could result in a higher average age for this category.
+
+2.  **Specific Population:** The "Not applicable" category might be associated with a specific group or subset of the population that tends to have higher ages. For example, it could be related to retired individuals or those whose age is not relevant in the context of the data.
+
+3.  **Data Entry or Categorization Error:** There could be errors in data entry or categorization, leading to inaccurate age values for the "Not applicable" category. It's essential to review the data and the process of assigning this category to ensure accuracy.
+
+4.  **Unique Circumstances:** The "Not applicable" category might be used for a specific scenario or condition where higher ages are expected. Understanding the context of this category and how it is assigned can provide insights.
+
+To investigate further, you may want to examine the distribution of ages within the "Not applicable" category, check for data quality issues, and understand the criteria for assigning records to this category. Additionally, domain knowledge and context about the data can help in interpreting and explaining such patterns.
+
+### `fct_reorder2(f, x, y)`
+
+This function reorders the factor `f` by the `y` values associated with the largest `x` values.
+
+```{r}
+by_age <- gss_cat |> 
+  filter(!is.na(age)) |> 
+  count(age, marital) |> 
+  group_by(age) |> 
+  mutate(
+    prop = n / sum(n)
+  )
+
+by_age
+```
+
+```{r}
+ggplot(
+  by_age,
+  aes(
+    x = age, 
+    y = prop, 
+    color = marital
+    )
+  ) + 
+  geom_line(linewidth = 1) +
+  scale_color_brewer(palette = "Set1")
+```
+
+```{r}
+ggplot(
+  by_age,
+  aes(
+    x = age, 
+    y = prop, 
+    color = fct_reorder2(marital, age, prop)
+    )
+  ) + 
+  geom_line(linewidth = 1) +
+  scale_color_brewer(palette = "Set1") +
+  labs(color = "marital")
+```
+
+### `fct_infreq()`
+
+```{r}
+gss_cat |> 
+  mutate(
+    marital = marital |> 
+      fct_infreq()
+    ) |> 
+  ggplot(aes(x = marital)) +
+  geom_bar()
+```
+
+```{r}
+gss_cat |> 
+  mutate(
+    marital = marital |> 
+      fct_infreq() |> 
+      fct_rev()
+    ) |> 
+  ggplot(aes(x = marital)) +
+  geom_bar()
+```
+
+## Exercises
+
+```{r}
+# 1
+# Using mean
+relig_summary <- gss_cat |> 
+  group_by(relig) |> 
+  summarize(
+    tvhours = mean(tvhours, na.rm = TRUE),
+    n = n()
+  )
+```
+
+```{r}
+ggplot(
+  relig_summary, 
+  aes(
+    x = tvhours, 
+    y = fct_reorder(relig, tvhours)
+    ) 
+  ) +
+  geom_point()
+```
+
+```{r}
+summary(gss_cat$tvhours)
+```
+
+```{r}
+# In some cases tv hours is 23 or 24 which seems suspicious
+gss_cat |> 
+  group_by(relig) |> 
+  summarize(
+    avg_tvhours = mean(tvhours, na.rm = TRUE),
+    med_tv_hours = median(tvhours, na.rm = TRUE),
+    min_tvhours = min(tvhours, na.rm = TRUE),
+    max_tvhours = max(tvhours, na.rm = TRUE),
+    n = n()
+    ) |> 
+  arrange(desc(max_tvhours))
+```
+
+```{r}
+# Using median
+relig_summary <- gss_cat |> 
+  group_by(relig) |> 
+  summarize(
+    tvhours = median(tvhours, na.rm = TRUE),
+    n = n()
+  )
+```
+
+```{r}
+ggplot(
+  relig_summary, 
+  aes(
+    x = tvhours, 
+    y = fct_reorder(relig, tvhours)
+    ) 
+  ) +
+  geom_point()
+```
+
+```{r}
+# 2
+glimpse(gss_cat)
+```
+
+Arbitrary order
+
+```{r}
+levels(gss_cat$marital)
+```
+
+Arbitrary order
+
+```{r}
+levels(gss_cat$race)
+```
+
+Principled order
+
+```{r}
+levels(gss_cat$rincome)
+```
+
+Arbitrary order
+
+```{r}
+levels(gss_cat$partyid)
+```
+
+Arbitrary order
+
+```{r}
+levels(gss_cat$relig)
+```
+
+Arbitrary order
+
+```{r}
+levels(gss_cat$denom)
+```
+
+```{r}
+# 3
+rincome_summary <- gss_cat |> 
+  group_by(rincome) |> 
+  summarize(
+    age = mean(age, na.rm = TRUE),
+    n = n()
+  )
+```
+
+```{r}
+ggplot(
+  rincome_summary,
+  aes(
+    x = age, 
+    y = fct_relevel(rincome, "Not applicable")
+    )
+       ) +
+  geom_point()
+```
+
+In ggplot2, when you use a categorical variable on the y-axis, the order of the levels on the y-axis is determined by the factor levels of that variable. When you use **`fct_relevel(rincome, "Not applicable")`**, you are reordering the levels of the **`rincome`** factor variable, making "Not applicable" the first level. The order of levels in a factor affects the order of the categories on the axis.
+
+In general, ggplot2 plots categorical variables from bottom to top on the y-axis based on the factor levels. The first level in the factor appears at the bottom, and subsequent levels appear above it.
+
+If "Not applicable" was originally at the bottom of the plot and moving it to the front of the levels resulted in it being at the top of the plot, it's possible that the original order of levels was reversed, or the default order of levels placed "Not applicable" at the bottom.
+
+## Modifying factor levels
+
+```{r}
+gss_cat |> 
+  count(partyid)
+```
+
+```{r}
+gss_cat |> 
+  mutate(
+    partyid = fct_recode(partyid,
+      "Republican, strong" = "Strong republican",
+      "Republican, weak" = "Not str republican",
+      "Independent, near rep" = "Ind,near rep",
+      "Independent, near dem" = "Ind,near dem",
+      "Democrat, weak" = "Not str democrat",
+      "Democrat, strong" = "Strong democrat"
+    )
+  ) |> 
+  count(partyid)
+```
+
+```{r}
+gss_cat |> 
+  mutate(
+    partyid = fct_recode(partyid,
+      "Republican, strong" = "Strong republican",
+      "Republican, weak" = "Not str republican",
+      "Independent, near rep" = "Ind,near rep",
+      "Independent, near dem" = "Ind,near dem",
+      "Democrat, weak" = "Not str democrat",
+      "Democrat, strong" = "Strong democrat",
+      "Other" = "No answer",
+      "Other" = "Don't know",
+      "Other" = "Other party"
+      )
+    )
+```
+
+```{r}
+gss_cat |> 
+  mutate(
+    partyid = fct_collapse(partyid,
+"other" = c("No answer", "Don't know",
+            "Other party"),
+"rep" = c("Strong republican", 
+          "Not str republican"),
+"ind" = c("Ind,near rep", "Independent", 
+          "Ind,near dem"),
+"dem" = c("Not str democrat", 
+          "Strong democrat")
+)
+) |> 
+  count(partyid)
+```
+
+```{r}
+gss_cat |> 
+  mutate(relig = fct_lump_lowfreq(relig)) |> 
+  count(relig)
+```
+
+```{r}
+gss_cat |> 
+  mutate(relig = fct_lump_n(relig, n = 10)) |> 
+  count(relig, sort = TRUE)
+```
+
+## Exercises
+
+```{r}
+# 1
+party_summary <- gss_cat |> 
+  mutate(
+    partyid = fct_collapse(partyid,
+"other" = c("No answer", "Don't know",
+            "Other party"),
+"rep" = c("Strong republican", 
+          "Not str republican"),
+"ind" = c("Ind,near rep", "Independent", 
+          "Ind,near dem"),
+"dem" = c("Not str democrat", 
+          "Strong democrat")
+)
+) |> 
+  group_by(partyid, year) |> 
+  summarize(
+    n = n(),
+    prop = mean(n, na.rm = TRUE),
+  .groups = "drop"
+  )
+```
+
+```{r}
+ggplot(
+  party_summary, 
+  aes(x = year, y = prop, color = partyid)) +
+  geom_line()
+```
+
+```{r}
+# 2
+gss_cat |> 
+  mutate(
+    rincome = fct_collapse(rincome,
+"Not applicable" = c("Not applicable", 
+                     "No answer", 
+                     "Don't know",
+                      "Refused"),
+"$1000 to 9999" = c("$1000 to 2999", 
+                     "$3000 to 3999",
+                     "$4000 to 4999",
+                     "$5000 to 5999",
+                     "$6000 to 6999",
+                     "$7000 to 7999",
+                     "$8000 to 9999"
+                     ),
+"$10000 - 19999" = c("$10000 - 14999",
+                     "$15000 - 19999"
+                     )
+),
+rincome = fct_relevel(
+  rincome, 
+  "Not applicable"
+  ) |> 
+  fct_rev()
+) |> 
+  count(rincome)
+```
+
+```{r}
+
+```
+
+```{r}
+# 3
+gss_cat |> 
+  mutate(relig = fct_lump_n(relig, n = 10)) |> 
+  count(relig, sort = TRUE)
+```
+
+```{r}
+gss_cat |> 
+  mutate(
+    relig = fct_lump_n(
+      relig, 
+      n = 10, 
+      other_level = "Other"
+      )
+    ) |> 
+  count(relig, sort = TRUE)
+```
+
+## Ordered factors
+
+```{r}
+ordered(c("a", "b", "c"))
+```
+
+-   If you map an ordered factor to color or fill in ggplot2, it will default to `scale_color_viridis()`/`scale_fill_viridis()`, a color scale that implies a ranking.
+
+-   If you use an ordered function in a linear model, it will use "polygonal contrasts". These are mildly useful, but you are unlikely to have heard of them unless you have a PhD in Statistics, and even then you probably don't routinely interpret them. If you want to learn more, we recommend `vignette("contrasts", package = "faux")` by Lisa DeBruine.

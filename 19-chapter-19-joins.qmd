@@ -1,0 +1,910 @@
+---
+title: "Chapter 19 - Joins"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2023/12/18
+---
+
+# Joins
+
+This chapter will introduce you to two important types of joins:
+
+-   Mutating joins, which add new variables to one data frame from matching observations in another.
+
+-   Filtering joins, which filter observations from one data frame based on whether or not they match an observation in another.
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+library(Lahman)
+```
+
+## Keys
+
+### Primary and foreign keys
+
+A **primary key**is a variable or set of variables that uniquely identifies each observation. When more than one variable is needed, the key is called a **compound key.**
+
+```{r}
+airlines
+```
+
+```{r}
+airports
+```
+
+```{r}
+planes
+```
+
+```{r}
+# Compound key: origin and time_hour
+weather
+```
+
+A **foreign key** is a variable (or set of variables) that corresponds to a primary key in another table.
+
+### Checking primary keys
+
+```{r}
+planes |> 
+  count(tailnum)
+```
+
+```{r}
+planes |> 
+  count(tailnum) |> 
+  filter(n > 1)
+```
+
+```{r}
+weather |> 
+  count(time_hour, origin)
+```
+
+```{r}
+weather |> 
+  count(time_hour, origin) |> 
+  filter(n > 1)
+```
+
+```{r}
+planes |> 
+  filter(is.na(tailnum))
+```
+
+```{r}
+weather |> 
+  filter(is.na(time_hour) | is.na(origin))
+```
+
+### Surrogate keys
+
+```{r}
+flights |> 
+  count(time_hour, carrier, flight) |> 
+  filter(n > 1)
+```
+
+```{r}
+airports |> 
+  count(alt, lat) |> 
+  filter(n > 1)
+```
+
+```{r}
+airports |> 
+  count(alt, lat)
+```
+
+```{r}
+flights2 <- flights |> 
+  mutate(id = row_number(), .before = 1)
+
+flights2
+```
+
+### Exercises
+
+```{r}
+# 1
+str(weather)
+```
+
+```{r}
+str(airports)
+```
+
+-   `weather$origin` is a foreign key that corresponds to the primary key `airports$faa`.
+
+```{r}
+airports
+```
+
+```{r}
+airports |> 
+  count(faa) |> 
+  filter(n > 1)
+```
+
+```{r}
+# 2
+weather
+```
+
+```{r}
+flights
+```
+
+-   `flights$origin`-`flights$time_hour` is a compound foreign key that corresponds to the compound primary key `weather$origin`-`weather$time_hour`.
+
+-   If `weather` contained weather records for all airports in the USA, it would need `dest` variable to connect to `flights` data set.
+
+```{r}
+# 3
+weather |> 
+  count(year, month, day, hour, origin) |> 
+  filter(n > 1)
+```
+
+-   If the data set is filtered to this day and `hour`, it is seen that there is no 00:00 clock for the 3rd of November, 2013.
+
+```{r}
+weather |> 
+  count(year, month, day, hour, origin) |> 
+  filter(month == 11 & day == 3 & hour == 0)
+```
+
+-   Instead, hours start from 1:00 o'clock.
+
+```{r}
+weather |> 
+  count(year, month, day, hour, origin) |> 
+  filter(month == 11 & day == 3 & hour == 1)
+```
+
+```{r}
+# 4
+special_holidays <- flights |> 
+  select(year, month, day, hour, time_hour) |> 
+  mutate(special_holiday = factor(
+    FALSE,
+    levels = c(TRUE, FALSE))
+    )
+
+special_holidays
+```
+
+-   Best way to join this fictional data set to the existing ones can be using the surrogate keys, for instance, ids of the special days. This ids can be just factors like 1 for special days and 0 for ordinary days.
+
+```{r}
+# 5
+```
+
+`Batting`, `People` and `Salaries` data frames
+
+```{r}
+colnames(Batting)
+```
+
+```{r}
+# Primary key
+Batting |> 
+  count(playerID, yearID, stint) |>
+  filter(n > 1)
+```
+
+```{r}
+colnames(People)
+```
+
+```{r}
+# Primary key
+People |> 
+  count(playerID) |> 
+  filter(n > 1)
+```
+
+-   `Batting$playerID` is a foreign key that corresponds to the primary key `People$playeID`
+
+```{r}
+colnames(Salaries)
+```
+
+```{r}
+# Primary key
+Salaries |> 
+  count(yearID, teamID, lgID, playerID) |> 
+  filter(n > 1)
+```
+
+-   `Salaries$playerID` is a foreign key that corresponds to the primary key `People$playerID`
+
+`People`, `Managers`, `AwardsManagers` data frames
+
+```{r}
+colnames(Managers)
+```
+
+```{r}
+# Primary key
+Managers |> 
+  count(playerID, yearID, inseason) |> 
+  filter(n > 1)
+```
+
+-   `Managers$playerID` is a foreign key that corresponds to the primary key `People$playerID`
+
+```{r}
+colnames(AwardsManagers)
+```
+
+```{r}
+# Primary key
+AwardsManagers |> 
+  count(playerID, awardID, yearID, ) |> 
+  filter(n > 1)
+```
+
+-   `AwardsManagers$playerID` is a foreign key that corresponds to the primary key `People$playerID`
+
+`Batting`, `Pitching` and `Fielding` data frames
+
+```{r}
+colnames(Pitching)
+```
+
+```{r}
+# Primary key
+Pitching |> 
+  count(playerID, yearID, stint) |> 
+  filter(n > 1)
+```
+
+```{r}
+# Primary key
+Batting |> 
+  count(playerID, yearID, stint) |>
+  filter(n > 1)
+```
+
+-   `Pitching$playerID` - `Pitching$yearID` - `Pitching$stint` and `Batting$playerID` - `Batting$yearID` - `Batting$stint` are compound primary keys in both data frames. These data frames can be joined these columns.
+
+```{r}
+colnames(Fielding)
+```
+
+```{r}
+# Primary key
+Fielding |> 
+  count(playerID, yearID, 
+        stint, teamID, 
+        lgID, POS) |>
+  filter(n > 1)
+```
+
+-   `Fielding$playerID` - `Fielding$yearID` - `Fielding$stint` are compound foreign keys corresponding to the primary keys in both `Batting` and `Pitching` data frames.
+
+## Basic joins
+
+Now that you understand how data frames are connected via keys, we can start using joins to better understand the `flights` dataset. dplyr provides six join functions: `left_join()`, `inner_join()`, `right_join()`, `full_join()`, `semi_join()`, and `anti_join().`
+
+### Mutating joins
+
+A **mutating join** allows you to combine variables from two data frames: it first matches observations by their keys, then copies across variables from one data frame to the other.
+
+```{r}
+flights3 <- flights |> 
+  select(year, time_hour, 
+         origin, dest, 
+         tailnum, carrier)
+flights3
+```
+
+There are four types of mutating join, but there’s one that you’ll use almost all of the time: [`left_join()`](https://dplyr.tidyverse.org/reference/mutate-joins.html). It’s special because the output will always have the same rows as `x`, the data frame you’re joining to (That’s not 100% true, but you’ll get a warning whenever it isn’t.). The primary use of `left_join()` is to add in additional metadata.
+
+```{r}
+# full airline name
+flights3 |> 
+  left_join(airlines)
+```
+
+```{r}
+# the temperature and wind speed 
+# when each plane departed
+flights3 |> 
+  left_join(
+    weather |> 
+              select(origin, time_hour, 
+                     temp, wind_speed)
+    )
+```
+
+```{r}
+# the size of plane
+flights3 |> left_join(
+  planes |> select(tailnum, type, engines, seats)
+)
+```
+
+```{r}
+flights3 |> 
+  filter(tailnum == "N3ALAA") |> 
+  left_join(
+    planes |> select(tailnum, type, 
+                     engines, seats)
+    )
+```
+
+### Specifying join keys
+
+By default, `left_join()` will use all variables that appear in both data frames as the join key, the so called **natural** join. This is a useful heuristic, but it doesn’t always work.
+
+```{r}
+flights3 |> 
+  left_join(planes)
+```
+
+```{r}
+flights3 |> 
+  left_join(planes, join_by(tailnum))
+```
+
+`join_by(tailnum)` is short for `join_by(tailnum == tailnum)`. It’s important to know about this fuller form for two reasons. Firstly, it describes the relationship between the two tables: the keys must be equal. That’s why this type of join is often called an **equi join**.
+
+Secondly, it’s how you specify different join keys in each table. For example, there are two ways to join the `flights3` and `airports` table: either by `dest` or `origin`.
+
+```{r}
+flights3 |> 
+  left_join(airports, join_by(dest == faa))
+```
+
+```{r}
+flights3 |> 
+  left_join(airports, join_by(origin == faa))
+```
+
+### Exercises
+
+```{r}
+# 1
+colnames(flights)
+```
+
+```{r}
+flights |> 
+  group_by(hour) |> 
+  summarize(
+    total_delay = sum(
+      dep_delay, 
+      na.rm = TRUE
+      ),
+    n = n()
+    ) |> 
+  arrange(desc(total_delay))
+```
+
+```{r}
+flights |> 
+  left_join(weather) |> 
+  arrange(desc(dep_delay)) |> 
+  select(time_hour, dep_delay, 
+         temp, dewp, humid, wind_dir,
+         wind_speed, wind_gust, 
+         precip, pressure, visib) |> 
+  head(n = 48)
+```
+
+```{r}
+# 2
+top_dest <- flights3 |> 
+  count(dest, sort = TRUE) |> 
+  head(10)
+
+top_dest
+```
+
+```{r}
+top_destinations <- top_dest$dest
+top_destinations
+```
+
+```{r}
+flights[flights$dest %in% top_destinations, ]
+```
+
+```{r}
+# 3
+flights3 |> 
+  left_join(weather) |> 
+  filter(is.na(temp))
+```
+
+Not every flight have corresponding weather data for that hour.
+
+```{r}
+# 4
+flights3 |> 
+  left_join(planes, join_by(tailnum)) |> 
+  filter(is.na(tailnum)) |> 
+  count(carrier, sort = TRUE)
+```
+
+Planes without `tailnum` information in the `planes` data frame correspond to the 7 carriers.
+
+```{r}
+# 5
+planes |> 
+  left_join(
+    flights3 |> select(carrier, tailnum), 
+    join_by(tailnum)
+    )
+```
+
+```{r}
+planes |> 
+  left_join(
+    flights3 |> select(tailnum, carrier), 
+    join_by(tailnum)
+    ) |> 
+  group_by(tailnum, carrier) |> 
+  summarize(n = n(), .groups = "keep") |> 
+  arrange(desc(tailnum))
+```
+
+```{r}
+# 6
+flights |> 
+  select(origin, dest)
+```
+
+```{r}
+colnames(airports)
+```
+
+```{r}
+# Renaming while joining
+flights |> 
+  select(origin, dest) |> 
+  left_join(
+    airports |> 
+      select(
+        faa, 
+        origin_lat = lat,
+        origin_lon = lon
+        ), 
+    join_by(origin == faa)
+    ) |> 
+    left_join(
+    airports |> 
+      select(
+        faa, 
+        dest_lat = lat,
+        dest_lon = lon
+        ), 
+    join_by(dest == faa)
+    )
+```
+
+```{r}
+# check origin
+airports |> filter(faa == "EWR")
+```
+
+```{r}
+# check destination
+airports |> filter(faa == "IAH")
+```
+
+```{r}
+# 7
+flights |> 
+  group_by(dest) |> 
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE),
+    n = n()
+    ) |> 
+  left_join(airports, join_by(dest == faa)) |> 
+  ggplot(aes(x = lon, y = lat, 
+             color = avg_delay)) +
+  borders("state") +
+  geom_point() +
+  coord_quickmap()
+```
+
+```{r}
+airports |> 
+  semi_join(flights, join_by(faa == dest)) |> 
+  ggplot(aes(x = lon, y = lat)) +
+  borders("state") +
+  geom_point() +
+  coord_quickmap()
+```
+
+```{r}
+# 8
+flights |> 
+  filter(month == 6 & day == 13) |> 
+  group_by(dest) |> 
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE),
+    n = n()
+    ) |> 
+  left_join(airports, join_by(dest == faa)) |> 
+  ggplot(aes(x = lon, y = lat, 
+             color = avg_delay)) +
+  borders("state") +
+  geom_point() +
+  coord_quickmap()
+```
+
+From June 12 to June 13, 2013, two [derechos](https://en.wikipedia.org/wiki/Derecho "Derecho") occurred across different areas of the [Eastern United States](#0 "Eastern United States"). The initial derecho formed on the afternoon of June 12 and tracked across a large section of the [Midwestern United States](#0 "Midwestern United States"), the central [Appalachians](#0 "Appalachian Mountains"), and the [Mid-Atlantic states](#0) before moving into the Atlantic Ocean during the morning of June 13. A second, more widespread and intense derecho occurred on June 13 across the [Southeastern United States](#0 "Southeastern United States"), resulting in major wind damage across [North Carolina](#0 "North Carolina"), [Virginia](#0 "Virginia"), and [Maryland](#0 "Maryland"), among other states.
+
+## How do joins work
+
+```{r}
+x <- tribble(
+  ~key, ~val_x,
+  1, "x1",
+  2, "x2",
+  3, "x3"
+)
+
+y <- tribble(
+  ~key, ~val_y,
+  1, "y1",
+  2, "y2",
+  4, "y3"
+)
+```
+
+-   An inner join matches each row in `x` to the row in `y` that has the same value of `key`. Each match becomes a row in the output.
+
+-   We can apply the same principles to explain the **outer joins**, which keep observations that appear in at least one of the data frames.
+
+    -   A **left join** keeps all observations in `x`. Every row of `x` is preserved in the output because it can fall back to matching a row of `NA`s in `y`.
+
+    -   A **right join** keeps all observations in `y`. Every row of `y` is preserved in the output because it can fall back to matching a row of `NA`s in `x`.
+
+    -   A **full join** keeps all observations that appear in `x` or `y`. Every row of `x` and `y` is included in the output because both `x` and `y` have a fall back row of `NA`s.
+
+### Row matching
+
+The three ways a row in `x` can match. `x1` matches one row in `y`, `x2` matches two rows in `y`, `x3` matches zero rows in y. Note that while there are three rows in `x` and three rows in the output, there isn’t a direct correspondence between the rows.
+
+There are three possible outcomes for a row in `x`:
+
+-   If it doesn’t match anything, it’s dropped.
+
+-   If it matches 1 row in `y`, it’s preserved.
+
+-   If it matches more than 1 row in `y`, it’s duplicated once for each match.
+
+```{r}
+df1 <- tibble(
+  key = c(1, 2, 2), 
+  val_x = c("x1", "x2", "x3")
+  )
+
+df2 <- tibble(
+  key = c(1, 2, 2), 
+  val_y = c("y1", "y2", "y3")
+  )
+```
+
+```{r}
+df1 |> 
+  inner_join(df2, join_by(key))
+```
+
+```{r}
+df1 |> 
+  inner_join(
+    df2, 
+    join_by(key),
+    relationship = "many-to-many"         
+    )
+```
+
+### Filtering joins
+
+-   The semi-join keeps rows in `x` that have one or more matches in `y.`
+
+-   The anti-join keeps rows in `x` that match zero rows in `y`.
+
+## Non-equi joins
+
+```{r}
+x
+```
+
+```{r}
+x |> inner_join(
+  y, 
+  join_by(key == key),
+  keep = TRUE
+  )
+```
+
+```{r}
+x |> inner_join(
+  y, 
+  join_by(key >= key),
+  keep = TRUE
+  )
+```
+
+-   **Cross joins** match every pair of rows.
+
+-   **Inequality joins** use `<`, `<=`, `>`, and `>=` instead of `==`.
+
+-   **Rolling joins** are similar to inequality joins but only find the closest match.
+
+-   **Overlap joins** are a special type of inequality join designed to work with ranges.
+
+### Cross joins
+
+A cross join matches everything, as in generating the Cartesian product of rows. This means the output will have `nrow(x) * nrow(y)` rows.
+
+```{r}
+x
+```
+
+```{r}
+x |> cross_join(x)
+```
+
+Cross joins are useful when generating permutations. For example, the code below generates every possible pair of names. Since we’re joining `df` to itself, this is sometimes called a **self-join**. Cross joins use a different join function because there’s no distinction between inner/left/right/full when you’re matching every row.
+
+```{r}
+df <- tibble(
+  name = c("John", "Simon", "Tracy", "Max")
+  )
+
+df |> cross_join(df)
+```
+
+### Inequality joins
+
+Inequality joins use `<`, `<=`, `>=`, or `>` to restrict the set of possible matches. An inequality join where `x` is joined to `y` on rows where the key of `x` is less than the key of `y`. This makes a triangular shape in the top-left corner.
+
+```{r}
+x |> inner_join(y, join_by(key < key))
+```
+
+Inequality joins are extremely general, so general that it’s hard to come up with meaningful specific use cases. One small useful technique is to use them to restrict the cross join so that instead of generating all permutations, we generate all combinations:
+
+```{r}
+df <- tibble(
+  id = 1:4, 
+  name = c("John", "Simon", "Tracy", "Max")
+  )
+```
+
+```{r}
+df |> inner_join(df, join_by(id < id))
+```
+
+### Rolling joins
+
+Rolling joins are a special type of inequality join where instead of getting every row that satisfies the inequality, you get just the closest row.
+
+```{r}
+# Inequality join
+x |> inner_join(y, join_by(key < key))
+```
+
+```{r}
+# Rolling join
+x |> inner_join(y, join_by(closest(key < key)))
+```
+
+A rolling join is similar to a greater-than-or-equal inequality join but only matches the first value.
+
+Rolling joins are particularly useful when you have two tables of dates that don’t perfectly line up and you want to find (e.g.) the closest date in table 1 that comes before (or after) some date in table 2.
+
+```{r}
+parties <- tibble(
+  q = 1:4,
+  party = ymd(
+    c("2022-01-10", "2022-04-04", 
+      "2022-07-11", "2022-10-03")
+    )
+)
+```
+
+```{r}
+set.seed(123)
+
+employees <- tibble(
+  name = sample(babynames::babynames$name, 100),
+  birthday = ymd("2022-01-01") + 
+    (sample(
+      365,
+      100,
+      replace = TRUE
+      ) - 1)
+)
+
+employees
+```
+
+```{r}
+employees |> 
+  left_join(
+    parties, 
+    join_by(closest(birthday >= party))
+    )
+```
+
+```{r}
+employees |> 
+  anti_join(
+    parties, 
+    join_by(closest(birthday >= party))
+    )
+```
+
+`set.seed(123)`
+
+In R, the **`set.seed(123)`** statement is used to set the seed for the random number generator. The **`set.seed`** function is typically used with functions that involve random processes, such as generating random numbers or sampling from a distribution. By setting the seed, you make the randomness reproducible, meaning that if you run the same code again with the same seed, you should get the same results.
+
+Here's an example in R:
+
+```{r}
+set.seed(123)
+
+# Generate a random number
+random_number <- runif(1)
+random_number
+```
+
+In this example, **`set.seed(123)`** sets the seed for the random number generator, and **`runif(1)`** generates one random number from a uniform distribution between 0 and 1. If you run this code multiple times with the same seed, you should get the same random number each time.
+
+Setting the seed is useful in scenarios where you want to share your code with others or reproduce the same results. It ensures that even though the code involves randomness, others can obtain the same results by using the same seed.
+
+### Overlap joins
+
+-   `between(x, y_lower, y_upper)` is short for `x >= y_lower, x <= y_upper`.
+
+-   `within(x_lower, x_upper, y_lower, y_upper)` is short for `x_lower >= y_lower, x_upper <= y_upper`.
+
+-   `overlaps(x_lower, x_upper, y_lower, y_upper)` is short for `x_lower <= y_upper, x_upper >= y_lower`.
+
+```{r}
+parties <- tibble(
+  q = 1:4,
+  party = ymd(
+    c("2022-01-10", "2022-04-04", 
+      "2022-07-11", "2022-10-03")
+              ),
+  start = ymd(
+    c("2022-01-01", "2022-04-04", 
+      "2022-07-11", "2022-10-03")
+    ),
+  end = ymd(
+    c("2022-04-03", "2022-07-11", 
+      "2022-10-02", "2022-12-31")
+    )
+)
+
+parties
+```
+
+```{r}
+parties |> 
+  inner_join(
+    parties, 
+    join_by(
+      overlaps(start, end, start, end),
+      q < q
+    )
+  ) |> 
+  select(start.x, end.x, start.y, end.y)
+```
+
+```{r}
+parties <- tibble(
+  q = 1:4,
+  party = ymd(
+    c("2022-01-10", "2022-04-04", 
+      "2022-07-11", "2022-10-03")
+    ),
+  start = ymd(
+    c("2022-01-01", "2022-04-04", 
+      "2022-07-11", "2022-10-03")
+    ),
+  end = ymd(
+    c("2022-04-03", "2022-07-10", 
+      "2022-10-02", "2022-12-31")
+    )
+)
+```
+
+```{r}
+employees |>
+  inner_join(
+  parties,
+  join_by(
+    between(
+      birthday, start, end
+    )
+  ),
+  unmatched = "error"
+)
+```
+
+### Exercises
+
+```{r}
+x |> full_join(y, join_by(key == key))
+```
+
+```{r}
+x |> full_join(
+  y, 
+  join_by(key == key),
+  keep = TRUE
+  )
+```
+
+```{r}
+x
+```
+
+```{r}
+y
+```
+
+-   It is full join so, as the corresponding row for key 3 in x does not have any value, both key and value are assigned `NA`.
+
+-   Also, key 4 in y, does not have corresponding value in x, so, key and value are assigned `NA`.
+
+```{r}
+# 4
+parties <- tibble(
+  q = 1:4,
+  party = ymd(
+    c("2022-01-10", "2022-04-04", 
+      "2022-07-11", "2022-10-03")
+              ),
+  start = ymd(
+    c("2022-01-01", "2022-04-04", 
+      "2022-07-11", "2022-10-03")
+    ),
+  end = ymd(
+    c("2022-04-03", "2022-07-11", 
+      "2022-10-02", "2022-12-31")
+    )
+)
+
+parties
+```
+
+-   `q < q` inequality restricts the join not to return permutations, but just combinations:
+
+```{r}
+parties |> 
+  inner_join(
+    parties, 
+    join_by(
+      overlaps(start, end, start, end),
+      q < q
+    )
+  ) |> 
+  select(start.x, end.x, start.y, end.y)
+```
+
+-   If removed, it returns all the overlaps:
+
+```{r}
+parties |> 
+  inner_join(
+    parties, 
+    join_by(
+      overlaps(start, end, start, end)
+    )
+  ) |> 
+  select(start.x, end.x, start.y, end.y)
+```

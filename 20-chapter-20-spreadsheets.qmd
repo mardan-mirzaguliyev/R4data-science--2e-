@@ -1,0 +1,510 @@
+---
+title: "Chapter 20 - Spreadsheets"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2023/12/26
+---
+
+# Spreadsheets
+
+## Excel
+
+```{r}
+library(readxl)
+library(tidyverse)
+library(writexl)
+library(openxlsx)
+library(googlesheets4)
+```
+
+### Getting started
+
+Most of readxl’s functions allow you to load Excel spreadsheets into R:
+
+-   `read_xls()` reads Excel files with `xls` format.
+
+-   `read_xlsx()` read Excel files with `xlsx` format.
+
+-   `read_excel()` can read files with both `xls` and `xlsx` format. It guesses the file type based on the input.
+
+### Reading Excel spreadsheets
+
+```{r}
+# raw data
+students <- read_excel("data/students.xlsx")
+students
+```
+
+```{r}
+# specify column names
+students <- read_excel(
+  "data/students.xlsx",
+  col_names = c("student_id", "full_name",
+                "favourite_food", "meal_plan",
+                "age")
+  )
+
+students
+```
+
+```{r}
+# skip some rows
+students <- read_excel(
+  "data/students.xlsx",
+  col_names = c("student_id", "full_name",
+                "favourite_food", "meal_plan",
+                "age"),
+  skip = 1
+  )
+
+students
+```
+
+```{r}
+# specify NA
+students <- read_excel(
+  "data/students.xlsx",
+  col_names = c("student_id", "full_name",
+                "favourite_food", "meal_plan",
+                "age"),
+  skip = 1,
+  na = c("", "N/A")
+  )
+
+students
+```
+
+```{r}
+# specify column types
+students <- read_excel(
+  "data/students.xlsx",
+  col_names = c("student_id", "full_name",
+                "favourite_food", "meal_plan",
+                "age"),
+  skip = 1,
+  na = c("", "N/A"), 
+  col_types = c("numeric", "text",
+                "text", "text", "numeric")
+  )
+
+students
+```
+
+```{r}
+# specify column types - five entered in a numeric column
+students <- read_excel(
+  "data/students.xlsx",
+  col_names = c("student_id", "full_name",
+                "favourite_food", "meal_plan",
+                "age"),
+  skip = 1,
+  na = c("", "N/A"), 
+  col_types = c("numeric", "text",
+                "text", "text", "text")
+  )
+
+students
+```
+
+```{r}
+students <- students |> 
+  mutate(
+    age = if_else(age == "five", "5", age),
+    age = parse_number(age)
+  )
+
+students
+```
+
+### Reading worksheets
+
+```{r}
+read_excel(
+  "data/penguins.xlsx", 
+  sheet = "Torgersen Island"
+  )
+```
+
+```{r}
+# specify NA
+penguins_torgersen <- read_excel(
+  "data/penguins.xlsx", 
+  sheet = "Torgersen Island",
+  na = "NA"
+  )
+```
+
+```{r}
+excel_sheets("data/penguins.xlsx")
+```
+
+```{r}
+penguins_biscoe <- read_excel(
+  "data/penguins.xlsx",
+  sheet = "Biscoe Island",
+  na = "NA"
+  )
+
+penguins_dream <- read_excel(
+  "data/penguins.xlsx",
+  sheet = "Dream Island",
+  na = "NA"
+  )
+```
+
+```{r}
+dim(penguins_torgersen)
+```
+
+```{r}
+dim(penguins_biscoe)
+```
+
+```{r}
+dim(penguins_dream)
+```
+
+```{r}
+penguins <- bind_rows(
+  penguins_torgersen, 
+  penguins_biscoe,
+  penguins_dream
+)
+```
+
+### Reading part of a sheet
+
+```{r}
+deaths_path <- readxl_example("deaths.xlsx")
+```
+
+```{r}
+deaths <- read_excel(deaths_path)
+```
+
+```{r}
+deaths
+```
+
+```{r}
+read_excel(deaths_path, range = "A5:F15")
+```
+
+### Data types
+
+The underlying data in Excel spreadsheets is more complex. A cell can be one of four things:
+
+-   A boolean, like `TRUE`, `FALSE`, or `NA`.
+
+-   A number, like “10” or “10.5”.
+
+-   A datetime, which can also include time like “11/1/21” or “11/1/21 3:00 PM”.
+
+-   A text string, like “ten”.
+
+### Writing to Excel
+
+```{r}
+bake_sale <- tibble(
+  item = factor(
+    c("brownie", "cupcake", "cookie")
+    ),
+  quantity = c(10, 5, 8)
+)
+
+bake_sale
+```
+
+```{r}
+# Write without column names
+write_xlsx(
+  bake_sale, 
+  path = "data/bake-sale3.xlsx",
+  col_names = FALSE
+  )
+```
+
+```{r}
+# Write without formatting
+write_xlsx(
+  bake_sale, 
+  path = "data/bake-sale2.xlsx",
+  format_headers = FALSE
+  )
+```
+
+### Formatted output
+
+The writexl package is a light-weight solution for writing a simple Excel spreadsheet, but if you’re interested in additional features like writing to sheets within a spreadsheet and styling, you will want to use the [openxlsx package.](https://ycphs.github.io/openxlsx/) We won’t go into the details of using this package here, but we recommend reading <https://ycphs.github.io/openxlsx/articles/Formatting.html> for an extensive discussion on further formatting functionality for data written from R to Excel with openxlsx.
+
+Note that this package is not part of the tidyverse so the functions and workflows may feel unfamiliar. For example, function names are camelCase, multiple functions can’t be composed in pipelines, and arguments are in a different order than they tend to be in the tidyverse. However, this is ok. As your R learning and usage expands outside of this book you will encounter lots of different styles used in various R packages that you might use to accomplish specific goals in R. A good way of familiarizing yourself with the coding style used in a new package is to run the examples provided in function documentation to get a feel for the syntax and the output formats as well as reading any vignettes that might come with the package.
+
+### Exercises
+
+```{r}
+# 1
+survey <- read_excel(
+  "data/survey.xlsx",
+  na = c("", "N/A"), 
+  col_types = c("numeric", "text")
+  )
+
+survey
+```
+
+```{r}
+survey <- survey |> 
+  mutate(
+    survey_id = as.character(survey_id),
+    n_pets = if_else(
+      n_pets == "two", 
+      "2", 
+      n_pets
+      ),
+    n_pets = parse_number(n_pets)
+  )
+
+survey
+```
+
+```{r}
+# 2
+roster <- read_excel(
+  "data/roster.xlsx",
+  col_types = c("numeric", "text", "numeric")
+  )
+
+roster |> tidyr::fill(everything())
+```
+
+```{r}
+# 3
+# a
+sales <- read_excel(
+  "data/sales.xlsx",
+  skip = 2,
+  na = c("", "N/A"),
+  col_names = c("id", "n")
+  )
+
+sales
+```
+
+```{r}
+# b
+sales
+```
+
+```{r}
+sales |> 
+  mutate(
+    brand = if_else(
+      grepl("Brand", id),
+      id, 
+      NA
+      )
+  ) |> 
+  fill(brand, .direction = "downup") |> 
+  filter(!grepl("Brand", id)) |> 
+  relocate(brand) |> 
+  mutate(
+    id = as.double(id), 
+    n = as.double(n)
+    )
+```
+
+```{r}
+# 4
+bake_sale
+
+write.xlsx(bake_sale, "data/bake_sale2.xlsx")
+```
+
+```{r}
+# 5
+students <- read_excel(
+  "data/students.xlsx",
+  na = c("", "N/A")
+  )
+
+students
+```
+
+```{r}
+students |> 
+  janitor::clean_names() |> 
+  mutate(
+    age = if_else(age == "five", "5", age),
+    age = parse_number(age)
+  )
+```
+
+```{r}
+# 6
+roster <- read_xlsx(
+  "data/roster.xlsx",
+  col_types = c("numeric", "text", "numeric")
+  )
+
+roster 
+# roster <- read_xls(
+#   "data/roster.xlsx",
+#   col_types = c("numeric", "text", "numeric")
+#   )
+
+
+# Error: 
+# filepath: /Users/mardan.mirzaguliyev/Desktop/R# -for-data-science-(2e)/01-code/data/roster.xlsx
+#  libxls error: Unable to open file
+```
+
+## Google Sheets
+
+### Reading Google Sheets
+
+```{r}
+gs4_deauth()
+```
+
+```{r}
+students_sheet_id <- "1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w"
+```
+
+```{r}
+students <- read_sheet(students_sheet_id)
+students
+```
+
+```{r}
+# Column names, NA strings, and column types
+students <- read_sheet(
+  students_sheet_id,
+  col_names = c(
+    "student_id", 
+    "full_name", 
+    "favourite_food",
+    "meal_plan",
+    "age"
+    ),
+  skip = 1,
+  na = c("", "N/A"),
+  col_types = "dcccc"
+)
+
+students
+```
+
+```{r}
+penguins_sheet_id <- "1aFu8lnD_g0yjF5O-K6SFgSEWiHPpgvFCF0NY9D6LXnY"
+```
+
+```{r}
+# Individual sheets
+read_sheet(
+  penguins_sheet_id, 
+  sheet = "Torgersen Island"
+  )
+```
+
+```{r}
+sheet_names(penguins_sheet_id)
+```
+
+```{r}
+# Ranges
+deaths_url <- gs4_example("deaths")
+
+deaths <- read_sheet(
+  deaths_url, 
+  range = "A5:F15"
+  )
+
+deaths
+```
+
+### Writing to Google Sheets
+
+```{r}
+gs4_auth(email = "mardan.mirzayev04@gmail.com")
+```
+
+```{r}
+write_sheet(
+  bake_sale, 
+  ss = "https://docs.google.com/spreadsheets/d/1gs4NT1-eeudCjtf9jYyUb7xqBV9QT9-QSr24l9PNbBs/edit?pli=1#gid=1356896449"
+  )
+```
+
+```{r}
+write_sheet(
+  bake_sale, 
+  ss = "https://docs.google.com/spreadsheets/d/1gs4NT1-eeudCjtf9jYyUb7xqBV9QT9-QSr24l9PNbBs/edit#gid=49384386",
+  sheet = "Sales"
+  )
+```
+
+### Exercises
+
+```{r}
+# 3
+# Excel
+students_excel <- read_excel(
+  "data/students.xlsx"
+  )
+
+students_excel |> View()
+```
+
+```{r}
+# Google Sheets
+students_sheet_id <- "1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w"
+
+students_gs <- read_sheet(students_sheet_id)
+
+students_gs |> View()
+```
+
+-   While reading Google Sheets NA values are represented as NULL.
+
+-   In Excel age variable is represented as decimal point number not as integer.
+
+```{r}
+# 2
+gs4_deauth()
+
+gs_id <- "1ywVz_OSyMewyWup70tP28APnL017QC7Us5Vu_8dULkc"
+
+survey <- read_sheet(
+  gs_id,
+  col_types = "cc",
+  na = c("N/A", "")
+  )
+```
+
+```{r}
+survey |> 
+  mutate(
+    n_pets = if_else(
+      n_pets == "two",
+      "2",
+      n_pets
+      ),
+    n_pets = as.numeric(n_pets)
+  )
+```
+
+```{r}
+# 3
+gs4_deauth()
+
+gs_id <- "1zaA1ag4gHxVMZIrroHGjLvXWl3Q-JL0NeSyxUEnm3AQ"
+
+roster <- read_sheet(
+  gs_id,
+  )
+
+roster |> 
+  tidyr::fill(everything()) |> 
+  View()
+```

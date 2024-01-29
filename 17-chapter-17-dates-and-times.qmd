@@ -1,0 +1,1121 @@
+---
+title: "Chapter 17 - Dates and times"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2023/12/10
+---
+
+# Dates and times
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+
+## Creating data/times
+
+There are three types of date/time data that refer to an instant in time:
+
+-   A **date**. Tibbles print this as `<date>`.
+
+-   A **time** within a day. Tibbles print this as `<time>`.
+
+-   A **date-time** is a date plus a time: it uniquely identifies an instant in time (typically to the nearest second). Tibbles print this as `<dttm>`. Base R calls these POSIXct, but doesn't exactly trip off the tongue.
+
+```{r}
+today()
+```
+
+```{r}
+now()
+```
+
+### During import
+
+```{r}
+# Date and time components separated by space
+csv <- "
+date,datetime
+2022-01-02,2022-01-02 05:12
+"
+# print to the console
+read_csv(csv, show_col_types = FALSE)
+```
+
+**ISO8601 i**s an international standard for writing dates where the components of a date are organized from biggest to smallest separated by `-`. For example, in ISO8601 May 3 2022 is `2022-05-03`. ISO8601 dates can also include times, where hour, minute, and second are separated by `:`, and the date and time components are separated by either a `T` or a space. For example, you could write 4:26pm on May 3 2022 as either `2022-05-03 16:26` or `2022-05-03T16:26`.
+
+```{r}
+# Date and time components separated by T
+csv <- "
+date,datetime
+2022-01-02,2022-01-02T05:12
+"
+# print to the console
+read_csv(csv, show_col_types = FALSE)
+```
+
+```{r}
+csv <- "
+date
+01/02/15
+"
+```
+
+```{r}
+read_csv(
+  csv, 
+  col_types = cols(date = col_date("%m/%d/%y"))
+  )
+```
+
+```{r}
+read_csv(
+  csv,
+  col_types = cols(date = col_date("%d/%m/%y"))
+)
+```
+
+```{r}
+read_csv(
+  csv, 
+  col_types = cols(date = col_date("%y/%m/%d"))
+  )
+```
+
+### From strings
+
+```{r}
+ymd("2017-01-31")
+```
+
+```{r}
+mdy("January 31st, 2017")
+```
+
+```{r}
+dmy("31-Jan-2017")
+```
+
+```{r}
+dmy("31-Jan-2017")
+```
+
+```{r}
+ymd_hms("2017-01-31 20:11:59")
+```
+
+```{r}
+mdy_hm("01/31/2017 08:01")
+```
+
+```{r}
+ymd("2017-01-31", tz = "UTC")
+```
+
+### From individual components
+
+```{r}
+flights |> 
+  select(year,  month, day, hour, minute)
+```
+
+```{r}
+flights |> 
+  select(year, month, day, hour, minute) |> 
+  mutate(
+    departure = make_datetime(
+      year, 
+      month, 
+      day, 
+      hour, 
+      minute
+    )
+    )
+```
+
+```{r}
+flights |> 
+  select(
+    year,
+    month, 
+    day, 
+    hour, 
+    minute, 
+    arr_time
+    )
+```
+
+```{r}
+make_datetime_100 <- function(
+    year, 
+    month, 
+    day,
+    time
+) {
+  make_datetime(
+    year, 
+    month, 
+    day, 
+    time %/% 100, 
+    time %% 100
+  )
+}
+```
+
+```{r}
+flights_dt <- flights |> 
+  filter(
+    !is.na(dep_time), 
+    !is.na(arr_time) 
+    ) |> 
+  mutate(
+    dep_time = make_datetime_100(
+      year, 
+      month, 
+      day, 
+      dep_time
+      ),
+    arr_time = make_datetime_100(
+      year, 
+      month,
+      day,
+      arr_time
+    ),
+    sched_dep_time = make_datetime_100(
+      year, 
+      month,
+      day, 
+      sched_dep_time
+    ),
+    sched_arr_time = make_datetime_100(
+      year,
+      month,
+      day,
+      sched_arr_time
+    )
+  ) |> 
+  select(
+    origin,
+    dest, 
+    ends_with("delay"),
+    ends_with("time")
+    )
+```
+
+```{r}
+flights_dt
+```
+
+```{r}
+flights_dt |> 
+  ggplot(aes(x = dep_time)) +
+  geom_freqpoly(binwidth = 86400) 
+# 86400 seconds = 1 day
+```
+
+```{r}
+flights_dt |> 
+  filter(dep_time < ymd(20130102)) |> 
+  ggplot(aes(x = dep_time)) +
+  geom_freqpoly(binwidth = 600)
+# 600 s = 10 minutes
+```
+
+```{r}
+flights |> 
+  filter(
+    !is.na(dep_time), 
+    !is.na(arr_time) 
+    ) |> 
+  mutate(
+    dep_time_modified = make_datetime_100(
+      year, 
+      month, 
+      day, 
+      dep_time
+      ),
+    .keep = "used"
+  ) |> select(dep_time, dep_time_modified)
+```
+
+### From other types
+
+```{r}
+as_datetime(today())
+```
+
+```{r}
+as_date(now())
+```
+
+```{r}
+as_datetime(60 * 60 * 10)
+```
+
+```{r}
+as_date(365 * 10 + 2)
+```
+
+### Exercises
+
+```{r}
+# 1
+ymd(c("2010-10-10", "bananas"))
+# Warning:  1 failed to parse.[1] "2010-10-10" NA
+```
+
+```{r}
+# 2
+today(tzone = "UTC")
+```
+
+`tzone`
+
+a character vector specifying which time zone you would like the current time in. tzone defaults to your computer's system timezone. You can retrieve the current time in the Universal Coordinated Time (UTC) with now("UTC").
+
+```{r}
+# 3
+d1 <- "January 1, 2010"
+d2 <- "2015-Mar-07"
+d3 <- "06-Jun-2017"
+d4 <- c("August 19 (2015)", "July 1 (2015)")
+d5 <- "12/30/14" # Dec 30, 2014
+t1 <- "1705"
+t2 <- "11:15:10.12 PM"
+```
+
+```{r}
+# a
+# col_types = cols(d1 = col_date("%B/%d/%Y"))
+```
+
+```{r}
+mdy(d1)
+```
+
+```{r}
+# b
+# col_types = cols(d2 = col_date("%Y/%b/%e"))
+```
+
+```{r}
+ymd(d2)
+```
+
+```{r}
+# c
+# col_types = cols(d3 = col_date("%e/%b/%Y"))
+```
+
+```{r}
+dmy(d3)
+```
+
+```{r}
+# d
+# col_types = cols(
+#d4 = col_date("%B/%e/%./%Y/%.")
+#)
+```
+
+```{r}
+mdy(d4)
+```
+
+```{r}
+# e
+# col_types = cols(d5 = col_date("%m/%e/%y"))
+```
+
+```{r}
+mdy(d5)
+```
+
+```{r}
+# f
+# col_types = cols(t1 = col_date("%H:%M"))
+```
+
+```{r}
+# Parse the time string using lubridate
+t1_hm <- hms(
+  paste0(
+    substr(t1, 1, 2), 
+    ":", 
+    substr(t1, 3, 4), 
+    ":00"
+    )
+  )
+
+cat(
+  "Original Time String:", 
+  t1, 
+  "\n"
+  )
+
+cat(
+  "Formatted Time:", 
+  format(t1_hm, format = "%h:%m"),
+  "\n")
+```
+
+```{r}
+# f
+# col_types = cols(t2 = col_date("%I/%M/%S/%p"))
+t2
+```
+
+```{r}
+hms(t2)
+```
+
+## Date-time components
+
+### Getting components
+
+```{r}
+datetime <- ymd_hms("2026-07-08 12:34:56")
+```
+
+```{r}
+year(datetime)
+```
+
+```{r}
+month(datetime)
+```
+
+```{r}
+mday(datetime)
+```
+
+```{r}
+yday(datetime)
+```
+
+```{r}
+wday(datetime)
+```
+
+```{r}
+month(datetime, label = TRUE)
+```
+
+```{r}
+wday(datetime, label = TRUE, abbr = FALSE)
+```
+
+```{r}
+flights_dt |> 
+  mutate(wday = wday(dep_time, label = TRUE)) |> 
+  ggplot(aes(x = wday)) +
+  geom_bar()
+```
+
+```{r}
+flights_dt |> 
+  mutate(minute = minute(dep_time)) |> 
+  group_by(minute) |> 
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE),
+    n = n()
+  ) |> 
+  ggplot(aes(x = minute, y = avg_delay)) +
+  geom_line()
+```
+
+```{r}
+sched_dep <- flights_dt |> 
+  mutate(minute = minute(sched_dep_time)) |> 
+  group_by(minute) |> 
+  summarize(
+    avg_delay = mean(arr_delay, na.rm = TRUE),
+    n = n()
+  )
+```
+
+```{r}
+ggplot(
+  sched_dep,
+  aes(x = minute, y = avg_delay)
+  ) +
+  geom_line()
+```
+
+### Rounding
+
+```{r}
+flights_dt |> 
+  count(week = floor_date(dep_time, "week")) |> 
+  ggplot(aes(x = week, y = n)) +
+  geom_line() +
+  geom_point()
+```
+
+```{r}
+flights_dt |> 
+  mutate(
+    dep_hour = dep_time - floor_date(
+      dep_time, "day"
+      )
+  ) |> 
+  ggplot(aes(x = dep_hour)) +
+  geom_freqpoly(binwidth = 60 * 30)
+```
+
+```{r}
+flights_dt |> 
+  mutate(
+    dep_hour = hms::as_hms(
+      dep_time - floor_date(
+        dep_time, 
+        "day"
+        )
+      )
+    ) |> 
+  ggplot(aes(x = dep_hour)) +
+  geom_freqpoly(binwidth = 60 * 30)
+```
+
+### Modifying components
+
+```{r}
+(datetime <- ymd_hms("2026-07-08 12:34:56"))
+```
+
+```{r}
+year(datetime) <- 2030
+datetime
+```
+
+```{r}
+month(datetime) <- 01
+datetime
+```
+
+```{r}
+hour(datetime) <- hour(datetime) + 1
+datetime
+```
+
+```{r}
+update(
+  datetime, 
+  year = 2030, 
+  month = 2, 
+  mday = 30,
+  hour = 2
+  )
+```
+
+```{r}
+update(ymd("2023-02-01"), mday = 30)
+```
+
+```{r}
+update(ymd("2023-02-01"), hour = 400)
+```
+
+### Exercise
+
+```{r}
+# 1
+flights_dt <- flights |> 
+  filter(
+    !is.na(dep_time), 
+    !is.na(arr_time) 
+    ) |> 
+  mutate(
+    dep_time = make_datetime_100(
+      year, 
+      month, 
+      day, 
+      dep_time
+      ),
+    arr_time = make_datetime_100(
+      year, 
+      month,
+      day,
+      arr_time
+    ),
+    sched_dep_time = make_datetime_100(
+      year, 
+      month,
+      day, 
+      sched_dep_time
+    ),
+    sched_arr_time = make_datetime_100(
+      year,
+      month,
+      day,
+      sched_arr_time
+    )
+  ) |> 
+  select(
+    origin,
+    dest, 
+    ends_with("delay"),
+    ends_with("time")
+    )
+```
+
+```{r}
+flights_dt |> 
+  mutate(
+    dep_hour = hms::as_hms(
+      dep_time - floor_date(dep_time, "day")
+    ),
+    month = month(dep_time)
+    ) |> 
+  ggplot(aes(x = dep_hour)) +
+  geom_freqpoly(binwidth = 60 * 30) +
+  facet_wrap(~month, ncol = 3) +
+  labs(
+    title = "Distribution of Flight Times within a Day",
+       x = "Departure Hour",
+       y = "Frequency"
+    )
+```
+
+```{r}
+# 2
+flights_dt |> 
+  select(dep_time, sched_dep_time, dep_delay)
+```
+
+```{r}
+flights_dt |> 
+  select(dep_time, sched_dep_time, dep_delay) |> 
+  mutate(
+    actual_dep_delay = as.numeric(
+      dep_time - sched_dep_time, 
+      units = "mins"
+      ),
+    delay_comparison = 
+      dep_delay == actual_dep_delay
+    )
+```
+
+```{r}
+# 3
+flights_dt |> 
+  select(
+    dep_time,
+    arr_time, 
+    air_time,
+    origin,
+    dest
+    ) |> 
+  mutate(
+    actual_air_time = as.numeric(
+      arr_time - dep_time, 
+      units = "mins"
+      ),
+    air_time_comparison = 
+      air_time == actual_air_time
+  ) |> 
+  filter(!is.na(air_time_comparison)) |> 
+  ggplot(
+    aes(x = air_time, 
+        y = actual_air_time,
+        color = origin
+        )
+    ) +
+  geom_point() +
+  facet_wrap(~air_time_comparison)
+```
+
+```{r}
+# 4
+flights_dt |> 
+  mutate(
+    dep_hour = hms::as_hms(
+      dep_time - floor_date(dep_time, "day")
+      )
+    ) |>
+  group_by(dep_hour) |> 
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE)
+    ) |> 
+  ggplot(aes(x = dep_hour, y = avg_delay)) +
+  geom_line() +
+  labs(title = "Average Delay Time Over the Course of a Day",
+       x = "Hour of the Day",
+       y = "Average Delay Time (minutes)") +
+  theme_minimal()
+```
+
+```{r}
+# 5
+flights_dt |>
+  mutate(
+    day_of_week = wday(dep_time, label = TRUE)
+    ) |> 
+  group_by(day_of_week) |> 
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE)
+    ) |> 
+  arrange(avg_delay) |> 
+  head(1)
+```
+
+```{r}
+# 6
+summary(diamonds$carat)
+```
+
+```{r}
+summary(flights$sched_dep_time)
+```
+
+```{r}
+ggplot(diamonds, aes(carat)) +
+  geom_histogram()
+```
+
+```{r}
+ggplot(flights, aes(sched_dep_time)) +
+  geom_histogram()
+```
+
+```{r}
+# Kernel Density Plot for diamonds$carat
+ggplot(diamonds, aes(x = carat)) +
+  geom_density(fill = "blue", alpha = 0.7) +
+  labs(title = "Kernel Density Plot of Diamonds Carat", x = "Carat") +
+  theme_minimal()
+```
+
+```{r}
+# Kernel Density Plot for flights$sched_dep_time
+ggplot(flights, aes(x = sched_dep_time)) +
+  geom_density(fill = "green", alpha = 0.7) +
+  labs(title = "Kernel Density Plot of Scheduled Departure Time", x = "Scheduled Departure Time") +
+  theme_minimal()
+```
+
+```{r}
+ks.test(diamonds$carat, flights$sched_dep_time)
+```
+
+-   In diamonds data set carat plays somewhat secondary role as the determinant of the price. The real variable that truly affects the price of a diamonds is the cut of the diamond.
+
+-   In flights data set, scheduled departure time is also kind of secondary variable. The relationship between other variables and the actual departure time is more interesting that scheduled departure time.
+
+```{r}
+# 7
+flights_dt |> 
+  mutate(
+    early_departure = ifelse(
+      dep_delay < 0, 
+      TRUE, 
+      FALSE
+      )
+    )
+```
+
+```{r}
+flights_dt2 <- flights_dt |> 
+  mutate(
+    early_departure = ifelse(
+      dep_delay < 0, 
+      TRUE,
+      FALSE
+      )
+  )
+
+flights_dt2
+```
+
+```{r}
+time_range_flights <- flights_dt2 |>
+    filter(
+      minute(dep_time) %in% c(20:30, 50:60)
+    )
+
+time_range_flights
+```
+
+```{r}
+# Calculate the overall proportion of early departures
+overall_proportion_early <- mean(
+  flights_dt2$early_departure, 
+  na.rm = TRUE
+  )
+
+overall_proportion_early
+```
+
+```{r}
+# Calculate the proportion of early departures in the specified time ranges
+time_range_proportion_early <- mean(
+  time_range_flights$early_departure
+                                    )
+time_range_proportion_early
+```
+
+```{r}
+# Display the results
+cat("Overall Proportion of Early Departures:", overall_proportion_early, "\n")
+cat("Proportion of Early Departures in Time Ranges 20-30 and 50-60:", time_range_proportion_early, "\n")
+```
+
+1.  **Proportion of Early Departures:**
+
+    -   The **`mean`** function calculates the proportion of early departures for both the overall dataset and the subset within the specified time ranges.
+
+2.  **Displaying Results:**
+
+    -   The **`cat`** function is used to display the overall proportion of early departures and the proportion within the specified time ranges.
+
+By comparing these proportions, you can assess whether early departures are more common in the specified time ranges compared to the overall dataset. If the proportion is higher in these time ranges, it provides support for the hypothesis that scheduled flights are leaving early during these periods.
+
+## Time spans
+
+-   **Durations**, which represent an exact number of seconds.
+
+-   **Periods**, which represent human units like weeks and months.
+
+-   **Intervals**, which represent a starting and ending point.
+
+### Durations
+
+```{r}
+# How old is Hadley?
+h_age <- today() - ymd("1979-10-14")
+h_age
+```
+
+```{r}
+as.duration(h_age)
+```
+
+```{r}
+dseconds(15)
+```
+
+```{r}
+dminutes(10)
+```
+
+```{r}
+dhours(c(12, 24))
+```
+
+```{r}
+ddays(0:5)
+```
+
+```{r}
+dweeks(3)
+```
+
+```{r}
+dyears(1)
+```
+
+Durations always record the time span in seconds. Larger units are created by converting minutes, hours, days, weeks, and years to seconds: 60 seconds in a minute, 60 minutes in an hour, 24 hours in a day, and 7 days in a week. Larger time units are more problematic. A year uses the "average" number of days in a year, i.e. 365.25. There's no way to convert a month to a duration, because there's just too much variation.
+
+```{r}
+2 * dyears(1)
+```
+
+```{r}
+dyears(1) + dweeks(12) + dhours(15)
+```
+
+```{r}
+tomorrow <- today() + ddays(1)
+last_year <- today() - dyears(1)
+tomorrow
+last_year
+```
+
+```{r}
+one_am <- ymd_hms(
+  "2026-03-08 01:00:00", 
+  tz = "America/New_York"
+  )
+
+one_am
+```
+
+```{r}
+one_am + ddays(1)
+```
+
+### Periods
+
+```{r}
+one_am
+```
+
+```{r}
+one_am + days(1)
+```
+
+```{r}
+hours(c(12, 24))
+```
+
+```{r}
+days(7)
+```
+
+```{r}
+month(1:6)
+```
+
+```{r}
+10 * (months(6) + days(1)) 
+```
+
+```{r}
+days(50) + hours(25) + minutes(2)
+```
+
+```{r}
+# A leap year
+ymd("2024-01-01") + dyears(1)
+ymd("2024-01-01") + years(1)
+```
+
+```{r}
+# Daylight saving time
+one_am + ddays(1)
+```
+
+```{r}
+one_am + days(1)
+```
+
+```{r}
+flights_dt |> 
+  filter(arr_time < dep_time)
+```
+
+```{r}
+flights_dt <- flights_dt |> 
+  mutate(
+    overnight = arr_time < dep_time,
+    arr_time = arr_time + days(overnight),
+    sched_arr_time = sched_arr_time + 
+      days(overnight)
+  )
+
+flights_dt
+```
+
+```{r}
+flights_dt |> 
+  filter(arr_time < dep_time)
+```
+
+### Intervals
+
+```{r}
+years(1) / days(1)
+```
+
+```{r}
+y2023 <- ymd("2023-01-01") %--% ymd("2024-01-01")
+y2024 <- ymd("2024-01-01") %--% ymd("2025-01-01")
+
+y2023
+y2024
+```
+
+```{r}
+y2023 / days(1)
+```
+
+```{r}
+y2024 / days(1) 
+```
+
+### Exercises
+
+```{r}
+# 1
+flights_dt |> 
+  mutate(
+    overnight = arr_time < dep_time,
+    not_overnight = !days(overnight),
+    arr_time = arr_time + days(overnight),
+    sched_arr_time = sched_arr_time + 
+      days(overnight)
+  )
+```
+
+```{r}
+class(days(flights_dt$overnight))
+```
+
+-   `days(overnight)` takes overnight logical variable, and calculates the number of days, hours, minutes, and seconds according to the number of `TRUE` values. So, it is possible to calculate the total number of overnights using `sum()` function.
+
+```{r}
+sum(days(flights_dt$overnight))
+```
+
+In this case it is 0 because, the above code removed them using arithmetic operations.
+
+-   `!days(overnight)` takes overnight logical variable, and negates the value, so overnights becomes not overnights. As the above code normalized all the issues related to the calculations, the date-times are normally represented.
+
+```{r}
+sum(!days(flights_dt$overnight))
+```
+
+In R, **`days(!overnight)`** and **`days(overnight)`** are expressions using the **`lubridate`** package, which is commonly used for working with dates and times. Here's an explanation for someone who is just starting to learn R:
+
+**Key Fact:**
+
+In R, the **`lubridate`** package provides a convenient way to handle date and time objects. The functions **`days()`** and **`!overnight`** are used in the context of comparing and calculating durations, specifically in the context of flights or events that span across days.
+
+**Explanation:**
+
+1.  **`days(!overnight)`:**
+
+    -   The **`days()`** function is used to represent a duration in terms of days.
+
+    -   The **`!overnight`** part is a logical condition that, when negated with **`!`**, refers to flights that are not overnight.
+
+    -   So, **`days(!overnight)`** represents the duration in days for events or flights that do not span across multiple days.
+
+2.  **`days(overnight)`:**
+
+    -   Similar to the previous case, the **`days()`** function is used to represent a duration in terms of days.
+
+    -   The **`overnight`** part is a logical condition that refers to flights or events that are overnight.
+
+    -   Therefore, **`days(overnight)`** represents the duration in days for events or flights that span across multiple days.
+
+```{r}
+# 2 
+# a
+first_day_of_months_2015 <- seq(
+  as.Date("2015-01-01"), 
+  as.Date("2015-12-01"),
+  by = "1 month"
+  )
+
+first_day_of_months_2015
+```
+
+```{r}
+# b
+first_day_of_months_2023 <- seq(
+  as.Date("2023-01-01"), 
+  as.Date("2023-12-01"),
+  by = "1 month"
+  )
+
+first_day_of_months_2023
+```
+
+```{r}
+# 3
+age_calc <- function(birthdate) {
+  birthdate <- ymd(as.Date(birthdate))
+  age <- year(today()) - year(birthdate)
+  return(age)
+}
+```
+
+```{r}
+age_calc("1991-03-30")
+```
+
+```{r}
+# 4
+(today() %--% (today() + years(1))) / months(1)
+```
+
+```{r}
+# Get the current date
+current_date <- today()
+
+# Calculate the difference in months between today and one year from today
+difference_in_months <- (
+  current_date %--% (current_date + years(1))
+  ) / months(1)
+
+difference_in_months
+```
+
+Explanation:
+
+1.  **`current_date <- today()`:** Gets the current date using the **`today()`** function from the **`lubridate`** package.
+
+2.  **`current_date + years(1)`:** Adds one year to the current date.
+
+3.  **`(current_date %m-% (current_date + years(1))) / months(1)`:** Calculates the difference in months between the two dates using the **`%m-%`** operator and divides by **`months(1)`** to get the result in months.
+
+## Time zones
+
+```{r}
+Sys.timezone()
+```
+
+```{r}
+length(OlsonNames())
+```
+
+```{r}
+head(OlsonNames())
+```
+
+```{r}
+x1 <- ymd_hms(
+  "2024-06-01 12:00:00", 
+  tz = "America/New_York")
+
+x2 <- ymd_hms(
+  "2024-06-01 18:00:00",
+  tz = "Europe/Copenhagen"
+)
+
+x3 <- ymd_hms("2024-06-02 04:00:00",
+              tz = "Pacific/Auckland")
+```
+
+```{r}
+x1 - x2
+```
+
+```{r}
+x1 - x3
+```
+
+```{r}
+x4 <- c(x1, x2, x3)
+x4
+```
+
+You can change the time zone in two ways:
+
+-   Keep the instant in time the same, and change how it's displayed. Use this when the instant is correct, but you want a more natural display.
+
+```{r}
+x4a <- with_tz(x4, tzone = "Australia/Lord_Howe")
+x4a
+```
+
+```{r}
+x4a - x4
+```
+
+(This also illustrates another challenge of times zones: they're not all integer hour offsets!)
+
+-   Change the underlying instant in time. Use this when you have an instant that has been labelled with the incorrect time zone, and you need to fix it.
+
+```{r}
+x4b <- force_tz(
+  x4,
+  tzone = "Australia/Lord_Howe"
+  )
+```
+
+```{r}
+x4b - x4
+```

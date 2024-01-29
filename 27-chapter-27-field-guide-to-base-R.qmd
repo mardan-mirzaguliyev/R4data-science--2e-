@@ -1,0 +1,635 @@
+---
+title: "Chapter 27 - A field guide to base R"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2024/01/18
+---
+
+# **A field guide to base R**
+
+```{r}
+library(tidyverse)
+```
+
+## Selecting multiple elements with `[`
+
+`[` is used to extract sub-components from vectors and data frames, and is called like `x[i]` r `x[i, j]`.
+
+### Subsetting vectors
+
+-   **A vector of positive integers.**
+
+Subsetting with positive integers keeps the elements at those positions:
+
+```{r}
+x <- c("one", "two", "three", "four", "five")
+x[c(3, 2, 5)]
+```
+
+```{r}
+# longer output
+x[c(1, 1, 5, 5, 5, 2)]
+```
+
+-   **A vector of negative integers.**
+
+Subsetting with a logical vector keeps all values corresponding to a `TRUE` value. This is most often useful in conjunction with the comparison functions.
+
+```{r}
+x <- c(10, 3, NA, 5, 8, 1, NA)
+```
+
+```{r}
+# All non-missing values of x
+x[!is.na(x)]
+```
+
+```{r}
+# All even (or missing!) values of x
+x[x %% 2 == 0]
+```
+
+Unlike [filter()](https://dplyr.tidyverse.org/reference/filter.html), `NA` indices will be included in the output as `NA`s.
+
+**Key Points:**
+
+-   **`filter()` function:** It's a function in R that specifically filters out missing values (`NA`) from the output. When you use `filter()`, you're telling R to exclude any elements that have an `NA` value.
+
+-   **Logical indexing (using `[]`):** This method of subsetting a vector doesn't automatically exclude `NA` values. It preserves them in the output.
+
+```{r}
+# Using filter(): Removes NAs
+tibble(x) |> 
+  filter(!is.na(x))
+```
+
+```{r}
+x[x %% 2 == 0]
+```
+
+-   **A character vector**.
+
+If you have a named vector, you can subset it with a character vector:
+
+```{r}
+x <- c(abs = 1, def = 2, xyz = 5)
+x[c("xyz", "def")]
+```
+
+As with subsetting with positive integers, you can use a character vector to duplicate individual entries.
+
+```{r}
+x[c("xyz", "def", "def", "def")]
+```
+
+-   **Nothing.**
+
+The final type of subsetting is nothing, `x[]`, which returns the complete `x`. This is not useful for subsetting vectors, but as we’ll see shortly, it is useful when subsetting 2d structures like tibbles.
+
+```{r}
+x[]
+```
+
+### Subsetting data frames
+
+```{r}
+df <- tibble(
+  x = 1:3,
+  y = c("a", "e", "f" ),
+  z = runif(3)
+)
+
+df
+```
+
+```{r}
+# Select first row and second column
+df[1, 2]
+```
+
+```{r}
+# Select all rows and columns x and y
+df[, c("x", "y")]
+```
+
+```{r}
+# Select rows where `x` is greater than 1 and all columns
+df[df$x > 1, ]
+```
+
+If `df` is a `data.frame`, then `df[, cols]` will return a vector if `col` selects a single column and a data frame if it selects more than one column. If `df` is a tibble, then `[` will always return a tibble.
+
+```{r}
+df1 <- data.frame(x = 1:3)
+df1[, "x"]
+```
+
+```{r}
+df2 <- tibble(x = 1:3)
+df2[, "x"]
+```
+
+```{r}
+df1[, "x", drop = FALSE]
+```
+
+### dplyr equivalents
+
+-   `filter()`
+
+```{r}
+df <- tibble(
+  x = c(2, 3, 1, 1, NA),
+  y = letters[1:5],
+  z = runif(5)
+)
+
+df
+```
+
+```{r}
+df |> filter(x > 1)
+```
+
+```{r}
+# same as
+df[!is.na(df$x) & df$x > 1, ]
+```
+
+```{r}
+# Another common technique in the wild is to use which() for its side-effect of dropping missing values:
+df[which(df$x > 1), ]
+```
+
+-   `arrange()` is equivalent to subsetting the rows with an integer vector, usually created with [order()](https://rdrr.io/r/base/order.html):
+
+```{r}
+df |> arrange(x, y)
+```
+
+```{r}
+# same as
+df[order(df$x, df$y), ]
+```
+
+```{r}
+df[order(df$x, df$y, decreasing = TRUE), ]
+```
+
+```{r}
+df[order(-rank(df$x), df$y), ]
+```
+
+-   `select()` and `relocate()` are similar to subsetting the columns with a character vector:
+
+```{r}
+df |> select(x, z)
+```
+
+```{r}
+# same as 
+df[, c("x", "z")]
+```
+
+Base R also provides a function that combines the features of [filter()](https://dplyr.tidyverse.org/reference/filter.html) and [select()](https://dplyr.tidyverse.org/reference/select.html) called [`subset()`](https://rdrr.io/r/base/subset.html):
+
+```{r}
+df |> 
+  filter(x > 1) |> 
+  select(y, z)
+```
+
+```{r}
+# same as
+df |> subset(x > 1, c(y, z))
+```
+
+### Exercises
+
+```{r}
+# 1
+# a
+# My solution
+return_even_pos <- function(c) {
+  condition <- x[x] %% 2 == 0
+  x[condition]
+}
+```
+
+```{r}
+x <- c(2, 1, 4, NA, 3, NA, NA, 6, 5)
+```
+
+```{r}
+return_even_pos(x)
+```
+
+```{r}
+x
+```
+
+```{r}
+x[x]
+```
+
+```{r}
+# Bard solution
+even_pos_elements <- function(x) {
+  x[seq(2, length(x), by = 2)]
+}
+```
+
+```{r}
+even_pos_elements(x)
+```
+
+```{r}
+# b
+return_except_last <- function(x) {
+  x[-length(x)]
+}
+```
+
+```{r}
+return_except_last(x)
+```
+
+```{r}
+# c
+return_even_no_na <- function(x) {
+  x[!is.na(x) & x %% 2 == 0]
+}
+```
+
+```{r}
+return_even_no_na(x)
+```
+
+```{r}
+# 3
+x1 <- -5:5
+x2 <- c(rep(NA, 3), -5:5)
+x2
+```
+
+```{r}
+x1[-which(x1 > 0)]
+```
+
+```{r}
+x1[x1 <= 0]
+```
+
+```{r}
+x2[-which(x2 > 0)]
+```
+
+```{r}
+x2[x2 <= 0]
+```
+
+```{r}
+x <- c(1, 2, NA, -4, 0, NA)
+
+result1 <- x[-which(x > 0)]  
+# Output: [1 NA -4 0 NA]  (preserves NAs)
+result2 <- x[x <= 0]         # Output: [-4 0]           (excludes NAs)
+
+result1
+result2
+```
+
+## Selecting a single element with \$ and \[\[
+
+### Data frames
+
+```{r}
+tb <- tibble(
+  x = 1:4,
+  y = c(10, 4, 1, 21)
+)
+```
+
+```{r}
+tb
+```
+
+```{r}
+# by position
+tb[[1]]
+```
+
+```{r}
+# by name
+tb[["x"]]
+```
+
+```{r}
+tb$x
+```
+
+```{r}
+tb$z <- tb$x + tb$y
+tb
+```
+
+```{r}
+max(diamonds$carat)
+```
+
+```{r}
+levels(diamonds$cut)
+```
+
+```{r}
+# pull()
+diamonds |> pull(carat) |> max()
+```
+
+```{r}
+diamonds |> pull(cut) |> levels()
+```
+
+### Tibbles
+
+```{r}
+df <- data.frame(x1 = 1)
+df$x
+```
+
+```{r}
+df$z
+```
+
+```{r}
+tb <- tibble(x1 = 1)
+```
+
+```{r}
+tb$x
+```
+
+```{r}
+tb$z
+```
+
+### Lists
+
+```{r}
+l <- list(
+  a = 1:3,
+  b = "a string",
+  c = pi,
+  d = list(-1, -5)
+)
+```
+
+-   `[` extracts a sub-list. It doesn’t matter how many elements you extract, the result will always be a list.
+
+```{r}
+str(l[1:2])
+```
+
+```{r}
+str(l[1])
+```
+
+```{r}
+str(l[4])
+```
+
+Like with vectors, you can subset with a logical, integer, or character vector.
+
+-   `[[` and `$` extract a single component from a list. They remove a level of hierarchy from the list.
+
+```{r}
+str(l[[1]])
+```
+
+```{r}
+str(l[[4]])
+```
+
+```{r}
+str(l$a)
+```
+
+```{r}
+
+```
+
+### Exercises
+
+```{r}
+# 1
+l
+```
+
+`[[`
+
+```{r}
+# l[[5]]
+# Error in l[[5]] : subscript out of bounds
+```
+
+```{r}
+l[["e"]]
+```
+
+`[`
+
+```{r}
+l[5]
+```
+
+```{r}
+l["e"]
+```
+
+```{r}
+# 2
+pepper_shaker <- list(
+  packet1 = list(1:5),
+  packet2 = list(6:10),
+  packet3 = list(11:15)
+)
+
+pepper_shaker
+```
+
+```{r}
+# a
+pepper_shaker[[1]][1]
+```
+
+```{r}
+# b
+pepper_shaker[[1]][[1]]
+```
+
+## Apply family
+
+```{r}
+df <- tibble(
+  a = 1,
+  b = 2,
+  c = "a",
+  d = "b",
+  e = 4
+)
+df
+```
+
+```{r}
+# First find numeric columns
+num_cols <- sapply(df, is.numeric)
+num_cols
+```
+
+```{r}
+# Then transform each column with lapply()
+# then replace the original values
+df[, num_cols] <- lapply(
+  df[, num_cols, drop = FALSE], 
+  \(x) x * 2
+  )
+df
+```
+
+```{r}
+# map_vev()
+# # Simplify output to a vector instead of a list by computing the mean of the distributions
+1:10 |> 
+  # output a list
+  map(rnorm, n = 10) |>
+  map_vec(mean, .progress = TRUE)
+```
+
+```{r}
+vapply(df, is.numeric, logical(1))
+```
+
+```{r}
+diamonds |> 
+  group_by(cut) |> 
+  summarize(price = mean(price))
+```
+
+```{r}
+tapply(diamonds$price, diamonds$cut, mean)
+```
+
+### `for` loops
+
+`for (element in vector) {`\
+`# do something with element`
+
+`}`
+
+```{r}
+paths <- list.files(
+  "data/gapminder", 
+  pattern = "[.]xlsx$",
+  full.names = TRUE
+  ) |> 
+  set_names(basename)
+
+paths
+```
+
+```{r}
+template <- readxl::read_excel(paths[[1]])
+template$year <- 1952 
+template
+```
+
+```{r}
+con <- DBI::dbConnect(duckdb::duckdb())
+```
+
+```{r}
+DBI::dbCreateTable(con, "gapminder", template)
+```
+
+```{r}
+con |> 
+  tbl("gapminder")
+```
+
+```{r}
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  
+  DBI::dbAppendTable(con, "gapminder", df)
+}
+```
+
+```{r}
+paths |> walk(append_file)
+```
+
+```{r}
+con |> 
+  tbl("gapminder") |> 
+  count(year)
+```
+
+```{r}
+# with for loop
+for (path in paths) {
+  append_file(path)
+}
+```
+
+```{r}
+con |> 
+  tbl("gapminder") |> 
+  count(year)
+```
+
+```{r}
+paths <- dir(
+  "data/gapminder",
+  pattern = "\\.xlsx$",
+  full.names = TRUE
+  )
+files <- map(paths, readxl::read_excel)
+```
+
+```{r}
+files <- vector("list", length(paths))
+```
+
+```{r}
+seq_along(paths)
+```
+
+```{r}
+for (i in seq_along(paths)) {
+  files[[i]] <- readxl::read_excel(paths[[1]])
+}
+```
+
+```{r}
+do.call(rbind, files)
+```
+
+```{r}
+out <- NULL
+
+for (path in paths) {
+  out <- rbind(out, readxl::read_excel(path))
+}
+```
+
+## Plots
+
+```{r}
+hist(diamonds$carat)
+```
+
+```{r}
+plot(diamonds$carat, diamonds$price)
+```

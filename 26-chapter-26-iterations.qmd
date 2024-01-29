@@ -1,0 +1,1048 @@
+---
+title: "Chapter 26 - Iteration"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2024/01/15
+---
+
+# Iteration
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+```
+
+## Modifying multiple columns
+
+```{r}
+df <- tibble(
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+```
+
+```{r}
+df |> 
+  summarize(
+    n = n(),
+    a = median(a),
+    b = median(b),
+    c = median(c),
+    d = median(d),
+  )
+```
+
+```{r}
+df |> summarize(
+  n = n(),
+  across(a:d, median)
+)
+```
+
+### Selecting columns with `.cols`
+
+The first argument to [`across()`](https://dplyr.tidyverse.org/reference/across.html), `.cols`, selects the columns to transform. This uses the same specifications as [select()](https://dplyr.tidyverse.org/reference/select.html), [Section 3.3.2](#0), so you can use functions like [starts_with()](https://tidyselect.r-lib.org/reference/starts_with.html) and [ends_with()](https://tidyselect.r-lib.org/reference/starts_with.html) to select columns based on their name.
+
+There are two additional selection techniques that are particularly useful for [across()](https://dplyr.tidyverse.org/reference/across.html): [`everything()`](https://tidyselect.r-lib.org/reference/everything.html)and [where()](https://tidyselect.r-lib.org/reference/where.html). [everything()](https://tidyselect.r-lib.org/reference/everything.html) is straightforward: it selects every (non-grouping) column:
+
+```{r}
+df <- tibble(
+  grp = sample(2, 10, replace = TRUE),
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+```
+
+```{r}
+df |> 
+  group_by(grp) |> 
+  summarize(across(everything(), median))
+```
+
+`where()` allows you to select columns based on their type:
+
+-   `where(is.numeric)` selects all numeric columns.
+
+-   `where(is.character)` selects all string columns.
+
+-   `where(is.Date)` selects all date columns.
+
+-   `where(is.POSIXct)` selects all date-time columns.
+
+-   `where(is.logical)` selects all logical columns.
+
+### Calling a single function
+
+```{r}
+# df |> 
+#  group_by(grp) |> 
+#  summarize(across(everything(), median()))
+
+# Error in `summarize()`:
+# ℹ In argument: `across(everything(), median())`.
+# Caused by error in `median.default()`:
+# ! argument "x" is missing, with no default
+```
+
+```{r}
+# median()
+# #> Error in median.default(): argument "x" is missing, with no default
+```
+
+### Calling multiple functions
+
+```{r}
+rnorm_na <- function(
+    n,
+    n_na,
+    mean = 0,
+    sd = 1
+) {
+  sample(
+    c(
+      rnorm(
+        n - n_na,
+        mean = mean, 
+        sd = sd
+        ), 
+      rep(NA, n_na)
+      )
+    )
+}
+```
+
+```{r}
+df_miss <- tibble(
+  a = rnorm_na(5, 1),
+  b = rnorm_na(5, 1),
+  c = rnorm_na(5, 2),
+  d = rnorm(5)
+)
+
+df_miss
+```
+
+```{r}
+df_miss |> 
+  summarize(
+    across(a:d, median),
+    n = n()
+  )
+```
+
+```{r}
+df_miss |>
+  summarize(
+    across(
+      a:d, 
+      function(x) median(x, na.rm = TRUE)
+      ),
+    n = n()
+  )
+```
+
+```{r}
+# This is a little verbose, so R comes with a handy shortcut: for this sort of throw away, or anonymous1, function you can replace function with \2
+df_miss |> 
+  summarize(
+    across(a:d, \(x) median(x, na.rm = TRUE)),
+    n = n()
+  )
+```
+
+```{r}
+# In either case, across() effectively expands to the following code
+df_miss |> 
+  summarize(
+    a = median(a, na.rm = TRUE),
+    b = median(b, na.rm = TRUE),
+    c = median(c, na.rm = TRUE),
+    d = median(d, na.rm = TRUE),
+    n = n()
+  )
+```
+
+```{r}
+df_miss |> 
+  summarize(
+    across(a:d, list(
+      median = \(x) median(x, na.rm = TRUE),
+      n_miss = \(x) sum(is.na(x))
+    )
+    )
+  )
+```
+
+### Columns names
+
+```{r}
+df_miss |> 
+  summarize(
+    across(
+      a:d,
+      list(
+        median = \(x) median(x, na.rm = TRUE),
+        n_miss = \(x) sum(is.na(x))
+      ),
+      .names = "{.fn}_{.col}"
+    ),
+    n = n()
+  )
+```
+
+```{r}
+# coalesce() to replace NAs with 0
+df_miss |> 
+  mutate(
+    across(a:d, \(x) coalesce(x, 0))
+  )
+```
+
+```{r}
+# If you’d like to instead create new columns, you can use the .names argument to give the output new names
+df_miss |> 
+  mutate(
+    across(
+      a:d,
+      \(x) coalesce(x, 0), 
+      .names = "{.col}_na_zero"
+      )
+  )
+```
+
+### Filtering
+
+```{r}
+df_miss
+```
+
+```{r}
+# same as df_miss |> filter(is.na(a) | is.na(b) | is.na(c) | is.na(d))
+df_miss |> filter(if_any(a:d, is.na))
+```
+
+```{r}
+df_miss |> filter(if_all(a:d, is.na))
+```
+
+`across()` in functions
+
+```{r}
+expand_dates <- function(df) {
+  df |> 
+    mutate(
+      across(
+        where(is.Date),
+        list(
+          year = year, 
+          month = month, 
+          day = mday
+          )
+      )
+    )
+}
+```
+
+```{r}
+df_date <- tibble(
+  name = c("Amy", "Bob"),
+  date = ymd(c("2009-08-03", "2010-01-16"))
+)
+```
+
+```{r}
+df_date |> 
+  expand_dates()
+```
+
+```{r}
+summarize_means <- function(
+    df,
+    summary_vars = where(is.numeric)
+) {
+  df |> 
+    summarize(
+      across(
+        {{ summary_vars }},
+        \(x) mean(x, na.rm = TRUE)
+      ),
+      n = n(),
+      .groups = "drop"
+    )
+}
+```
+
+```{r}
+diamonds |> 
+  group_by(cut) |> 
+  summarize_means()
+```
+
+```{r}
+diamonds |> 
+  group_by(cut) |> 
+  summarize_means(c(carat, x:z))
+```
+
+### Vs `pivot_longer()`
+
+```{r}
+df
+```
+
+```{r}
+df |> 
+  summarize(
+    across(
+      a:d,
+      list(median = median, mean = mean)
+      )
+    )
+```
+
+```{r}
+long <- df |> 
+  pivot_longer(a:d) |> 
+  group_by(name) |> 
+  summarize(
+    median = median(value),
+    mean = mean(value)
+  )
+long
+```
+
+```{r}
+long |> 
+  pivot_wider(
+    names_from = name,
+    values_from = c(median, mean),
+    names_vary = "slowest",
+    names_glue = "{name}_{.value}"
+  )
+```
+
+```{r}
+df_paired <- tibble(
+  a_val = rnorm(10),
+  a_wts = runif(10),
+  b_val = rnorm(10),
+  b_wts = runif(10),
+  c_val = rnorm(10),
+  c_wts = runif(10),
+  d_val = rnorm(10),
+  d_wts = runif(10)
+)
+df_paired
+```
+
+```{r}
+df_long <- df_paired |> 
+  pivot_longer(
+    everything(),
+    names_to = c("group", ".value"),
+    names_sep = "_"
+  )
+
+df_long
+```
+
+```{r}
+df_long |> 
+  group_by(group) |> 
+  summarize(mean = weighted.mean(val, wts))
+```
+
+### Exercises
+
+```{r}
+# 1
+# a
+penguins
+```
+
+```{r}
+length(unique(penguins$species))
+```
+
+```{r}
+penguins |> 
+  summarize(
+    across(
+      everything(), 
+      ~ n_distinct(.)
+      )
+    )
+```
+
+```{r}
+# b
+mtcars
+```
+
+```{r}
+mtcars |> 
+  summarize(
+    across(
+      everything(), 
+      mean
+      )
+    )
+```
+
+```{r}
+# c
+diamonds
+```
+
+```{r}
+diamonds |> 
+  group_by(cut, clarity, color) |> 
+  summarize(
+    across(
+      where(is.numeric),
+      \(x) mean(x, na.rm = TRUE)
+    ),
+    n = n(),
+    .groups = "drop"
+  )
+```
+
+```{r}
+diamonds |> 
+  group_by(cut, clarity, color) |> 
+  summarize(
+    across(
+      where(is.numeric),
+      list(
+        n = ~ n(),
+        mean = ~ mean(., na.rm = TRUE)
+        )
+    ),
+    .groups = "drop"
+  )
+```
+
+```{r}
+# 2
+mtcars |> 
+  summarize(
+    across(
+      everything(), 
+      list(mean = mean, median = median)
+      )
+    )
+```
+
+```{r}
+mtcars |> 
+  summarize(
+    across(
+      everything(), 
+      list(mean, median)
+      )
+    )
+```
+
+```{r}
+# 3
+expand_dates <- function(df) {
+  df |> 
+    mutate(
+      across(
+        where(is.Date),
+        list(
+          year = year, 
+          month = month, 
+          day = mday
+          )
+      )
+    ) |> 
+    select(!where(is.Date))
+}
+```
+
+```{r}
+df_date <- tibble(
+  name = c("Amy", "Bob"),
+  date = ymd(c("2009-08-03", "2010-01-16"))
+)
+```
+
+```{r}
+df_date |> expand_dates()
+```
+
+```{r}
+# 4
+# The shorthand is useful for adding logic inline
+# This function select all summaries where there is at least one missing value in a group.
+show_missing <- function(
+    df,
+    group_vars,
+    summary_vars = everything()
+) {
+  df |> 
+  group_by(pick({{ group_vars }})) |> 
+    summarize(
+      across(
+        {{ summary_vars }},
+        \(x) sum(is.na(x))
+        ),
+      .groups = "drop"
+    ) |> 
+    select(where(\(x) any(x > 0)))
+}
+```
+
+```{r}
+nycflights13::flights |> 
+  show_missing(c(year, month, day))
+```
+
+```{r}
+show_missing1 <- function(
+    df,
+    group_vars,
+    summary_vars = everything()
+) {
+  df |> 
+  group_by(pick({{ group_vars }})) |> 
+    summarize(
+      across(
+        {{ summary_vars }},
+        \(x) sum(is.na(x))
+        ),
+      .groups = "drop"
+    )
+}
+```
+
+```{r}
+nycflights13::flights |> 
+  show_missing1(c(year, month, day))
+```
+
+1.  This line defines a function called `show_missing` that takes three arguments:
+
+    `show_missing <- function(df, group_vars, summary_vars = everything())`
+
+    -   `df`: The DataFrame to be analyzed.
+
+    -   `group_vars`: A list of columns to group the data by.
+
+    -   `summary_vars`: (Optional) A list of columns to summarize. If not specified, all columns will be summarized.
+
+<!-- -->
+
+2.  This line pipes the `df` bDataFrame to the next step of the function.
+
+    `df |>`
+
+<!-- -->
+
+3.  This line groups the data by the columns specified in the `group_vars` argument. The `pick` function is used to ensure that the `group_vars` are evaluated as a list.
+
+    `group_by(pick({{ group_vars }})) |>`
+
+<!-- -->
+
+4.  This line summarizes the data by counting the number of missing values in each column for each group. The `across` function iterates over each column in the `summary_vars` list and applies the function `\(x) sum(is.na(x))` to each column. This function counts the number of missing values in each column. The `.groups = "drop"` argument tells the `summarize` function to drop the grouping information from the resulting DataFrame.
+
+    `summarize(   across({{ summary_vars }}, \(x) sum(is.na(x))),   .groups = "drop" ) |>`
+
+<!-- -->
+
+5.  This line filters the resulting DataFrame to only include the columns that have at least one missing value in any group. The `where` function filters the DataFrame based on a logical condition. The `any(x > 0)` condition checks if there are any values in the column that are greater than zero (i.e., If there are any missing values).
+
+    `select(where((x) any(x > 0)))`
+
+The output of the `show_missing` function is a DataFrame that shows the number of missing values for each column in each group.
+
+## Reading multiple files
+
+```{r}
+# data2019 <- readxl::read_excel("data/y2019.xlsx")
+# data2020 <- readxl::read_excel("data/y2020.xlsx")
+# data2021 <- readxl::read_excel("data/y2021.xlsx")
+# data2022 <- readxl::read_excel("data/y2022.xlsx")
+```
+
+```{r}
+# data <- bind_rows(data2019, data2020, data2021, data2022)
+```
+
+### Listing files in a directory
+
+```{r}
+paths <- list.files(
+  "data/gapminder",
+  pattern = "[.]xlsx$",
+  full.names = TRUE
+  )
+```
+
+```{r}
+paths
+```
+
+### Lists
+
+```{r}
+gapminder_1952 <- readxl::read_excel("data/gapminder/1952.xlsx")
+gapminder_1957 <- readxl::read_excel("data/gapminder/1957.xlsx")
+gapminder_1962 <- readxl::read_excel("data/gapminder/1962.xlsx")
+gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
+```
+
+```{r}
+paths
+```
+
+```{r}
+files <- list(
+  gapminder_1952 <- readxl::read_excel(
+    "data/gapminder/1952.xlsx"
+    ),
+  gapminder_1957 <- readxl::read_excel(
+  "data/gapminder/1957.xlsx"
+  ),
+  gapminder_1962 <- readxl::read_excel(
+  "data/gapminder/1962.xlsx"
+  ),
+  gapminder_1967 <- readxl::read_excel(
+  "data/gapminder/1967.xlsx"
+  ),
+  gapminder_1972 <- readxl::read_excel(
+  "data/gapminder/1972.xlsx"
+  ),
+  gapminder_1977 <- readxl::read_excel(
+  "data/gapminder/1977.xlsx"
+  ),
+  gapminder_1982 <- readxl::read_excel(
+  "data/gapminder/1982.xlsx"
+  ),
+  gapminder_1987 <- readxl::read_excel(
+  "data/gapminder/1987.xlsx"
+  ),
+  gapminder_1992 <- readxl::read_excel(
+  "data/gapminder/1992.xlsx"
+  ),
+  gapminder_1997 <- readxl::read_excel(
+  "data/gapminder/1997.xlsx"
+  ),
+  gapminder_2002 <- readxl::read_excel(
+  "data/gapminder/2002.xlsx"
+  ),
+  gapminder_2007 <- readxl::read_excel(
+    "data/gapminder/2007.xlsx"
+    )
+  )
+```
+
+```{r}
+files[[3]]
+```
+
+### `purrr:map()` and `list_rbind()`
+
+-   `map(x, f)` is shorthand for
+
+    `list(`
+
+    `f(x[[1]]),`
+
+    `f(x[[2]]),`
+
+`...,`
+
+`f(x[[n]])`
+
+`)`
+
+```{r}
+files <- map(paths, readxl::read_excel)
+length(files)
+```
+
+```{r}
+files[[3]]
+```
+
+```{r}
+list_rbind(files)
+```
+
+```{r}
+paths |> 
+  map(readxl::read_excel) |> 
+  list_rbind()
+```
+
+### Data in the path
+
+```{r}
+paths |> set_names(basename)
+```
+
+```{r}
+files <- paths |> 
+  set_names(basename) |> 
+  map(readxl::read_excel)
+
+length(files)
+```
+
+```{r}
+# That makes this call to map() shorthand for
+
+# files <- list(
+#  "1952.xlsx" = readxl::read_excel(
+#    "data/gapminder/1952.xlsx"
+#    ),
+#  "1957.xlsx" = readxl::read_excel(
+#    "data/gapminder/1957.xlsx"
+#    ),
+#  "1962.xlsx" = readxl::read_excel(
+#    "data/gapminder/1962.xlsx"
+#    ),
+#  "2007.xlsx" = readxl::read_excel(
+#    "data/gapminder/2007.xlsx"
+#    )
+#)
+```
+
+```{r}
+files[["1962.xlsx"]]
+```
+
+```{r}
+paths |> 
+  set_names(basename) |> 
+  map(readxl::read_excel) |> 
+  list_rbind(names_to = "year") |> 
+  mutate(year = parse_number(year))
+```
+
+```{r}
+paths |> 
+  set_names() |> 
+  map(readxl::read_excel) |> 
+  list_rbind(names_to = "year") |> 
+  separate_wider_delim(
+    year, 
+    delim = "/",
+    names = c(NA, "dir", "file")
+    ) |> 
+  separate_wider_delim(
+    file, 
+    delim = ".",
+    names = c("file", "ext")
+  )
+```
+
+### Save your work
+
+If you’re working in a project, we suggest calling the file that does this sort of data prep work something like `0-cleanup.R`. The `0` in the file name suggests that this should be run before anything else.
+
+```{r}
+gapminder <- paths |> 
+  set_names(basename) |> 
+  map(readxl::read_excel) |> 
+  list_rbind(names_to = "year") |> 
+  mutate(year = parse_number(year))
+
+write_csv(gapminder, "gapminder.csv")
+```
+
+### Many simple iterations
+
+```{r}
+process_file <- function(path) {
+  df <- read_csv(path)
+  
+  df |> 
+    filter(!is.na(id)) |> 
+    mutate(id = tolower(id)) |>
+    pivot_longer(jan:dec, names_to = "month")
+}
+```
+
+```{r}
+# paths |> 
+#  map(process_file) |> 
+#  list_rbind()
+```
+
+```{r}
+#paths |> 
+#  map(read_csv) |> 
+#  map(\(df) df |> filter(!is.na(id))) |> 
+#  map(\(df) df |> mutate(id = tolower(id))) |> 
+#  map(\(df) df |> pivot_longer(jan:dec, names_to #= "month")) |> 
+#  list_rbind()
+```
+
+```{r}
+# paths |> 
+#  map(read_csv) |> 
+#  list_rbind() |> 
+#  filter(!is.na(id)) |> 
+#  mutate(id = tolower(id)) |> 
+#  pivot_longer(jan:dec, names_to = "month")
+```
+
+### Heterogeneous data
+
+```{r}
+paths <- list.files(
+  "data/gapminder", 
+  pattern = "[.]xlsx$", 
+  full.names = TRUE
+)
+
+paths
+```
+
+```{r}
+files <- paths |> 
+  set_names(basename) |> 
+  map(readxl::read_excel)
+
+length(files)
+```
+
+```{r}
+files[["1962.xlsx"]]
+```
+
+```{r}
+gapminder <- paths |> 
+  set_names(basename) |> 
+  map(readxl::read_excel) |> 
+  list_rbind(names_to = "year") |> 
+  mutate(year = parse_number(year))
+
+gapminder
+```
+
+```{r}
+df_types <- function(df) {
+  tibble(
+    col_name = names(df),
+    col_type = map_chr(
+      df, 
+      vctrs::vec_ptype_full
+      ),
+    n_miss = map_int(df, \(x) sum(is.na(x)))
+  )
+}
+```
+
+```{r}
+df_types(gapminder)
+```
+
+```{r}
+files |> 
+  map(df_types) |> 
+  list_rbind(names_to = "file_name") |> 
+  select(-n_miss) |> 
+  pivot_wider(
+    names_from = col_name,
+    values_from = col_type,
+  )
+```
+
+### Handling failures
+
+```{r}
+files <- paths |> 
+  map(
+    possibly(
+      \(path) readxl::read_excel(path),
+      NULL
+      )
+    )
+
+data <- files |> list_rbind()
+data
+```
+
+```{r}
+failed <- map_vec(files, is.null)
+paths[failed]
+```
+
+## Saving multiple outputs
+
+We’ll explore this challenge using three examples:
+
+-   Saving multiple data frames into one database.
+
+-   Saving multiple data frames into multiple `.csv` files.
+
+-   Saving multiple plots to multiple `.png` files.
+
+### Writing to a database
+
+```{r}
+paths <- list.files(
+  "data/gapminder-csv", 
+  pattern = "[.]csv$",
+  full.names = TRUE
+  )
+
+paths
+```
+
+```{r}
+con <- DBI::dbConnect(duckdb::duckdb())
+```
+
+```{r}
+duckdb::duckdb_read_csv(
+  con, 
+  "gapminder-csv",
+  paths
+  )
+```
+
+```{r}
+paths <- list.files(
+  "data/gapminder", 
+  pattern = "[.]xlsx$",
+  full.names = TRUE
+  ) |> 
+  set_names(basename)
+
+paths
+```
+
+```{r}
+template <- readxl::read_excel(paths[[1]])
+template$year <- 1952 
+template
+```
+
+```{r}
+con <- DBI::dbConnect(duckdb::duckdb())
+```
+
+```{r}
+# DBI::dbDisconnect(con)
+```
+
+```{r}
+DBI::dbCreateTable(con, "gapminder", template)
+```
+
+```{r}
+con |> 
+  tbl("gapminder")
+```
+
+```{r}
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  
+  DBI::dbAppendTable(con, "gapminder", df)
+}
+```
+
+```{r}
+# paths |> map(append_file)
+```
+
+```{r}
+paths |> walk(append_file)
+```
+
+```{r}
+con |> 
+  tbl("gapminder") |> 
+  count(year)
+```
+
+### Writing to csv files
+
+```{r}
+by_clarity <- diamonds |> 
+  group_nest(clarity)
+
+by_clarity
+```
+
+```{r}
+by_clarity$data[[1]]
+```
+
+```{r}
+by_clarity <- by_clarity |> 
+  mutate(
+    path = str_glue(
+      "data/diamonds-{clarity}.csv"
+      )
+    )
+
+by_clarity
+```
+
+```{r}
+walk2(
+  by_clarity$data, 
+  by_clarity$file_path, 
+  write_csv
+  )
+```
+
+### Saving plots
+
+```{r}
+carat_histogram <- function(df) {
+  ggplot(df, aes(x = carat)) + 
+    geom_histogram(binwidth = 0.1)
+}
+```
+
+```{r}
+carat_histogram(by_clarity$data[[1]])
+```
+
+```{r}
+by_clarity <- by_clarity |> 
+  mutate(
+    plot = map(data, carat_histogram),
+    path = str_glue("data/clarity-{clarity}.png")
+  )
+```
+
+```{r}
+by_clarity$plot
+```
+
+```{r}
+walk2(
+  by_clarity$path,
+  by_clarity$plot,
+  \(path, plot) ggsave(
+    path, 
+    plot,
+    width = 6,
+    height = 6
+    )
+)
+```
+
+```{r}
+# This is shorthand for
+# ggsave(by_clarity$path[[1]], by_clarity$plot[[1]], width = 6, height = 6)
+# ggsave(by_clarity$path[[2]], by_clarity$plot[[2]], width = 6, height = 6)
+# ggsave(by_clarity$path[[3]], by_clarity$plot[[3]], width = 6, height = 6)
+# ggsave(by_clarity$path[[8]], by_clarity$plot[[8]], width = 6, height = 6)
+```

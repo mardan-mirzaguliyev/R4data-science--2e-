@@ -1,0 +1,261 @@
+---
+title: "Chapter 24 - Web scraping"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2024/01/04
+---
+
+# Web scraping
+
+```{r}
+library(tidyverse)
+library(rvest)
+```
+
+## Extracting data
+
+```{r}
+html <- read_html("http://rvest.tidyverse.org/")
+html
+```
+
+```{r}
+html <- minimal_html("
+  <p>This is a paragraph</p>
+  <ul>
+    <li>This is a bulleted list</li>
+  </ul>
+")
+html
+```
+
+### Find elements
+
+```{r}
+html <- minimal_html("
+  <h1>This is a heading</h1>
+  <p id='first'>This is a paragraph</p>
+  <p class='important'>This is an important paragraph</p>
+")
+```
+
+```{r}
+html |> html_elements("p")
+```
+
+```{r}
+html |> html_elements(".important")
+```
+
+```{r}
+html |> html_elements("#first")
+```
+
+```{r}
+html |> html_element("p")
+```
+
+```{r}
+html |> html_elements("b")
+```
+
+```{r}
+html |> html_element("b")
+```
+
+### Nesting selectors
+
+```{r}
+html <- minimal_html("
+  <ul>
+    <li><b>C-3PO</b> is a <i>droid</i> that weighs <span class='weight'>167 kg</span></li>
+    <li><b>R4-P17</b> is a <i>droid</i></li>
+    <li><b>R2-D2</b> is a <i>droid</i> that weighs <span class='weight'>96 kg</span></li>
+    <li><b>Yoda</b> weighs <span class='weight'>66 kg</span></li>
+  </ul>
+  ")
+```
+
+```{r}
+characters <- html |> html_elements("li")
+characters
+```
+
+```{r}
+characters |> html_element("b")
+```
+
+```{r}
+characters |> html_element(".weight")
+```
+
+```{r}
+characters |> html_elements(".weight")
+```
+
+### Text and attributes
+
+```{r}
+characters |> 
+  html_element("b") |> 
+  html_text2()
+```
+
+```{r}
+characters |> 
+  html_element(".weight") |> 
+  html_text2()
+```
+
+```{r}
+html <- minimal_html("
+  <p><a href='https://en.wikipedia.org/wiki/Cat'>cats</a></p>
+  <p><a href='https://en.wikipedia.org/wiki/Dog'>dogs</a></p>
+")
+```
+
+```{r}
+html |> 
+  html_elements("p") |> 
+  html_element("a") |> 
+  html_attr("href")
+```
+
+### Tables
+
+```{r}
+html <- minimal_html("
+  <table class='mytable'>
+    <tr><th>x</th>   <th>y</th></tr>
+    <tr><td>1.5</td> <td>2.7</td></tr>
+    <tr><td>4.9</td> <td>1.3</td></tr>
+    <tr><td>7.2</td> <td>8.1</td></tr>
+  </table>
+  ")
+```
+
+```{r}
+html |> 
+  html_element(".mytable") |> 
+  html_table()
+```
+
+## Finding the right selectors
+
+Figuring out the selector you need for your data is typically the hardest part of the problem. You’ll often need to do some experimenting to find a selector that is both specific (i.e. it doesn’t select things you don’t care about) and sensitive (i.e. it does select everything you care about). Lots of trial and error is a normal part of the process! There are two main tools that are available to help you with this process: SelectorGadget and your browser’s developer tools.
+
+[SelectorGadget](https://rvest.tidyverse.org/articles/selectorgadget.html) is a javascript bookmarklet that automatically generates CSS selectors based on the positive and negative examples that you provide. It doesn’t always work, but when it does, it’s magic! You can learn how to install and use SelectorGadget either by reading [https://rvest.tidyverse.org/articles/selectorgadget.html](#0) or watching Mine’s video at [https://www.youtube.com/watch?v=PetWV5g1Xsc](#0).
+
+Every modern browser comes with some toolkit for developers, but we recommend Chrome, even if it isn’t your regular browser: its web developer tools are some of the best and they’re immediately available.
+
+## Putting it all together
+
+### StarWars
+
+```{r}
+url <- "https://rvest.tidyverse.org/articles/starwars.html"
+html <- read_html(url)
+```
+
+```{r}
+section <- html |> html_elements("section")
+section
+```
+
+```{r}
+section |> html_elements("h2")
+```
+
+```{r}
+section |> html_element(".director")
+```
+
+```{r}
+tibble(
+  title = section |> 
+    html_element("h2") |> 
+    html_text2(),
+  released = section |> 
+    html_element("p") |> 
+    html_text2() |> 
+    str_remove("Released: ") |> 
+    parse_date(),
+  director = section |> 
+    html_element(".director") |> 
+    html_text2(),
+  intro = section |> 
+    html_element(".crawl") |> 
+    html_text2()
+)
+```
+
+### IMDB top films
+
+```{r}
+url <- "https://web.archive.org/web/20220201012049/https://www.imdb.com/chart/top/"
+html <- read_html(url)
+```
+
+```{r}
+table <- html |> 
+  html_element("table") |> 
+  html_table()
+table
+```
+
+```{r}
+ratings <- table |> 
+  select(
+    rank_title_year = `Rank & Title`,
+    rating = `IMDb Rating`
+    ) |> 
+  mutate(
+    rank_title_year = str_replace_all(
+      rank_title_year, "\n +", " "
+    )
+  ) |> 
+  separate_wider_regex(
+    rank_title_year,
+    patterns = c(
+      rank = "\\d+", "\\.",
+      title = ".+", " +\\(",
+      year = "\\d+", "\\)"
+    )
+  )
+
+ratings
+```
+
+```{r}
+html |> 
+  html_elements("td strong") |> 
+  head() |> 
+  html_attr("title")
+```
+
+```{r}
+ratings |> 
+  mutate(
+    rating_n = html |> html_elements(
+      "td strong"
+    ) |> html_attr("title")
+  ) |> 
+  separate_wider_regex(
+    rating_n,
+    patterns = c(
+      "[0-9.]+ based on ",
+      number = "[0-9,]+",
+      " user ratings"
+    )
+  ) |> 
+  mutate(
+    number = parse_number(number)
+  )
+```
+
+## **Dynamic sites**
+
+So far we have focused on websites where `html_elements()` returns what you see in the browser and discussed how to parse what it returns and how to organize that information in tidy data frames. From time-to-time, however, you’ll hit a site where `html_elements()` and friends don’t return anything like what you see in the browser. In many cases, that’s because you’re trying to scrape a website that dynamically generates the content of the page with javascript. This doesn’t currently work with rvest, because rvest downloads the raw HTML and doesn’t run any javascript.
+
+It’s still possible to scrape these types of sites, but rvest needs to use a more expensive process: fully simulating the web browser including running all javascript. This functionality is not available at the time of writing, but it’s something we’re actively working on and might be available by the time you read this. It uses the [chromote package](https://rstudio.github.io/chromote/) which actually runs the Chrome browser in the background, and gives you additional tools to interact with the site, like a human typing text and clicking buttons. Check out the [rvest website](https://rvest.tidyverse.org) for more details.

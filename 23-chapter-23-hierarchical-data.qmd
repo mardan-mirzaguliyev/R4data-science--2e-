@@ -1,0 +1,805 @@
+---
+title: "Chapter 23 - Hierarchical data"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2024/01/04
+---
+
+# **Hierarchical data**
+
+In this chapter, you’ll learn the art of data **rectangling**: taking data that is fundamentally hierarchical, or tree-like, and converting it into a rectangular data frame made up of rows and columns. This is important because hierarchical data is surprisingly common, especially when working with data that comes from the web.
+
+```{r}
+library(tidyverse)
+library(repurrrsive)
+library(jsonlite)
+```
+
+## Lists
+
+```{r}
+x1 <- list(1:4, "a", TRUE)
+x1
+```
+
+```{r}
+x2 <- list(a = 1:2, b = 1:3, c = 1:4)
+x2
+```
+
+```{r}
+str(x1)
+```
+
+```{r}
+str(x2)
+```
+
+### Hierarchy
+
+```{r}
+x3 <- list(list(1, 2), list(3, 4))
+x3
+```
+
+```{r}
+c(c(1, 2), c(3, 4))
+```
+
+```{r}
+x4 <- c(list(1, 2), list(3, 4))
+str(x4)
+```
+
+```{r}
+x5 <- list(
+  1, list(2, list(3, list(4, list(5))))
+)
+
+str(x5)
+```
+
+```{r}
+View(x5)
+```
+
+```{r}
+x5[[2]][[2]][[2]]
+```
+
+```{r}
+x5[[1]]
+```
+
+### List-columns
+
+Lists can also live inside a tibble, where we call them list-columns. List-columns are useful because they allow you to place objects in a tibble that wouldn’t usually belong in there. In particular, list-columns are used a lot in the [tidymodels](https://www.tidymodels.org) ecosystem, because they allow you to store things like model outputs or resamples in a data frame.
+
+```{r}
+df <- tibble(
+  x = 1:2,
+  y = c("a", "b"),
+  z = list(list(1, 2), list(3, 4, 5))
+)
+
+df
+```
+
+```{r}
+df |> 
+  filter(x == 1)
+```
+
+```{r}
+# The list column could be arbitrarily complex, so there’s no good way to print it. 
+# If you want to see it, you’ll need to pull out just the one list-column and apply one of the techniques that you’ve learned above
+df |> pull(z) |> str()
+```
+
+```{r}
+df |> pull(z) |> View()
+```
+
+```{r}
+# Base R
+# It’s possible to put a list in a column of a data.frame, but it’s a lot fiddlier because data.frame() treats a list as a list of columns
+data.frame(x = list(1:3, 3:5))
+```
+
+```{r}
+# You can force data.frame() to treat a list as a list of rows by wrapping it in list I(), 
+# but the result doesn’t print particularly well
+data.frame(
+  x = I(list(1:2, 3:5)),
+  y = c("1, 2", "3, 4, 5")
+)
+```
+
+## Unnesting
+
+List-columns tend to come in two basic forms: named and unnamed. When the children are **named**, they tend to have the same names in every row. For example, in `df1`, every element of list-column `y` has two elements named `a` and `b`. Named list-columns naturally unnest into columns: each named element becomes a new named column.
+
+```{r}
+df1 <- tribble(
+  ~x, ~y,
+  1, list(a = 11, b = 12),
+  2, list(a = 21, b = 22),
+  3, list(a = 31, b = 32),
+)
+```
+
+When the children are **unnamed**, the number of elements tends to vary from row-to-row. For example, in `df2`, the elements of list-column `y` are unnamed and vary in length from one to three. Unnamed list-columns naturally unnest into rows: you’ll get one row for each child.
+
+```{r}
+df2 <- tribble(
+  ~x, ~ y,
+  1, list(11, 12, 13),
+  2, list(21),
+  3, list(31, 32),
+)
+```
+
+### `unnest_wider()`
+
+```{r}
+df1 |> 
+  unnest_wider(y)
+```
+
+```{r}
+df1 |> 
+  unnest_wider(y, names_sep = "_")
+```
+
+### `unnest_longer()`
+
+```{r}
+df2 |> 
+  unnest_longer(y)
+```
+
+```{r}
+df6 <- tribble(
+  ~x, ~y,
+  "a", list(1, 2),
+  "b", list(3),
+  "c", list()
+)
+
+df6 |> unnest_longer(y)
+```
+
+```{r}
+df6 |> unnest_longer(y, keep_empty = TRUE)
+```
+
+### Inconsistent types
+
+```{r}
+df4 <- tribble(
+  ~x, ~y,
+  "a", list(1),
+  "b", list("a", TRUE, 5)
+)
+```
+
+```{r}
+df4 |> 
+  unnest_longer(y)
+```
+
+### Other functions
+
+tidyr has a few other useful rectangling functions that we’re not going to cover in this book:
+
+-   [`unnest_auto()`](https://tidyr.tidyverse.org/reference/unnest_auto.html) automatically picks between [`unnest_longer()`](https://tidyr.tidyverse.org/reference/unnest_longer.html) and [`unnest_wider()`](https://tidyr.tidyverse.org/reference/unnest_wider.html) based on the structure of the list-column. It’s great for rapid exploration, but ultimately it’s a bad idea because it doesn’t force you to understand how your data is structured, and makes your code harder to understand.
+
+-   [`unnest()`](https://tidyr.tidyverse.org/reference/unnest.html) expands both rows and columns. It’s useful when you have a list-column that contains a 2d structure like a data frame, which you don’t see in this book, but you might encounter if you use the [`tidymodels`](https://www.tmwr.org/base-r#combining-base-r-models-and-the-tidyverse) ecosystem.
+
+These functions are good to know about as you might encounter them when reading other people’s code or tackling rarer rectangling challenges yourself.
+
+### Exercises
+
+```{r}
+# 1
+df2
+```
+
+```{r}
+df2 |> unnest_wider(y, names_sep = "_")
+```
+
+-   `names_sep` argument must be used when `unnest_wider()` function is applied to unnamed list-columns.
+
+-   Missing values are represented as NA.
+
+```{r}
+# 2
+df1 |> View()
+```
+
+```{r}
+# If the inner vectors are named, the names are copied to an `_id` column
+df1 |> unnest_longer(y)
+```
+
+```{r}
+df1 |> unnest_longer(y, indices_include = FALSE)
+```
+
+```{r}
+# 3
+df4 <- tribble(
+  ~x, ~y, ~z,
+  "a", list("y-a-1", "y-a-2"), list("z-a-1", 
+                                    "z-a-2"),
+  "b", list("y-b-1", "y-b-2", "y-b-3"), 
+  list("z-b-1", "z-b-2", "z-b-3")
+)
+```
+
+```{r}
+df4
+```
+
+```{r}
+# Multiple columns
+# If columns are aligned, you can unnest simultaneously
+df4 |> 
+  unnest_longer(c(y, z))
+```
+
+```{r}
+# This is important because sequential unnesting would generate the
+# Cartesian product of the rows
+df4 |> 
+  unnest_longer(y) |> 
+  unnest_longer(z)
+```
+
+## Case studies
+
+The main difference between the simple examples we used above and real data is that real data typically contains multiple levels of nesting that require multiple calls to [`unnest_longer()`](https://tidyr.tidyverse.org/reference/unnest_longer.html) and/or [`unnest_wider()`](https://tidyr.tidyverse.org/reference/unnest_wider.html). To show that in action, this section works through three real rectangling challenges using datasets from the repurrrsive package.
+
+### Very wide data
+
+```{r}
+View(gh_repos)
+```
+
+```{r}
+repos <- tibble(json = gh_repos)
+repos
+```
+
+```{r}
+repos |> 
+  unnest_longer(json)
+```
+
+```{r}
+repos |> 
+  unnest_longer(json) |> 
+  unnest_wider(json)
+```
+
+```{r}
+repos |> 
+  unnest_longer(json) |> 
+  unnest_wider(json) |> 
+  names() |> 
+  head(10)
+```
+
+```{r}
+repos |> 
+  unnest_longer(json) |> 
+  unnest_wider(json) |> 
+  select(id, full_name, owner, description)
+```
+
+```{r}
+#repos |> 
+#  unnest_longer(json) |> 
+#  unnest_wider(json) |> 
+# select(id, full_name, owner, description) |> 
+#  unnest_wider(owner)
+
+# ----------
+#Error in `unnest_wider()`:
+#! Can't duplicate names between the affected #columns and the original data.
+#✖ These names are duplicated:
+#  ℹ `id`, from `owner`.
+#ℹ Use `names_sep` to disambiguate using the column name.
+#ℹ Or use `names_repair` to specify a repair strategy.
+#Backtrace:
+# 1. tidyr::unnest_wider(...)
+#Error in unnest_wider(select(unnest_wider(unnest_longer(repos, json),  : 
+  
+#✖ These names are duplicated:
+#  ℹ `id`, from `owner`.
+#ℹ Use `names_sep` to disambiguate using the column name.
+#ℹ Or use `names_repair` to specify a repair strategy.
+```
+
+```{r}
+repos |> 
+  unnest_longer(json) |> 
+  unnest_wider(json) |> 
+  select(id, full_name, owner, description) |>
+  unnest_wider(owner, names_sep = "_")
+```
+
+### Relational data
+
+```{r}
+chars <- tibble(json = got_chars)
+chars
+```
+
+```{r}
+chars |> 
+  unnest_wider(json)
+```
+
+```{r}
+characters <- chars |> 
+  unnest_wider(json) |> 
+  select(id, name, gender, 
+         culture, born, died, alive)
+
+characters
+```
+
+```{r}
+chars |> 
+  unnest_wider(json) |> 
+  select(id, where(is.list))
+```
+
+```{r}
+titles <- 
+  chars |> 
+  unnest_wider(json) |> 
+  select(id, titles) |> 
+  unnest_longer(titles) |> 
+  filter(titles != "") |> 
+  rename(title = titles)
+
+titles
+```
+
+### Deeply nested
+
+```{r}
+gmaps_cities
+```
+
+```{r}
+gmaps_cities |> 
+  unnest_wider(json)
+```
+
+```{r}
+gmaps_cities |> 
+  unnest_wider(json) |> 
+  select(-status) |> 
+  unnest_longer(results)
+```
+
+```{r}
+locations <- gmaps_cities |> 
+  unnest_wider(json) |> 
+  select(-status) |> 
+  unnest_longer(results) |> 
+  unnest_wider(results)
+
+locations
+```
+
+```{r}
+locations |> 
+  select(city, formatted_address, geometry) |> 
+  unnest_wider(geometry)
+```
+
+```{r}
+locations |> 
+  select(city, formatted_address, geometry) |> 
+  unnest_wider(geometry) |> 
+  unnest_wider(location)
+```
+
+```{r}
+locations |> 
+  select(city, formatted_address, geometry) |> 
+  unnest_wider(geometry) |> 
+  # focus on the variables of interest
+  select(!location:viewport) |> 
+  unnest_wider(bounds)
+```
+
+```{r}
+locations |> 
+  select(city, formatted_address, geometry) |> 
+  unnest_wider(geometry) |> 
+  select(!location:viewport) |> 
+  unnest_wider(bounds) |> 
+  rename(ne = northeast, sw = southwest) |> 
+  unnest_wider(c(ne, sw), names_sep = "_")
+```
+
+```{r}
+locations |> 
+  select(city, formatted_address, geometry) |> 
+  hoist(
+    geometry,
+    ne_lat = c("bounds", "northeast", "lat"),
+    sw_lat = c("bounds", "southwest", "lat"),
+    ne_lng = c("bounds", "norhteast", "lng"),
+    sw_lng = c("bounds", "southwest", "lng")
+  )
+```
+
+### Exercises
+
+```{r}
+# 1
+repos |> 
+  unnest_longer(json) |> 
+  unnest_wider(json)
+```
+
+```{r}
+repos |> 
+  unnest_longer(json) |> 
+  unnest_wider(json) |> 
+  names()
+```
+
+```{r}
+repos |> 
+  unnest_longer(json) |> 
+  unnest_wider(json) |> 
+  select(id, name, full_name,
+         owner, created_at) |>
+  unnest_longer(created_at) |> 
+  arrange(created_at)
+```
+
+-   The oldest repo in this data set has been created in 24th of June, 2012, so, this repo was created before this date.
+
+-   **Reasons for Imprecision:**
+
+    -   **Data collection limitations:** The dataset might not include all repositories on GitHub or might have been filtered based on certain criteria, affecting the earliest captured date.
+
+    -   **Data updates:** The dataset might have been updated since its initial creation, potentially adding newer repositories and shifting the earliest date.
+
+    -   **API restrictions:** GitHub's API might have limitations on retrieving historical data, potentially excluding older repositories.
+
+    -   **Data aggregation:** The dataset might be an aggregate of multiple data collections with varying timestamps, making it difficult to pinpoint a single creation date.
+
+    **Additional Considerations:**
+
+    -   **Metadata:** If available, check for metadata or documentation accompanying the dataset, which might provide more accurate information about its creation date or collection process.
+
+    -   **Context:** Consider how the dataset was obtained and for what purpose. This can provide clues about its potential age and limitations.
+
+```{r}
+# 2
+owners <- repos |> 
+  unnest_longer(json) |> 
+  unnest_wider(json) |> 
+  unnest_wider(owner, names_sep = "_") |> 
+  distinct(
+    owner_login, 
+    owner_id,
+    owner_url, 
+    owner_followers_url,
+    owner_following_url
+    )
+
+owners
+```
+
+```{r}
+# 3
+# titles
+titles <- 
+  chars |> 
+  unnest_wider(json) |> 
+  select(id, titles) |> 
+  unnest_longer(titles) |> 
+  filter(titles != "") |> 
+  rename(title = titles)
+
+titles
+```
+
+```{r}
+# aliases
+aliases <- chars |> 
+  unnest_wider(json) |> 
+  select(id, aliases) |> 
+  unnest_longer(aliases) |> 
+  filter(aliases != "")
+
+aliases
+```
+
+```{r}
+# allegiances
+allegiances <- chars |> 
+  unnest_wider(json) |> 
+  select(id, allegiances) |>
+  unnest_longer(allegiances)
+
+allegiances
+```
+
+```{r}
+# books
+books <- chars |> 
+  unnest_wider(json) |> 
+  select(id, books) |> 
+  unnest_longer(books)
+
+books
+```
+
+```{r}
+# TV series
+tv_series <- chars |> 
+  unnest_wider(json) |> 
+  select(id, tvSeries) |> 
+  unnest_longer(tvSeries) |> 
+  filter(tvSeries != "")
+
+tv_series
+```
+
+```{r}
+# 4
+tibble(json = got_chars) |> 
+  unnest_wider(json) |> 
+  select(id, where(is.list)) |> 
+  pivot_longer(
+    where(is.list),
+    names_to = "name",
+    values_to = "value"
+  ) |> 
+  unnest_longer(value)
+```
+
+```{r}
+# Step 1: Convert to tibble
+tibble(json = got_chars)
+```
+
+```{r}
+# Step 2: Widening based on json column;
+# Unnesting
+tibble(json = got_chars) |> 
+  unnest_wider(json)
+```
+
+```{r}
+# Step 3: Select only list-columns
+tibble(json = got_chars) |> 
+  unnest_wider(json) |> 
+  select(id, where(is.list))
+```
+
+```{r}
+# Step 4: Converting data set to longer version;
+# Names of the columns 
+# and their contents are now in rows
+tibble(json = got_chars) |> 
+  unnest_wider(json) |> 
+  select(id, where(is.list)) |> 
+  pivot_longer(
+    where(is.list), 
+    names_to = "name", 
+    values_to = "value"
+  )
+```
+
+```{r}
+# Step 5: Unnesting based on value;
+# Getting corresponding value for titles, books, 
+# TV series etc.
+tibble(json = got_chars) |> 
+  unnest_wider(json) |> 
+  select(id, where(is.list)) |> 
+  pivot_longer(
+    where(is.list), 
+    names_to = "name", 
+    values_to = "value"
+  ) |> 
+  unnest_longer(value)
+```
+
+```{r}
+gmaps_cities |> 
+  unnest_wider(json) |> 
+  select(-status) |> 
+  unnest_longer(results) |> 
+  unnest_wider(results) |> 
+  unnest_longer(address_components) |> 
+  View()
+```
+
+```{r}
+gmaps_cities |> 
+  unnest_wider(json) |> 
+  select(-status) |> 
+  unnest_longer(results) |> 
+  unnest_wider(results) |> 
+  unnest_longer(address_components) |>
+  unnest_wider(
+    address_components, 
+    names_sep = "_"
+    ) |> 
+  View()
+```
+
+-   Address components contain both short and long names for the addresses, so, the length are different.
+
+-   In this case, it is best to use the `unnest_wider()` `names_sep` argument, since it separates both long and short names into separate columns.
+
+```{r}
+gmaps_cities |> 
+  unnest_wider(json) |> 
+  select(-status) |> 
+  unnest_longer(results) |> 
+  unnest_wider(results) |> 
+  unnest_wider(
+    address_components, 
+    names_sep = "_"
+    )
+```
+
+## JSON
+
+JSON is short for **j**ava**s**cript **o**bject **n**otation and is the way that most web APIs return data. It’s important to understand it because while JSON and R’s data types are pretty similar, there isn’t a perfect 1-to-1 mapping, so it’s good to understand a bit about JSON if things go wrong.
+
+### **Data types**
+
+JSON is a simple format designed to be easily read and written by machines, not humans. It has six key data types. Four of them are scalars:
+
+-   The simplest type is a null (`null`) which plays the same role as `NA` in R. It represents the absence of data.
+
+-   A **string** is much like a string in R, but must always use double quotes.
+
+-   A **number** is similar to R’s numbers: they can use integer (e.g., 123), decimal (e.g., 123.45), or scientific (e.g., 1.23e3) notation. JSON doesn’t support `Inf`, `-Inf`, or `NaN`.
+
+-   A **boolean** is similar to R’s `TRUE` and `FALSE`, but uses lowercase `true` and `false`.
+
+### `jsonlite`
+
+```{r}
+# A path to a json file inside the package:
+gh_users_json()
+```
+
+```{r}
+# Read it with read_json()
+gh_users2 <- read_json(gh_users_json())
+```
+
+```{r}
+# Check it's the same as the data we were using previously
+identical(gh_users, gh_users2)
+```
+
+```{r}
+str(parse_json('1'))
+```
+
+```{r}
+str(parse_json('[1, 2, 3]'))
+```
+
+```{r}
+str(parse_json('{"x": [1, 2, 3]}'))
+```
+
+### Starting the rectangling process
+
+```{r}
+json <- '[
+  {"name": "John", "age": 34},
+  {"name": "Susan", "age": 27}
+]'
+```
+
+```{r}
+str(parse_json(json))
+```
+
+```{r}
+df <- tibble(json = parse_json(json))
+df
+```
+
+```{r}
+df |> 
+  unnest_wider(json)
+```
+
+```{r}
+json <- '{
+  "status": "OK",
+  "results": [
+    {"name": "John", "age": 34},
+    {"name": "Susan", "age": 27}
+  ]
+}
+'
+```
+
+```{r}
+df <- tibble(json = list(parse_json(json)))
+df
+```
+
+```{r}
+df |> 
+  unnest_wider(json) |> 
+  unnest_wider(results, names_sep = "_")
+```
+
+```{r}
+df |> 
+  unnest_wider(json) |> 
+  unnest_longer(results) |> 
+  unnest_wider(results)
+```
+
+```{r}
+df <- tibble(results = parse_json(json)$results)
+```
+
+```{r}
+df |> 
+  unnest_wider(results)
+```
+
+### Exercises
+
+```{r}
+# 1
+json_col <- parse_json('
+  {
+    "x": ["a", "x", "z"],
+    "y": [10, null, 3]
+   }
+')
+
+json_row <- parse_json('
+  [
+     {"x": "a", "y": 10},
+     {"x": "x", "y": null},
+     {"x": "z", "y": 3}
+  ]
+')
+```
+
+```{r}
+df_col <- tibble(json = list(json_col))
+df_row <- tibble(json = json_row)
+```
+
+```{r}
+# a
+df_col |> 
+  unnest_wider(json) |> 
+  unnest_longer(c(x, y))
+```
+
+```{r}
+# b
+df_row |> 
+  unnest_wider(json)
+```

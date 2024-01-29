@@ -1,0 +1,1211 @@
+---
+title: "Chapter 25 Functions - Part 1"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2024/01/08
+---
+
+# Functions
+
+Writing a function has four big advantages over using copy-and-paste:
+
+1.  You can give a function an evocative name that makes your code easier to understand.
+
+2.  As requirements change, you only need to update code in one place, instead of many.
+
+3.  You eliminate the chance of making incidental mistakes when you copy and paste (i.e. updating a variable name in one place, but not in another).
+
+4.  It makes it easier to reuse work from project-to-project, increasing your productivity over time.
+
+A good rule of thumb is to consider writing a function whenever you’ve copied and pasted a block of code more than twice (i.e. you now have three copies of the same code). In this chapter, you’ll learn about three useful types of functions:
+
+-   Vector functions take one or more vectors as input and return a vector as output.
+
+-   Data frame functions take a data frame as input and return a data frame as output.
+
+-   Plot functions that take a data frame as input and return a plot as output.
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+
+## Vector functions
+
+```{r}
+df <- tibble(
+  a = rnorm(5),
+  b = rnorm(5),
+  c = rnorm(5),
+  d = rnorm(5)
+)
+
+df |> mutate(
+  a = (a - min(a, na.rm = TRUE)) / 
+    (max(a, na.rm = TRUE) -
+       min(a, na.rm = TRUE)),
+  b = (b - min(b, na.rm = TRUE)) / 
+    (max(b, na.rm = TRUE) -
+       min(a, na.rm = TRUE)),
+  c = (c - min(c, na.rm = TRUE)) / 
+    (max(c, na.rm = TRUE) -
+       min(c, na.rm = TRUE)),
+  d = (d - min(d, na.rm = TRUE)) / 
+    (max(d, na.rm = TRUE) -
+       min(d, na.rm = TRUE)),
+)
+```
+
+### Writing a function
+
+```{r}
+a = rnorm(5)
+b = rnorm(5)
+c = rnorm(5)
+d = rnorm(5)
+
+(a - min(a, na.rm = TRUE)) / 
+    (max(a, na.rm = TRUE) -
+       min(a, na.rm = TRUE))
+
+(b - min(b, na.rm = TRUE)) / 
+    (max(b, na.rm = TRUE) -
+       min(b, na.rm = TRUE))
+
+(c - min(c, na.rm = TRUE)) / 
+    (max(c, na.rm = TRUE) -
+       min(c, na.rm = TRUE))
+
+(d - min(d, na.rm = TRUE)) / 
+    (max(d, na.rm = TRUE) -
+       min(d, na.rm = TRUE))
+
+a
+b
+c
+d
+```
+
+To turn this into a function you need three things:
+
+1.  A **name**. Here we’ll use `rescale01` because this function rescales a vector to lie between 0 and 1.
+
+2.  The **arguments**. The arguments are things that vary across calls and our analysis above tells us that we have just one. We’ll call it `x` because this is the conventional name for a numeric vector.
+
+3.  The **body**. The body is the code that’s repeated across all the calls.
+
+`TEMPLATE`
+
+`name <- function(arguments) {`
+
+`body`
+
+`}`
+
+```{r}
+rescale01 <- function(x) {
+  (x - min(x, na.rm = TRUE)) /
+     (max(x, na.rm = TRUE) - 
+        min(x, na.rm = TRUE))
+}
+```
+
+```{r}
+rescale01((c(-10, 0, 10)))
+```
+
+```{r}
+rescale01(c(1, 2, 3, NA, 5))
+```
+
+```{r}
+df |> mutate(
+  a = rescale01(a),
+  b = rescale01(b),
+  c = rescale01(c),
+  d = rescale01(d)
+)
+```
+
+### Improving our function
+
+```{r}
+rescale01 <- function(x) {
+  rng <- range(x, na.rm = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
+```
+
+```{r}
+x <- c(1:10, Inf)
+rescale01(x)
+```
+
+```{r}
+# Ignore infinite values
+rescale01 <- function(x) {
+  rng <- range(x, na.rm = TRUE, finite = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
+```
+
+```{r}
+rescale01(x)
+```
+
+### Mutate functions
+
+Now you’ve got the basic idea of functions, let’s take a look at a whole bunch of examples. We’ll start by looking at “mutate” functions, i.e. functions that work well inside of [`mutate()`](https://dplyr.tidyverse.org/reference/mutate.html) and [`filter()`](https://dplyr.tidyverse.org/reference/filter.html) because they return an output of the same length as the input.
+
+```{r}
+z_score <- function(x) {
+  (x - mean(x, na.rm = TRUE)) / 
+    sd(x, na.rm = TRUE)
+}
+```
+
+```{r}
+clamp <- function(x, min, max) {
+  case_when(
+    x < min ~ min,
+    x > max ~ max,
+    .default = x
+  )
+}
+```
+
+```{r}
+clamp(1:10, min = 3, max = 7)
+```
+
+```{r}
+first_upper <- function(x) {
+  str_sub(x, 1, 1) <- str_to_upper(
+    str_sub(x, 1, 1)
+  )
+  x
+}
+```
+
+```{r}
+first_upper("hello")
+```
+
+```{r}
+# https://twitter.com/NVlabormarket/status/1571939851922198530
+clean_number <- function(x) {
+  is_pct <- str_detect(x, "%")
+  num <- x |> 
+    str_remove_all("%") |> 
+    str_remove_all(",") |> 
+    str_remove_all(fixed("$")) |> 
+    as.numeric()
+  if_else(is_pct, num / 100, num)
+}
+```
+
+```{r}
+clean_number("$12,300")
+```
+
+```{r}
+clean_number("45%")
+```
+
+```{r}
+fix_na <- function(x) {
+  if_else(x %in% c(997, 998, 999), NA, x)
+}
+```
+
+```{r}
+x <- 990:1000
+fix_na(x)
+```
+
+### Summary functions
+
+Another important family of vector functions is summary functions, functions that return a single value for use in [`summarize()`](https://dplyr.tidyverse.org/reference/summarise.html).
+
+```{r}
+commas <- function(x) {
+  str_flatten(x, collapse = ", ", last = " and ")
+}
+```
+
+```{r}
+commas(c("cat", "dog", "pigeon"))
+```
+
+```{r}
+cv <- function(x, na.rm = FALSE) {
+  sd(x, na.rm = na.rm) / mean(x, na.rm = na.rm)
+}
+```
+
+```{r}
+cv(runif(100, min = 0, max = 50))
+```
+
+```{r}
+cv(runif(100, min = 0, max = 500))
+```
+
+```{r}
+# https://twitter.com/gbganalyst/status/1571619641390252033
+n_missing <- function(x) {
+  sum(is.na(x))
+}
+```
+
+```{r}
+x <- c(NA, NA, NA)
+n_missing(x)
+```
+
+```{r}
+# https://twitter.com/neilgcurrie/status/1571607727255834625
+# mean absolute percentage error
+mape <- function(actual, predicted) {
+  sum(abs((actual - predicted) / actual)) / 
+    length(actual)
+}
+```
+
+### Exercises
+
+```{r}
+# 1
+x <- c(1:20, rep(NA, 5))
+x
+
+y <- c(1:30, rep(NA, 20))
+y
+
+z <- c(1:40, rep(NA, 35))
+z
+```
+
+```{r}
+mean(is.na(x))
+mean(is.na(y))
+mean(is.na(z))
+```
+
+```{r}
+# a
+mean_missing <- function(x) {
+  sum(is.na(x)) / length(x)
+}
+```
+
+```{r}
+mean_missing(x)
+```
+
+```{r}
+mean_missing(y)
+```
+
+```{r}
+mean_missing(z)
+```
+
+```{r}
+# b
+element_portion <- function(x, na.rm) {
+  x / sum(x, na.rm = na.rm)
+}
+```
+
+```{r}
+element_portion(x, na.rm = TRUE)
+```
+
+```{r}
+element_portion(y, na.rm = TRUE)
+```
+
+```{r}
+element_portion(z, na.rm = TRUE)
+```
+
+```{r}
+# c
+round_proportion <- function(x, na.rm) {
+  round(x / sum(x, na.rm = na.rm) * 100, 1)
+}
+```
+
+```{r}
+round_proportion(x, na.rm = TRUE)
+```
+
+```{r}
+round_proportion(y, na.rm = TRUE)
+```
+
+```{r}
+round_proportion(z, na.rm = TRUE)
+```
+
+```{r}
+round_proportion(z, na.rm = FALSE)
+```
+
+```{r}
+# 2
+rescale01 <- function(x) {
+  rng <- range(x, na.rm = TRUE, finite = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+  case_when(
+    x == -Inf            ~ 0,
+    x == Inf             ~ 1,
+    x != -Inf | x != Inf ~ x
+  )
+}
+```
+
+```{r}
+x <- c(1:10, -Inf, Inf)
+rescale01(x)
+```
+
+```{r}
+# 3
+birthdates <- c("1962/01/15", "1967/02/10",
+                "1991/03/30", "1992/04/23")
+```
+
+```{r}
+age_in_years <- function(x) {
+  age_year <- year(today()) - year(parse_date(x))
+  age_year
+}
+```
+
+```{r}
+age_in_years(birthdates)
+```
+
+```{r}
+# 4
+x <- 1:50
+var(x)
+```
+
+```{r}
+# a
+variance_func <- function(x) {
+  # Calculate the mean of the data
+  mean_x <- mean(x)
+  
+  # Calculate the squared 
+  # deviations from the mean
+  squared_devs <- (x - mean_x)^2
+  
+  # Calculate the variance (divide by n-1 for 
+  # sample variance)
+  variance <- sum(squared_devs) / (length(x) - 1)
+  return(variance)
+}
+```
+
+```{r}
+variance_func(x)
+```
+
+```{r}
+# b
+# Pearson's coefficient of skewness
+# Skewness = ∑(x_i - μ)^3 / nσ^3
+pearson_skewness <- function(x) {
+  # Calculate the mean, standard deviation, 
+  # and third central moment
+  mean_x <- mean(x, na.rm = TRUE)
+  std <- sd(x, na.rm = TRUE)
+  moment_3 <- mean((x - mean_x)^3)
+  
+  # Calculate the skewness 
+  # using Pearson's formula
+  skewness_x <- moment_3 / std^3
+    
+  return(skewness_x)
+}
+```
+
+```{r}
+my_data <- c(2, 5, 8, 1, 4)
+```
+
+```{r}
+pearson_skewness(my_data)
+```
+
+```{r}
+e1071::skewness(my_data)
+```
+
+```{r}
+# 5
+both_na <- function(x, y) {
+  na_pos <- which(is.na(x) | is.na(y))
+  na_pos
+}
+```
+
+```{r}
+x <- c(NA, 1:10)
+y <- c(1:10, NA)
+```
+
+```{r}
+both_na(x, y)
+```
+
+```{r}
+# 6
+is_directory <- function(x) {
+  file.info(x)$isdir
+}
+```
+
+```{r}
+is_readable <- function(x) {
+  file.access(x, 4) == 0
+}
+```
+
+```{r}
+x <- file.path(
+  "/Users/mardan.mirzaguliyev"
+  )
+```
+
+```{r}
+is_directory(x)
+```
+
+```{r}
+is_readable(dir("/Users/mardan.mirzaguliyev/Desktop/R-for-data-science-(2e)/01-code"))
+```
+
+## Data frame functions
+
+Data frame functions work like dplyr verbs: they take a data frame as the first argument, some extra arguments that say what to do with it, and return a data frame or a vector.
+
+To let you write a function that uses dplyr verbs, we’ll first introduce you to the challenge of indirection and how you can overcome it with embracing, `{{ }}`. With this theory under your belt, we’ll then show you a bunch of examples to illustrate what you might do with it.
+
+### Indirection and tidy evaluation
+
+```{r}
+grouped_mean <- function(
+    df, 
+    group_var, 
+    mean_var
+    ) {
+  df |> 
+    group_by(group_var) |> 
+    summarize(mean(mean_var))
+}
+```
+
+```{r}
+# diamonds |> grouped_mean(cut, carat)
+# Error in group_by(df, group_var) : 
+# ✖ Column `group_var` is not found.
+```
+
+```{r}
+df <- tibble(
+  mean_var = 1,
+  group_var = "g",
+  group = 1,
+  x = 10,
+  y = 100
+)
+```
+
+```{r}
+df |> grouped_mean(group, x)
+```
+
+Regardless of how we call `grouped_mean()` it always does `df |> group_by(group_var) |> summarize(mean(mean_var))`, instead of `df |> group_by(group) |> summarize(mean(x))` or `df |> group_by(group) |> summarize(mean(y))`. This is a problem of indirection, and it arises because dplyr uses **`tidy evaluation`** to allow you to refer to the names of variables inside your data frame without any special treatment.
+
+Tidy evaluation is great 95% of the time because it makes your data analyses very concise as you never have to say which data frame a variable comes from; it’s obvious from the context. The downside of tidy evaluation comes when we want to wrap up repeated tidyverse code into a function. Here we need some way to tell [`group_by()`](https://dplyr.tidyverse.org/reference/group_by.html) and [`summarize()`](https://dplyr.tidyverse.org/reference/summarise.html) not to treat `group_var` and `mean_var` as the name of the variables, but instead look inside them for the variable we actually want to use.
+
+Tidy evaluation includes a solution to this problem called **embracing** 🤗. Embracing a variable means to wrap it in braces so (e.g.) `var` becomes `{{ var }}`. Embracing a variable tells dplyr to use the value stored inside the argument, not the argument as the literal variable name. One way to remember what’s happening is to think of `{{ }}` as looking down a tunnel — `{{ var }}` will make a dplyr function look inside of `var` rather than looking for a variable called `var`.
+
+```{r}
+grouped_mean <- function(
+    df,
+    group_var,
+    mean_var
+) {
+  df |> 
+    group_by({{ group_var }}) |> 
+    summarize(mean({{ mean_var }}))
+}
+```
+
+```{r}
+df |> grouped_mean(group, x)
+```
+
+### When to embrace
+
+So the key challenge in writing data frame functions is figuring out which arguments need to be embraced. Fortunately, this is easy because you can look it up from the documentation 😄. There are two terms to look for in the docs which correspond to the two most common sub-types of tidy evaluation:
+
+-   **Data-masking**: this is used in functions like [`arrange()`](https://dplyr.tidyverse.org/reference/arrange.html), [`filter()`](https://dplyr.tidyverse.org/reference/filter.html), and [`summarize()`](https://dplyr.tidyverse.org/reference/summarise.html) that compute with variables.
+
+-   **Tidy-selection**: this is used for functions like [`select()`](https://dplyr.tidyverse.org/reference/select.html), [`relocate()`](https://dplyr.tidyverse.org/reference/relocate.html), and [`rename()`](https://dplyr.tidyverse.org/reference/rename.html) that select variables.
+
+### Common use cases
+
+```{r}
+summary6 <- function(data, var) {
+  data |> summarize(
+    min = min({{ var }}, na.rm = TRUE),
+    mean = mean({{ var }}, na.rm = TRUE),
+    median = median({{ var }}, na.rm = TRUE),
+    max = max({{ var }}, na.rm = TRUE),
+    n = n(),
+    n_miss = sum(is.na({{ var }})),
+    .groups = "drop"
+  )
+}
+```
+
+```{r}
+diamonds |> summary6(carat)
+```
+
+(Whenever you wrap [`summarize()`](https://dplyr.tidyverse.org/reference/summarise.html) in a helper, we think it’s good practice to set `.groups = "drop"` to both avoid the message and leave the data in an ungrouped state.)
+
+The nice thing about this function is, because it wraps [`summarize()`](https://dplyr.tidyverse.org/reference/summarise.html), you can use it on grouped data:
+
+```{r}
+diamonds |> 
+  group_by(cut) |> 
+  summary6(carat)
+```
+
+Furthermore, since the arguments to summarize are data-masking also means that the `var` argument to `summary6()` is data-masking. That means you can also summarize computed variables:
+
+```{r}
+diamonds |> 
+  group_by(cut) |> 
+  summary6(log10(carat))
+```
+
+```{r}
+# Sidewalk
+x <- 1:5
+
+# Find logarithms of x
+log_x <- log10(x)
+log_x
+```
+
+```{r}
+# Backwards
+10 ^ log_x
+
+# End of sidewalk
+```
+
+```{r}
+# https://twitter.com/Diabb6/status/1571635146658402309
+count_prop <- function(df, var, sort = FALSE) {
+  df |> 
+    count({{ var }}, sort = sort) |> 
+    mutate(prop = n / sum(n))
+}
+```
+
+```{r}
+diamonds |> count_prop(clarity)
+```
+
+```{r}
+unique_where <- function(df, condition, var) {
+  df |> 
+    filter({{ condition }}) |> 
+    distinct({{ var }}) |> 
+    arrange({{ var }})
+}
+```
+
+```{r}
+# Find all destinations in December
+flights |> unique_where(month == 12, dest)
+```
+
+```{r}
+subset_flights <- function(rows, cols) {
+  flights |> 
+    filter({{ rows }}) |> 
+    select(time_hour, carrier, flight, {{ cols }})
+}
+```
+
+```{r}
+subset_flights(month == 1, dest)
+```
+
+### Data-masking vs. tidy-selection
+
+```{r}
+count_missing <- function(
+    df, 
+    group_vars, 
+    x_var
+    ) {
+  df |> 
+    group_by({{ group_vars }}) |> 
+    summarize(
+      n_miss = sum(is.na({{ x_var }})),
+      .groups = "drop"
+    )
+}
+```
+
+```{r}
+# flights |> 
+#  count_missing(c(year, month, day), dep_time)
+
+# Error in group_by(df, { : 
+# Caused by error:
+# ! `c(year, month, day)` must be size 336776 or 1, not 1010328.
+# Run All Chunks AboveRun Current Chunk
+```
+
+```{r}
+count_missing <- function(
+    df, 
+    group_vars, 
+    x_var
+    ) {
+  df |> 
+    group_by(pick({{ group_vars }})) |> 
+    summarize(
+      n_miss = sum(is.na({{ x_var }})),
+      .groups = "drop"
+    )
+}
+```
+
+```{r}
+flights |> 
+  count_missing(c(year, month, day), dep_time)
+```
+
+```{r}
+# https://twitter.com/pollicipes/status/1571606508944719876
+count_wide <- function(data, rows, cols) {
+  data |> 
+    count(pick(c({{ rows }}, {{ cols }}))) |> 
+    pivot_wider(
+      names_from = {{ cols }},
+      values_from = n,
+      names_sort = TRUE,
+      values_fill = 0
+    )
+}
+```
+
+```{r}
+diamonds |> 
+  count_wide(c(clarity, color), cut)
+```
+
+### Exercises
+
+```{r}
+# 1
+# a - a function that Finds all flights that were cancelled (i.e. is.na(arr_time)) or delayed by more than an hour.
+filter_severe <- function(df) {
+  df |> 
+    filter(is.na(arr_time) | dep_delay > 60) |> 
+    select(flight, arr_time, dep_delay)
+}
+```
+
+```{r}
+flights |> filter_severe()
+```
+
+```{r}
+# b
+# a function that counts the number of cancelled flights and the number of flights delayed by more than an hour.
+summarize_severe <- function(df) {
+  df |>
+    summarize(
+      cancelled = sum(is.na(dep_time)),
+      more_than_60 = sum(
+        dep_delay >= 60, 
+        na.rm = TRUE
+          ),
+      .groups = "drop"
+    )
+}
+```
+
+```{r}
+flights |> 
+  group_by(dest) |> 
+  summarize_severe()
+```
+
+```{r}
+# c 
+# a function that finds all flights that were cancelled or delayed by more than a user supplied number of hours.
+# Method 1
+filter_severe <- function(
+    df, 
+    var1,
+    var2, 
+    hours
+    ) {
+   df |>
+    filter(
+      is.na({{ var1 }}) | {{ var2 }} >= hours
+      )
+}
+```
+
+```{r}
+flights |> filter_severe(
+  dep_time, 
+  dep_delay,
+  hours = 2
+  )
+```
+
+```{r}
+# Method 2
+filter_severe <- function(
+    df,
+    hours
+    ) {
+   df |> 
+    select(
+      year, 
+      month, 
+      day, 
+      flight,
+      dep_time, 
+      dep_delay
+      ) |> 
+    mutate(
+      dep_delay_hours = round(
+        dep_delay / 60,
+        2
+        )
+      ) |> 
+    filter(
+      is.na(dep_time) | 
+        dep_delay_hours >= hours) |> 
+    arrange(dep_delay_hours)
+}
+```
+
+```{r}
+flights |> filter_severe(hours = 2)
+```
+
+```{r}
+# d
+# a function that summarizes the weather to compute the minimum, mean, and maximum, of a user supplied variable.
+summarize_weather <- function(df, var) {
+  weather |> 
+    summarize(
+      min = min({{ var }}, na.rm = TRUE),
+      max = max({{ var }}, na.rm = TRUE),
+      mean = mean({{ var }}, na.rm = TRUE),
+      .groups = "drop"
+    )
+}
+```
+
+```{r}
+glimpse(weather)
+```
+
+```{r}
+weather |> summarize_weather(pressure)
+```
+
+```{r}
+weather |> summarize_weather(temp)
+```
+
+```{r}
+# e
+# a function that converts the user supplied variable that uses clock time (e.g., dep_time, arr_time, etc.) into a decimal time (i.e. hours + (minutes / 60)).
+standardize_time <- function(df, var) {
+  flights |> 
+    select(
+      year,
+      month,
+      day,
+      dep_time, 
+      arr_time, 
+      sched_dep_time,
+      sched_arr_time,
+      hour,
+      minute,
+      time_hour
+      ) |> 
+    filter(
+      !is.na(dep_time), 
+      !is.na(arr_time)
+      ) |> 
+    mutate(
+      standard_time = make_datetime(
+        year = year,
+        month = month,
+        day = day,
+        hour = {{ var }} %/% 100,
+        min = {{ var }} %% 100
+        )
+    )
+}
+```
+
+```{r}
+flights |> standardize_time(dep_time)
+```
+
+```{r}
+flights |> standardize_time(arr_time)
+```
+
+```{r}
+# 2
+df <- tibble(
+  x = sample(10, 100, rep = TRUE),
+  y = sample(10, 100, rep = TRUE)
+)
+```
+
+```{r}
+nrow(df)
+```
+
+```{r}
+# a 
+# distinct()
+```
+
+-   `...` - [<data-masking>](https://rlang.r-lib.org/reference/args_data_masking.html) Optional variables to use when determining uniqueness. If there are multiple rows for a given combination of inputs, only the first row will be preserved. If omitted, will use all variables in the data frame.
+
+```{r}
+nrow(distinct(df))
+```
+
+```{r}
+nrow(distinct(df, x, y))
+```
+
+```{r}
+distinct(df, x)
+```
+
+```{r}
+distinct(df, x, .keep_all = TRUE)
+```
+
+```{r}
+# Use `pick()` to select columns with tidy-select
+distinct(starwars, pick(contains("color")))
+```
+
+```{r}
+# b
+# count()
+```
+
+-   `...` - \<[`data-masking`](https://rlang.r-lib.org/reference/args_data_masking.html)\> Variables to group by.
+
+-   `wt` - \<[`data-masking`](https://rlang.r-lib.org/reference/args_data_masking.html)\> Frequency weights. Can be `NULL` or a variable:
+
+    -   If `NULL` (the default), counts the number of rows in each group.
+
+    -   If a variable, computes `sum(wt)` for each group.
+
+```{r}
+starwars |> count(species)
+```
+
+```{r}
+starwars |> count(species, sort = TRUE)
+```
+
+```{r}
+starwars |> count(sex, gender, sort = TRUE)
+```
+
+```{r}
+starwars |> count(
+  birth_decade = round(birth_year, -1)
+  )
+```
+
+```{r}
+# use the `wt` argument to perform a weighted count. This is useful
+# when the data has already been aggregated once
+df <- tribble(
+  ~name,    ~gender,   ~runs,
+  "Max",    "male",       10,
+  "Sandra", "female",      1,
+  "Susan",  "female",      4
+)
+```
+
+```{r}
+# count rows:
+df |> count(gender)
+```
+
+```{r}
+df |> count(gender, wt = runs)
+```
+
+```{r}
+# When factors are involved, `.drop = FALSE` can be used to retain factor
+# levels that don't appear in the data
+df2 <- tibble(
+  id = 1:5,
+  type = factor(
+    c("a", "c", "a", NA, "a"),
+    levels = c("a", "b", "c")
+    )
+  )
+```
+
+```{r}
+df2 |> count(type)
+```
+
+```{r}
+df2 |> count(type, .drop = FALSE)
+```
+
+```{r}
+# Or, using `group_by()`:
+df2 |> 
+  group_by(type, .drop = FALSE) |> 
+  count()
+```
+
+```{r}
+df2 |> 
+  group_by(type, .drop = TRUE) |> 
+  count()
+```
+
+```{r}
+# tally() is a lower-level function that assumes you've done the grouping
+starwars |> tally()
+```
+
+```{r}
+starwars |> group_by(species) |> tally()
+```
+
+```{r}
+# both count() and tally() have add_ variants that work like
+# mutate() instead of summarise
+df |> add_count(gender, wt = runs)
+```
+
+```{r}
+df |> add_tally(wt = runs)
+```
+
+```{r}
+df
+```
+
+```{r}
+# c
+# group_by()
+```
+
+-   ... - [\<data masking\>](https://rlang.r-lib.org/reference/args_data_masking.html) - In `group_by()`, variables or computations to group by. Computations are always done on the ungrouped data frame. To perform computations on the grouped data, you need to use a separate  `mutate()` step before the `group_by()`. Computations are not allowed in nest_by(). In `ungroup()`, variables to remove from the grouping.
+
+```{r}
+# grouping doesn't change how the data looks (apart from listing
+# how it's grouped):
+by_cyl <- mtcars |> group_by(cyl)
+by_cyl
+```
+
+```{r}
+# It changes how it acts with the other dplyr verbs:
+by_cyl |> summarize(
+  disp = mean(disp),
+  hp = mean(hp)
+)
+```
+
+```{r}
+by_cyl |> filter(disp == max(disp))
+```
+
+```{r}
+# Each call to summarise() removes a layer of grouping
+by_vs_am <- mtcars |> 
+  group_by(vs, am)
+by_vs_am
+```
+
+```{r}
+by_vs <- by_vs_am |> summarize(n = n())
+by_vs
+```
+
+```{r}
+by_vs |> summarize(n = sum(n))
+```
+
+```{r}
+# To removing grouping, use ungroup
+by_vs |> 
+  ungroup() |> 
+  summarize(n = sum(n))
+```
+
+```{r}
+# By default, group_by() overrides existing grouping
+by_cyl |> 
+  group_by(vs, am) |> 
+  group_vars()
+```
+
+```{r}
+# Use add = TRUE to instead append
+by_cyl |> 
+  group_by(vs, am, .add = TRUE) |> 
+  group_vars()
+```
+
+```{r}
+# d
+# rename_with()
+```
+
+-   `...` -
+
+    -   For `rename()`: \<[`tidy-select`](https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html)\> Use `new_name = old_name` to rename selected variables.
+
+    -   For `rename_with()`: additional arguments passed onto `.fn`.
+
+-   `.cols` - \<[`tidy-select`](https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html)\> Columns to rename; defaults to all columns.
+
+```{r}
+iris <- as_tibble(iris)
+```
+
+```{r}
+rename(iris, petal_length = Petal.Length)
+```
+
+```{r}
+# Rename using a named vector and `all_of()`
+lookup <- c(
+  pl = "Petal.Length", 
+  sl = "Sepal.Length"
+  )
+rename(iris, all_of(lookup))
+```
+
+```{r}
+rename_with(iris, toupper)
+```
+
+```{r}
+rename_with(iris, toupper, starts_with("Petal"))
+```
+
+```{r}
+# e
+# slice_min()
+```
+
+-   `...` - For `slice()`: \<[`data-masking`](https://rlang.r-lib.org/reference/args_data_masking.html)\> Integer row values.
+
+```{r}
+# Rows with minimum and maximum values of a variable
+mtcars |> slice_min(mpg, n = 5)
+```
+
+```{r}
+mtcars |> slice_max(mpg, n = 5)
+```
+
+```{r}
+# slice_min() and slice_max() may return more rows than requested
+# in the presence of ties.
+mtcars |> slice_min(cyl, n = 1)
+```
+
+```{r}
+# Use with_ties = FALSE to return exactly n matches
+mtcars |> 
+  slice_min(cyl, n = 1, with_ties = FALSE)
+```
+
+```{r}
+# f
+# slice_sample()
+```
+
+-   `...` - For `slice()`: \<[`data-masking`](https://rlang.r-lib.org/reference/args_data_masking.html)\> Integer row values.
+
+```{r}
+# slice_sample() allows you to random select with or without replacement
+mtcars |> slice_sample(n = 5)
+```
+
+```{r}
+mtcars |> slice_sample(n = 5, replace = TRUE)
+```
+
+```{r}
+# 3
+count_prop <- function(df, var, sort = FALSE) {
+  df |>
+    count({{ var }}, sort = sort) |> 
+    mutate(prop = n / sum(n))
+}
+```
+
+```{r}
+flights |> count_prop(tailnum)
+```
+
+```{r}
+count_prop <- function(df, vars, sort = FALSE) {
+  df |>
+    count(pick({{ vars }}), sort = sort) |> 
+    mutate(
+      prop = n / sum(n),
+      prop = as.numeric(prop)
+           )
+}
+```
+
+```{r}
+options(scipen=999)
+
+flights |> count_prop(c(flight, tailnum))
+```
+
+```{r}
+starwars %>% count_prop(c(sex, gender), sort = TRUE)
+```
+
+## 

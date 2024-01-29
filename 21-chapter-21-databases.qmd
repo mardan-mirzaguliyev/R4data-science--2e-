@@ -1,0 +1,430 @@
+---
+title: "Chapter 21 - Databases"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2024/01/01
+---
+
+# Databases
+
+```{r}
+library(DBI)
+library(dbplyr)
+library(tidyverse)
+```
+
+## Connecting to a database
+
+```{r}
+# con <- DBI::dbConnect(
+#   RMariaDB::MariaDB(), 
+#   username = "foo"
+# )
+# con <- DBI::dbConnect(
+#   RPostgres::Postgres(), 
+#   hostname = "databases.mycompany.com", 
+#   port = 1234
+# )
+```
+
+### In this book
+
+```{r}
+con <- DBI::dbConnect(duckdb::duckdb())
+```
+
+```{r}
+# supply the dbdir argument to make a persistent database and tell duckdb where to save it
+
+con <- DBI::dbConnect(
+  duckdb::duckdb(),
+  dbdir = "data/duckdb"
+  )
+```
+
+### Load some data
+
+```{r}
+con
+```
+
+```{r}
+# dbWriteTable(con, "mpg", ggplot2::mpg)
+# dbWriteTable(con, "diamonds", ggplot2::diamonds)
+```
+
+### DBI basics
+
+```{r}
+dbListTables(con)
+```
+
+```{r}
+con |> 
+  dbReadTable("diamonds") |> 
+  as_tibble()
+```
+
+```{r}
+sql <- "
+  SELECT carat, cut, clarity, color, price
+  FROM diamonds
+  WHERE price > 15000
+"
+as_tibble(dbGetQuery(con, sql))
+```
+
+## dbplyr basics
+
+```{r}
+diamonds_db <- tbl(con, "diamonds")
+diamonds_db
+```
+
+There are two other common ways to interact with a database. First, many corporate databases are very large so you need some hierarchy to keep all the tables organized. In that case you might need to supply a schema, or a catalog and a schema, in order to pick the table you’re interested in:
+
+```{r}
+# diamonds_db <- tbl(
+#   con, 
+#   in_schema("sales", "diamonds")
+#  )
+
+# diamonds_db <- tbl(
+#  con, 
+#  in_catalog(
+#    "north_america", 
+#    "sales", 
+#    "diamonds")
+#  )
+```
+
+Other times you might want to use your own SQL query as a starting point:
+
+```{r}
+# diamonds_db <- tbl(
+#  con, 
+#  sql("SELECT * FROM diamonds")
+# )
+```
+
+This object is **lazy**; when you use dplyr verbs on it, dplyr doesn’t do any work: it just records the sequence of operations that you want to perform and only performs them when needed.
+
+```{r}
+big_diamonds_db <- diamonds_db |> 
+  filter(price > 15000) |> 
+  select(carat:clarity, price)
+
+big_diamonds_db
+```
+
+```{r}
+big_diamonds_db |> 
+  show_query()
+```
+
+```{r}
+big_diamonds <- big_diamonds_db |> 
+  collect()
+
+big_diamonds
+```
+
+## SQL
+
+```{r}
+dbplyr::copy_nycflights13(con)
+```
+
+```{r}
+flights <- tbl(con, "flights")
+planes <- tbl(con, "planes")
+```
+
+### SQL basics
+
+```{r}
+flights |> show_query()
+```
+
+```{r}
+planes |> show_query()
+```
+
+```{r}
+flights |> 
+  filter(dest == "IAH") |> 
+  arrange(dep_delay) |> 
+  show_query()
+```
+
+```{r}
+flights |> 
+  group_by(dest) |> 
+  summarize(
+    dep_delay = mean(dep_delay, na.rm = TRUE)
+    ) |> 
+  show_query()
+```
+
+### SELECT
+
+```{r}
+planes |> 
+  select(tailnum, type, 
+         manufacturer, model, year) |> 
+  show_query()
+```
+
+```{r}
+planes |> 
+  select(tailnum, type, manufacturer, 
+         model, year) |> 
+  rename(year_built = year) |> 
+  show_query()
+```
+
+```{r}
+planes |> 
+  select(tailnum, type, manufacturer, 
+         model, year) |> 
+  relocate(
+    manufacturer,
+    model, 
+    .before = type
+    ) |> 
+  show_query()
+```
+
+```{r}
+flights |> 
+  mutate(
+    speed = distance / (air_time / 60)
+  ) |> 
+  show_query()
+```
+
+### FROM
+
+The `FROM` clause defines the data source. It’s going to be rather uninteresting for a little while, because we’re just using single tables. You’ll see more complex examples once we hit the join functions.
+
+### GROUP BY
+
+```{r}
+diamonds_db |> 
+  group_by(cut) |> 
+  summarize(
+    n = n(),
+    avg_price = mean(price, na.rm = TRUE)
+  ) |> 
+  show_query()
+```
+
+### WHERE
+
+```{r}
+flights |> 
+  filter(dest == "IAH" | dest == "HOU") |> 
+  show_query()
+```
+
+```{r}
+flights |> 
+  filter(arr_delay > 0 & arr_delay < 20) |>
+  show_query()
+```
+
+There are a few important details to note here:
+
+-   `|` becomes `OR` and `&` becomes `AND`.
+
+-   SQL uses `=` for comparison, not `==`. SQL doesn’t have assignment, so there’s no potential for confusion there.
+
+-   SQL uses only `''` for strings, not `""`. In SQL, `""` is used to identify variables, like R’s ``` `` ```.
+
+```{r}
+flights |> 
+  filter(dest %in% c("IAH", "HOU")) |>
+  show_query()
+```
+
+SQL uses `NULL` instead of `NA`. `NULL`s behave similarly to `NA`s. The main difference is that while they’re “infectious” in comparisons and arithmetic, they are silently dropped when summarizing. dbplyr will remind you about this behavior the first time you hit it:
+
+```{r}
+flights |> 
+  group_by(dest) |> 
+  summarize(delay = mean(arr_delay))
+```
+
+```{r}
+flights |> 
+  filter(!is.na(dep_delay)) |> 
+  show_query()
+```
+
+```{r}
+diamonds_db |> 
+  group_by(cut) |> 
+  summarize(n = n()) |> 
+  filter(n > 100) |> 
+  show_query()
+```
+
+### ORDER BY
+
+```{r}
+flights |> 
+  arrange(year, month, day, desc(dep_delay)) |> 
+  show_query()
+```
+
+### Subqueries
+
+```{r}
+flights |> 
+  mutate(
+    year1 = year + 1,
+    year2 = year1 + 1
+  ) |> 
+  show_query()
+```
+
+```{r}
+flights |> 
+  mutate(year1 = year + 1) |> 
+  filter(year1 == 2014) |> 
+  show_query()
+```
+
+### Joins
+
+```{r}
+flights |> 
+  left_join(
+    planes |> 
+      rename(year_built = year),
+    by = "tailnum"
+    ) |> 
+  show_query()
+```
+
+### Other verbs
+
+dbplyr also translates other verbs like `distinct()`, `slice_*()`, and `intersect()`, and a growing selection of tidyr functions like `pivot_longer()` and `pivot_wider()`. The easiest way to see the full set of what’s currently available is to visit the dbplyr website: <https://dbplyr.tidyverse.org/reference/>.
+
+### Exercises
+
+```{r}
+# 1
+flights |> 
+  distinct(month) |> 
+  collect() 
+```
+
+```{r}
+flights |> 
+  distinct(month) |> 
+  show_query()
+```
+
+```{r}
+flights |> 
+  head(n = 10) |> 
+  collect()
+```
+
+```{r}
+flights |> 
+  head(n = 10) |> 
+  show_query()
+```
+
+```{r}
+# 2
+flights |> 
+  filter(dep_delay < arr_delay) |> 
+  show_query()
+```
+
+```{r}
+flights |> 
+  mutate(
+    speed = distance / (air_time / 60)
+      ) |> 
+  show_query()
+```
+
+## Function translations
+
+```{r}
+summarize_query <- function(df, ...) {
+  df |> 
+    summarize(...) |> 
+    show_query()
+}
+
+mutate_query <- function(df, ...) {
+  df |> 
+    mutate(..., .keep = "none") |> 
+    show_query()
+}
+```
+
+```{r}
+flights |> 
+  group_by(year, month, day) |> 
+  summarize_query(
+    mean = mean(arr_delay, na.rm = TRUE),
+    median = median(arr_delay, na.rm = TRUE)
+  )
+```
+
+```{r}
+flights |> 
+  group_by(year, month, day) |> 
+  mutate_query(
+    mean = mean(arr_delay, na.rm = TRUE)
+  )
+```
+
+```{r}
+flights |> 
+  group_by(dest) |> 
+  arrange(time_hour) |> 
+  mutate_query(
+    lead = lead(arr_delay),
+    lag = lag(arr_delay)
+  )
+```
+
+```{r}
+flights |> 
+  mutate_query(
+    description = if_else(
+      arr_delay > 0, "delayed", "on-time"
+    )
+  )
+```
+
+```{r}
+flights |> 
+  mutate_query(
+    description = 
+      case_when(
+        arr_delay < -5 ~ "early",
+        arr_delay <  5 ~ "on-time",
+        arr_delay >= 5 ~ "late"
+      )
+  )
+```
+
+```{r}
+flights |> 
+  mutate_query(
+    description = cut(
+      arr_delay,
+      breaks = c(-Inf, -5, 5, Inf),
+      labels = c("early", "on-time", "late")
+    )
+  )
+```

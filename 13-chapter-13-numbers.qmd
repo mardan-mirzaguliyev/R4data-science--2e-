@@ -1,0 +1,1432 @@
+---
+title: "Chapter 13 - Numbers"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2023/11/06
+---
+
+# Numbers
+
+```{r}
+# install.packages("moments")
+library(tidyverse)
+library(nycflights13)
+library(moments)
+```
+
+## Making numbers
+
+```{r}
+x <- c("1.2", "5.6", "1e3")
+```
+
+```{r}
+parse_double(x)
+```
+
+## Counts
+
+```{r}
+flights |> count(dest)
+```
+
+```{r}
+flights |> count(dest, sort = TRUE)
+```
+
+```{r}
+flights |> 
+  count(dest, sort = TRUE)
+```
+
+```{r}
+flights |> 
+  count(dest, sort = TRUE) |> 
+  print(n = Inf)
+```
+
+```{r}
+flights |> 
+  group_by(dest) |> 
+  summarize(
+    n = n(),
+    delay = mean(arr_delay, na.rm = TRUE)
+  )
+```
+
+```{r}
+# n()
+
+# Must only be used inside data-masking verbs like `mutate()`, `filter()`, and
+# `group_by()`.
+```
+
+```{r}
+# n_distinct(x)
+flights |> 
+  group_by(dest) |> 
+  summarize(carriers = n_distinct(carrier)) |> 
+  arrange(desc(carriers))
+```
+
+```{r}
+# Weighted count
+flights |> 
+  group_by(tailnum) |> 
+  summarize(miles = sum(distance))
+```
+
+```{r}
+flights |> count(tailnum, wt = distance)
+```
+
+```{r}
+flights |> 
+  group_by(dest) |> 
+  summarize(n_cancelled = sum(is.na(dep_time)))
+```
+
+### Exercises
+
+```{r}
+# 1
+flights |> count(is.na(dep_time))
+```
+
+```{r}
+# 2
+# a - count version
+flights |> count(dest, sort = TRUE)
+```
+
+```{r}
+# group_by version
+flights |> 
+  group_by(dest) |> 
+  summarize(n = n()) |> 
+  arrange(desc(n))
+```
+
+```{r}
+# b
+# b - count version
+flights |> count(tailnum, wt = distance)
+```
+
+```{r}
+# group_by version
+flights |> 
+  group_by(tailnum) |> 
+  summarise(total_dist = sum(distance))
+```
+
+## Numeric transformations
+
+### **Arithmetic and recycling rules**
+
+```{r}
+x <- c(1, 2, 10, 20)
+```
+
+```{r}
+x / 5
+```
+
+```{r}
+x * c(1, 2)
+```
+
+```{r}
+x * c(1, 2, 3)
+```
+
+```{r}
+# wrong results
+flights |> 
+  filter(month == c(1, 2))
+```
+
+```{r}
+# use %in% operator instead
+flights |> 
+  filter(month %in% c(1, 2))
+```
+
+### Minimum and maximum
+
+```{r}
+df <- tribble(
+  ~x, ~y,
+  1, 3,
+  5, 2,
+  7, NA,
+)
+```
+
+```{r}
+df |> 
+  mutate(
+    min = pmin(x, y, na.rm = TRUE),
+    max = pmax(x, y, na.rm = TRUE)
+  )
+```
+
+```{r}
+df |> 
+  mutate(
+    min = min(x, y, na.rm = TRUE),
+    max = max(x, y, na.rm = TRUE)
+  )
+```
+
+### Modular arithmetic
+
+-   `%/%` does integer division
+
+-   `%%` computes the remainder
+
+```{r}
+1:10 %/% 3
+```
+
+```{r}
+1:10 %% 3
+```
+
+```{r}
+flights |> 
+  mutate(
+    hour = sched_dep_time %/% 100,
+    minute = sched_dep_time %% 100,
+    .keep = "used"
+  )
+```
+
+```{r}
+flights |> 
+  group_by(hour = sched_dep_time %/% 100) |> 
+  summarize(
+    prop_cancelled = mean(is.na(dep_time)),
+    n = n()
+    ) |> 
+  filter(hour > 1) |> 
+  ggplot(aes(x = hour, y = prop_cancelled)) +
+  geom_line(color = "grey50") +
+  geom_point(aes(size = n))
+```
+
+### Logarithms
+
+#### **Calculating the Natural Logarithm (base e):**
+
+```{r}
+e <- 2.718281828459
+```
+
+```{r}
+x <- 10
+natural_log <- log(x)
+natural_log
+```
+
+`natural_log` to the power of `e` which is which is an irrational and transcendental number approximately equal to 2.718281828459 is approximately 10.
+
+```{r}
+natural_log^2.718281828459
+```
+
+```{r}
+round(natural_log^2.718281828459, 0)
+```
+
+```{r}
+exp(natural_log)
+```
+
+#### Specify the base explicitly (although base e is the default
+
+```{r}
+explicit_base_log <- log(x, base = exp(1))
+explicit_base_log
+```
+
+#### **Calculating the Common Logarithm (base 10)**
+
+```{r}
+x <- 100
+common_log <- log10(x)
+common_log
+```
+
+```{r}
+# Exponential of base 10 logarithm
+10^common_log
+```
+
+#### **Calculating the Common Logarithm (base 2)**
+
+```{r}
+x <- 100
+base_2_log <- log2(x)
+base_2_log
+```
+
+```{r}
+# Exponential of base 10 logarithm
+2^base_2_log
+```
+
+### **Calculating Logarithms with a custom base**
+
+```{r}
+x <- 8
+custom_base_log <- log(x, base = 2)
+custom_base_log
+```
+
+```{r}
+2^custom_base_log
+```
+
+### Rounding
+
+```{r}
+# number to the nearest integer
+round(123.456)
+```
+
+```{r}
+# two digits
+round(123.456, digits = 2)
+```
+
+```{r}
+# one digit
+round(123.456, 1)
+```
+
+```{r}
+# round to nearest ten
+round(123.456, -1)
+```
+
+```{r}
+# round to nearest hundred
+round(123.456, -2)
+```
+
+```{r}
+# round to nearest thousand
+round(123.456, -3)
+```
+
+```{r}
+# “round half to even” or Banker’s rounding
+# if a number is half way between two integers,
+# it will be rounded to the even integer
+round(c(1.5, 2.5))
+```
+
+```{r}
+x <- 123.456
+floor(x)
+ceiling(x)
+```
+
+```{r}
+# Round down to nearest two digits
+floor(x / 0.01) * 0.01
+```
+
+```{r}
+ceiling(x / 0.01) * 0.01
+```
+
+```{r}
+# round() to a multiple of some other number
+# round to nearest multiple of 4
+round(x / 4) * 4
+```
+
+```{r}
+# round to nearest 0.25
+round(x / 0.25) * 0.25
+```
+
+### **Cutting numbers into ranges**
+
+```{r}
+x <- c(1, 2, 5, 10, 15, 20)
+```
+
+```{r}
+cut(x, breaks = c(0, 5, 10, 15, 20))
+```
+
+```{r}
+# the breaks don’t need to be evenly spaced
+cut(x, breaks = c(0, 5, 10, 100))
+```
+
+```{r}
+# labels
+# there should be one less labels than breaks
+cut(
+  x,
+  breaks = c(0, 5, 10, 15, 20),
+  labels = c("sm", "md", "lg", "xl")
+)
+```
+
+```{r}
+# any values outside of the range of the breaks will become NA
+y <- c(NA, -10, 5, 10, 30)
+cut(y, breaks = c(0, 5, 10, 15, 20))
+```
+
+### **Cumulative and rolling aggregates**
+
+```{r}
+x <- 1:10
+cumsum(x)
+```
+
+```{r}
+cumprod(x)
+```
+
+```{r}
+cummin(c(3:1, 2:0, 4:2))
+```
+
+```{r}
+cummax(c(3:1, 2:0, 4:2))
+```
+
+### Exercises
+
+```{r}
+# 1
+flights |> 
+  group_by(hour = sched_dep_time %/% 100) |> 
+  summarize(
+    prop_cancelled = mean(is.na(dep_time)),
+    n = n()
+    ) |> 
+  filter(hour > 1) |> 
+  ggplot(aes(x = hour, y = prop_cancelled)) +
+  geom_line(color = "grey50") +
+  geom_point(aes(size = n))
+```
+
+1.  `flights` data set is grouped by `hour` variable which is created by applying floor division to the `sched_dep_time` to get the hour of the flight.
+
+2.  Then, it is summarized creating two new variables:
+
+    1.  `prop_cancelled` is the proportion of the cancelled flights to the total flights per hour.
+
+    2.  `n` is the number of cancelled flights per hour.
+
+    3.  Then, it is filtered to display flights after 1 o'clock.
+
+    4.  After filtering line graph and points are plotted:
+
+        1.  `hour` variable is in the x axis
+
+        2.  `prop_cancelled` variable is in the y axis
+
+        3.  The size of the points depend on the number of cancelled flights per hour.
+
+```{r}
+# 2
+sin(90)
+```
+
+```{r}
+cos(90)
+```
+
+Here are some common trigonometric functions you might find in R:
+
+1.  **`sin(x):`** Sine function.
+
+2.  **`cos(x):`** Cosine function.
+
+3.  **`tan(x):`** Tangent function.
+
+4.  **`asin(x):`** Arcsine function (inverse sine).
+
+5.  **`acos(x):`** Arccosine function (inverse cosine).
+
+6.  **`atan(x):`** Arctangent function (inverse tangent).
+
+7.  **`atan2(y, x):`** Arctangent of y/x, taking signs into account to determine the quadrant.
+
+8.  **`sinh(x):`** Hyperbolic sine function.
+
+9.  **`cosh(x):`** Hyperbolic cosine function.
+
+10. **`tanh(x):`** Hyperbolic tangent function.
+
+By default, R trigonometric functions use radians rather than degrees. If you need to work with degrees, you can convert between radians and degrees using the **`pi`** constant in R. For example:
+
+```{r}
+# Convert degrees to radians
+angle_in_degrees <- 45
+angle_in_radians <- angle_in_degrees * (pi / 180)
+angle_in_radians
+```
+
+```{r}
+# Use trigonometric functions with radians
+sin_value <- sin(angle_in_radians)
+sin_value
+```
+
+```{r}
+cos_value <- cos(angle_in_radians)
+cos_value
+```
+
+```{r}
+tan_value <- tan(angle_in_radians)
+tan_value
+```
+
+```{r}
+# Sine function
+sin_value <- sin(pi/4)
+cat("sin(pi/4):", sin_value, "\n")
+```
+
+```{r}
+# Cosine function
+cos_value <- cos(pi/3)
+cat("cos(pi/3):", cos_value, "\n")
+```
+
+```{r}
+# Tangent function
+tan_value <- tan(pi/6)
+cat("tan(pi/6):", tan_value, "\n")
+```
+
+```{r}
+# Arcsine function (inverse sine)
+asin_value <- asin(0.5)
+cat("asin(0.5):", asin_value, "\n")
+```
+
+```{r}
+# Arccosine function (inverse cosine)
+acos_value <- acos(-0.5)
+cat("acos(-0.5):", acos_value, "\n")
+```
+
+```{r}
+# Arctangent function (inverse tangent)
+atan_value <- atan(1)
+cat("atan(1)", atan_value, "\n")
+```
+
+```{r}
+# Arctangent function with two arguments (atan2)
+atan2_value <- atan2(1, -1)
+cat("atan2(1, -1):", atan2_value, "\n")
+```
+
+```{r}
+# Hyperbolic sine function
+sinh_value <- sinh(2)
+cat("sinh(2):", sinh_value, "\n")
+```
+
+```{r}
+# Hyperbolic cosine function
+cosh_value <- cosh(2)
+cat("cosh(2):", cosh_value, "\n")
+```
+
+```{r}
+# Hyperbolic tangent function
+tanh_value <- tanh(0.5)
+cat("tanh(0.5):", tanh_value, "\n")
+```
+
+```{r}
+# 3
+flights |> 
+  filter(month == 1, day == 1) |> 
+  ggplot(
+    aes(x = sched_dep_time, y = dep_delay)
+    ) +
+  geom_point()
+```
+
+```{r}
+flights |> 
+  filter(month == 1, day == 1) |> 
+  mutate(
+    sched_dep_hour = 
+      ((sched_dep_time %/% 100) * 60 + 
+      (sched_dep_time %% 100)) / 60,
+    dep_delay_hour = dep_delay / 60,
+    .keep = "used"
+    ) |> 
+  ggplot(
+    aes(x = sched_dep_hour, y = dep_delay_hour)
+    ) +
+  geom_point()
+```
+
+```{r}
+# 4
+# My solution
+flights |> 
+  select(dep_time, arr_time) |> 
+  mutate(
+    rd_dep_time = floor(
+      dep_time / 8.333333
+      ) * 8.333333,
+    rd_arr_time = round(
+      arr_time / 8.333333
+      ) * 8.333333
+    )
+```
+
+```{r}
+# ChaGPT solution
+flights |> 
+  select(dep_time, arr_time) |> 
+  mutate(
+    rd_dep_time = floor(
+      dep_time / 5
+      ) * 5,
+    rd_arr_time = round(
+      arr_time / 5
+      ) * 5
+    )
+```
+
+## General transformations
+
+#### Ranks
+
+```{r}
+x <- c(1, 2, 2, 3, 4, NA)
+min_rank(x)
+```
+
+```{r}
+min_rank(desc(x))
+```
+
+```{r}
+df <- tibble(x = x)
+
+df |> 
+  mutate(
+    row_number = row_number(x),
+    dense_rank = dense_rank(x),
+    percent_rank = percent_rank(x),
+    cume_dist = cume_dist(x)
+  )
+```
+
+```{r}
+df <- tibble(id = 1:10)
+
+df |> 
+  mutate(
+    row0 = row_number() - 1,
+    three_groups = row0 %% 3,
+    three_in_each_group = row0 %/% 3
+  )
+```
+
+#### Offsets
+
+```{r}
+x <- c(2, 5, 11, 11, 19, 35)
+```
+
+```{r}
+lag(x)
+```
+
+```{r}
+lead(x)
+```
+
+```{r}
+# x - lag(x) gives you the difference between the current and previous value
+x - lag(x)
+```
+
+```{r}
+# x == lag(x) tells you when the current value changes
+x == lag(x)
+```
+
+#### Consecutive identifiers
+
+```{r}
+events <- tibble(
+  time = c(
+    0, 1, 2, 3, 5, 10, 12, 
+    15, 17, 19, 20, 27, 28, 
+    30
+    )
+)
+```
+
+```{r}
+events <- events |> 
+  mutate(
+    diff = time - lag(
+    time, 
+    default = first(time),
+      ),
+    has_gap = diff >= 5
+  )
+events
+```
+
+```{r}
+events |> 
+  mutate(
+    group = cumsum(has_gap)
+  )
+```
+
+```{r}
+df <- tibble(
+  x = c("a", "a","a", "b","c", "c", 
+        "d", "e", "a", "a", "b", "b"),
+  y = c(1, 2, 3, 2, 4, 1, 
+        3, 9, 4, 8, 10, 199)
+)
+```
+
+```{r}
+df |> 
+  group_by(id = consecutive_id(x)) |> 
+  slice_head(n = 1)
+```
+
+#### Exercises
+
+```{r}
+# 1
+flights_ranks <- flights |> 
+  mutate(
+    delay_rank = min_rank(desc(dep_delay)),
+    .keep = "used")
+```
+
+-   `min_rank()` gives every tie the same (smallest) value so that `c(10, 20, 20, 30)` gets ranks `c(1, 2, 2, 4)`. It's the way that ranks are usually computed in sports and is equivalent to `rank(ties.method = "min")`.
+
+```{r}
+top_10_delayed <- flights_ranks |> 
+  filter(delay_rank <= 10) |> 
+  arrange(delay_rank)
+```
+
+```{r}
+top_10_delayed 
+```
+
+```{r}
+# 2
+# Calculate the average delay for each plane
+plane_delay <- flights |> 
+  group_by(tailnum) |> 
+  summarise(
+    average_delay = mean(dep_delay, na.rm = TRUE)
+  ) |> 
+  mutate(
+    rank = min_rank(desc(average_delay))
+    ) |> 
+  arrange(rank) |> 
+# Return only the highest ranked tailnum
+  slice_head(n = 1)
+```
+
+```{r}
+plane_delay
+```
+
+```{r}
+# 3
+flights_hour <- flights |> 
+  mutate(
+    hour = dep_time %/% 100
+    )
+flights_hour
+```
+
+```{r}
+# Calculate the average delay for each hour
+hourly_delays <- flights_hour |> 
+  group_by(
+    hour) |> 
+  summarize(
+    average_delay = mean(dep_delay, na.rm = TRUE)
+    )
+hourly_delays
+```
+
+```{r}
+ggplot(
+  hourly_delays,
+  aes(x = hour, y = average_delay)
+  ) +
+  geom_line(color = "grey50") +
+  geom_point()
+```
+
+```{r}
+# 4
+# a
+flights |> 
+  group_by(dest) |> 
+  filter(row_number() < 4)
+```
+
+-   `row_number()` without an argument is used to refer to the "current" row number.
+
+-   It filters out first 3 entries in each group.
+
+-   In other words it gives exactly 3 rows per group.
+
+-   **`group_by(dest)`**: This groups the **`flights`** dataset by the 'dest' (destination) column. It means that subsequent operations will be applied separately for each destination.
+
+-   **`filter(row_number() < 4)`**: This filters the grouped data, keeping only the rows where the row number is less than 4 within each group. The **`row_number()`** function assigns a unique number to each row within its group based on the order of the data.
+
+    -   For each group of destinations, it keeps the first three rows (those with row numbers 1, 2, and 3). In other words, it retains the top three rows with the smallest row numbers within each destination group.
+
+-   In summary, the code is selecting the top three rows for each destination in the **`flights`** dataset based on the row numbers within each group. This can be useful for obtaining a subset of data that includes, for each destination, the first three flights based on some order (likely the default order of the dataset). Adjustments may be needed depending on your specific goals and the structure of the data.
+
+```{r}
+flights |> 
+  group_by(dest) |> 
+  slice_head(n = 3)
+```
+
+```{r}
+# b
+flights |> 
+  group_by(dest) |> 
+  filter(row_number(dep_delay) < 4)
+```
+
+This code can give 1, 2, and 3 rows per group referring to the row number based on dep_delay
+
+The code **flights \|\> group_by(dest) \|\> filter(row_number(dep_delay) \< 4)** is similar to the previous code but involves grouping by the 'dest' column and then filtering based on the row number of each group with respect to the 'dep_delay' column. Let's break it down:
+
+-   **group_by(dest)**: This groups the **flights** dataset by the 'dest' (destination) column. Subsequent operations will be applied separately for each destination.
+
+-   **filter(row_number(dep_delay) \< 4)**: This filters the grouped data, keeping only the rows where the row number is less than 4 within each group, where the row number is determined based on the values in the 'dep_delay' column.
+
+    -   For each group of destinations, it keeps the rows with the three smallest 'dep_delay' values. The **row_number(dep_delay)** function assigns a unique number to each row within its group based on the order of the 'dep_delay' values.
+
+-   In summary, the code is selecting the rows with the three smallest 'dep_delay' values for each destination in the **flights** dataset. This can be useful for obtaining a subset of data that includes, for each destination, the flights with the shortest departure delays based on the 'dep_delay' values within each group. Adjustments may be needed depending on your specific goals and the structure of the data.
+
+```{r}
+# 5
+# a
+flights |> 
+  group_by(dest) |> 
+  summarise(
+    total_delay = sum(dep_delay, na.rm = TRUE)
+  ) |> 
+  arrange(desc(total_delay))
+```
+
+```{r}
+# b
+flights |> 
+  group_by(flight, dest) |> 
+  mutate(
+    prop_delay = dep_delay / sum(
+      dep_delay, 
+      na.rm = TRUE
+    )
+  ) |> 
+  arrange(desc(prop_delay))
+```
+
+```{r}
+# 6
+flights |> 
+  mutate(hour = dep_time %/% 100) |> 
+  group_by(year, month, day, hour) |> 
+  summarize(
+    dep_delay = mean(dep_delay, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  filter(n > 5)
+```
+
+```{r}
+flights |> 
+  mutate(hour = dep_time %/% 100) |> 
+  group_by(year, month, day, hour) |> 
+  select(year, month, day, hour, dep_delay) |> 
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+    ) |> 
+  filter(is.nan(avg_delay) == FALSE) |> 
+  mutate(prev_avg_delay = lag(avg_delay)) |> 
+  ggplot(
+    aes(
+      x = avg_delay, 
+      y = prev_avg_delay,
+      color = hour
+      )
+    ) +
+  geom_point()
+```
+
+```{r}
+# 7
+# a - EDA
+flights |> 
+  group_by(flight, dest) |> 
+  summarize(
+    avg_distance = mean(distance, na.rm = TRUE),
+    avg_air_time = mean(air_time, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+    ) |> 
+  arrange(avg_air_time) |> 
+  View()
+```
+
+```{r}
+# b
+flights |> 
+  group_by(flight, dest) |> 
+  filter(is.na(air_time) == FALSE) |>
+  reframe(
+    rel_air_time = air_time / min(
+      air_time,
+      na.rm = TRUE
+      ),
+    n = n()
+    ) |> 
+  arrange(desc(rel_air_time)) |> 
+  View()
+```
+
+```{r}
+# 8
+# a
+flights |> 
+  group_by(dest) |> 
+  summarize(
+    unique_carriers = n_distinct(carrier)
+    ) |> 
+  filter(unique_carriers >= 2) |> 
+  arrange(unique_carriers)
+```
+
+```{r}
+# Filter destinations flown by at least two carriers
+dests_with_multiple_carrs <- flights |> 
+  group_by(dest) |> 
+  filter(n_distinct(carrier) >= 2) |> 
+  ungroup()
+
+# Calculate average departure delay for each carrier and destination pair
+carrier_dest_perf <- dests_with_multiple_carrs |>
+  group_by(carrier, dest) |> 
+  summarize(
+    avg_dep_delay = mean(
+      dep_delay, 
+      na.rm = TRUE
+      ), 
+    .groups = "drop"
+    )
+
+# Rank carriers within each destination based on average departure delay
+carrier_dest_perf |> 
+  group_by(dest) |>
+  mutate(rank = rank(avg_dep_delay)) |>
+  arrange(dest, rank)
+```
+
+## Numeric summaries
+
+### Center
+
+```{r}
+flights |> 
+  group_by(year, month, day) |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE),
+    median = median(dep_delay, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = mean, y = median)) +
+  geom_abline(
+    slope= 1, 
+    intercept = 0, 
+    color = "white",
+    linewidth = 2
+    ) +
+  geom_point()
+```
+
+### Minimum, maximum, and quantiles
+
+```{r}
+flights |> 
+  group_by(year, month, day) |> 
+  summarize(
+    max = max(dep_delay, na.rm = TRUE),
+    q95 = quantile(
+      dep_delay, 
+      0.95,
+      na.rm = TRUE
+      ),
+    .groups = "drop"
+  )
+```
+
+### Spread
+
+```{r}
+flights |> 
+  group_by(origin, dest) |> 
+  summarize(
+    distance_sd = IQR(distance),
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  filter(distance_sd > 0)
+```
+
+### Distributions
+
+```{r}
+flights |> 
+  filter(dep_delay < 120) |> 
+  ggplot(
+    aes(
+      x = dep_delay, 
+      group = interaction(day, month)
+      )
+    ) +
+  geom_freqpoly(binwidth = 5, alpha = 1/5)
+```
+
+### Positions
+
+```{r}
+flights |> 
+  group_by(year, month, day) |> 
+  summarize(
+    first_dep = first(dep_time, na_rm = TRUE),
+    fifth_dep = nth(dep_time, 5, na_rm = TRUE),
+    last_dep = last(dep_time, na_rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+```{r}
+flights |> 
+  group_by(year, month, day) |> 
+  mutate(r = min_rank(sched_dep_time)) |> 
+  filter(r %in% c(1, max(r)))
+```
+
+### With `mutate()`
+
+-   `x / sum(x)` calculates the proportion of a total.
+
+-   `(x - mean(x)) / sd(x)` computes a Z-score (standardized to mean 0 and sd 1).
+
+-   `(x - min(x)) / (max(x) - min(x))` standardizes to range \[0, 1\].
+
+-   `x / first(x)` computes an index based on the first observation.
+
+### Exercises
+
+```{r}
+# 1
+# a
+flights |> 
+  group_by(flight) |> 
+  filter(is.na(dep_delay) == FALSE) |>
+  reframe(
+    number_of_delays = n(),
+    min_delay = min(dep_delay, na.rm = TRUE),
+    max_delay = max(dep_delay, na.rm = TRUE),
+    avg_delay = mean(dep_delay, na.rm = TRUE),
+    median_delay = median(
+      dep_delay, na.rm = TRUE
+      ),
+    range_of_delays = max_delay - min_delay,
+    q25 = quantile(
+      dep_delay, 
+      0.25, 
+      na.rm = TRUE
+      ),
+    q75 = quantile(
+      dep_delay, 
+      0.75, 
+      na.rm = TRUE
+      ),
+    # Coefficient of Variation (CV)
+    cv_of_delays = sd(dep_delay, na.rm = TRUE) /
+      avg_delay,
+    # Proportion of On-Time Flights
+    proportion_on_time = sum(
+      dep_delay == 0,
+      na.rm = TRUE
+      ) / number_of_delays,
+    distribution_summary = c(
+      avg_delay, 
+      median_delay
+      ),
+    skewness_of_delays = moments::skewness(
+      dep_delay,
+      na.rm = TRUE
+    )
+  )
+```
+
+b\)
+
+The choice between using **`mean()`** and **`median()`** depends on the characteristics of the data and the specific goals of your analysis. Here's a general guideline on when each measure is useful:
+
+**`mean()`:**
+
+1.  **Symmetric Distributions:**
+
+    -   **`mean()`** is particularly useful when dealing with symmetrically distributed data. In a symmetric distribution, the mean is a measure of central tendency that provides a balanced representation of the data.
+
+2.  **Normal Distribution:**
+
+    -   For data that follows a normal distribution, the mean is a central and representative measure. It is the point around which the data is symmetrically distributed.
+
+3.  **Arithmetic Averaging:**
+
+    -   The mean is the result of adding up all values and dividing by the number of observations. It is suitable for situations where arithmetic averaging is appropriate.
+
+4.  **Precision in Measurement:**
+
+    -   When dealing with precise and continuous measurements, the mean is often preferred as it takes all data points into account.
+
+5.  **Sensitivity to Extreme Values:**
+
+    -   The mean is sensitive to extreme values or outliers. If the data contains outliers, the mean may be influenced by these values.
+
+**`median()`:**
+
+1.  **Skewed Distributions:**
+
+    -   **`median()`** is more robust in the presence of skewed or asymmetric distributions. It represents the middle value when the data is ordered.
+
+2.  **Ordinal or Interval Data:**
+
+    -   For ordinal or interval data that might have outliers or extreme values, the median is often a better indicator of central tendency.
+
+3.  **Handling Outliers:**
+
+    -   Because the median is not affected by extreme values to the same extent as the mean, it is a preferred measure when the data includes outliers.
+
+4.  **Non-Normal Distributions:**
+
+    -   In cases where the data is not normally distributed, the median may provide a more accurate representation of the central location.
+
+5.  **Data with Ranks or Categories:**
+
+    -   In situations where data is in the form of ranks or categories, the median is often more meaningful, especially if the distances between categories are not well-defined.
+
+In summary, **`mean()`** is appropriate when dealing with symmetric, normally distributed data without outliers, while **`median()`** is more robust in the presence of skewed distributions or when handling data with outliers. The choice should align with the characteristics of your dataset and the goals of your analysis.
+
+c\)
+
+While mean and median are common measures of central tendency, there are situations where other measures might be more useful, depending on the characteristics of the data and the goals of the analysis. Here are a few alternative measures and scenarios where they might be more appropriate:
+
+1.  **Mode:**
+
+    -   The mode represents the most frequently occurring value in a dataset. It is useful when you want to identify the most common value or values in a distribution, especially in categorical or discrete datasets.
+
+2.  **Geometric Mean:**
+
+    -   The geometric mean is appropriate when dealing with multiplicative relationships or ratios. It is often used for data that follows exponential growth or decay, such as financial returns or population growth rates.
+
+3.  **Harmonic Mean:**
+
+    -   The harmonic mean is relevant when dealing with rates, averages, or quantities that have a reciprocal relationship. It is especially useful in scenarios like speed or time calculations.
+
+4.  **Trimmed Mean:**
+
+    -   A trimmed mean involves removing a certain percentage of extreme values from both ends of the dataset before calculating the mean. This helps reduce the impact of outliers and provides a more robust measure of central tendency.
+
+5.  **Weighted Mean:**
+
+    -   In situations where some observations carry more importance than others, a weighted mean can be used. This assigns different weights to different observations based on their significance.
+
+6.  **Percentiles:**
+
+    -   Percentiles, such as the 25th and 75th percentiles, are useful for understanding the distribution of data and identifying specific points where a certain percentage of the data falls below or above.
+
+7.  **Winsorized Mean:**
+
+    -   Similar to a trimmed mean, a winsorized mean involves limiting extreme values but instead of removing them, they are replaced with values closer to the center of the distribution. This helps reduce the impact of outliers.
+
+8.  **Robust Measures (e.g., Median Absolute Deviation):**
+
+    -   Robust measures are resistant to the influence of outliers. For example, the median absolute deviation (MAD) is a robust alternative to standard deviation, providing a measure of dispersion that is not strongly affected by extreme values.
+
+The choice of the most appropriate measure depends on the specific characteristics of the data and the objectives of the analysis. For example, when dealing with highly skewed data, or data with outliers, robust measures or trimmed means might be more suitable. It's essential to consider the context and the nature of the data distribution when selecting an appropriate measure of central tendency.
+
+d\)
+
+Whether you should use arrival delay or departure delay to analyze delays of flights depends on the specific goals of your analysis and the aspects of the flight process you are interested in. Here are some considerations for each type of delay:
+
+**Departure Delay:**
+
+1.  **Preventive Analysis:**
+
+    -   If you are interested in understanding delays from the perspective of prevention and identifying factors that contribute to on-time departures, departure delay is more relevant.
+
+2.  **Ground Operations:**
+
+    -   Departure delay reflects the time a flight is delayed on the ground before taking off. Analyzing departure delay can provide insights into ground operations, such as boarding, fueling, or maintenance delays.
+
+3.  **Airline Operations:**
+
+    -   Airlines often focus on minimizing departure delays as they can affect overall schedule adherence and customer satisfaction. Analyzing departure delays is crucial for improving airline operations.
+
+**Arrival Delay:**
+
+1.  **Customer Experience:**
+
+    -   Arrival delay is more directly related to the passenger experience, as it represents the difference between the scheduled and actual arrival times. If your analysis is customer-centric, arrival delay may be more relevant.
+
+2.  **Connection Analysis:**
+
+    -   If you are analyzing flights in the context of connecting flights or multi-leg journeys, arrival delay becomes more critical. Passengers making connections rely on timely arrivals.
+
+3.  **Gate Availability:**
+
+    -   Arrival delay is relevant when considering gate availability at the destination airport. Airlines and airports need to manage gate resources efficiently, and arrival delay plays a role in this aspect.
+
+**Considerations for Both:**
+
+1.  **Flight Planning:**
+
+    -   Both departure and arrival delays are important in flight planning. Airlines need to optimize schedules, taking into account potential delays during both departure and arrival.
+
+2.  **Operational Efficiency:**
+
+    -   Analyzing both departure and arrival delays can provide a comprehensive view of operational efficiency. For example, you might investigate whether certain routes or times of day are more prone to delays.
+
+3.  **Statistical Analysis:**
+
+    -   Depending on your statistical methods and objectives, you might choose to analyze both departure and arrival delays to capture different aspects of the delay distribution.
+
+In summary, the choice between departure delay and arrival delay depends on the specific questions you want to answer and the context of your analysis. It's common to consider both types of delays to gain a comprehensive understanding of the factors influencing the overall delay experience for passengers and airlines.
+
+e\)
+
+```{r}
+planes |> View()
+```
+
+Using data from planes, often referred to as aircraft-specific data, can provide additional insights and granularity to your analysis of flight-related information. Here are several reasons why you might want to incorporate plane-specific data into your analysis:
+
+1.  **Maintenance Analysis:**
+
+    -   Plane-specific data can include information about the maintenance history of individual aircraft. Analyzing this data can help assess the reliability of planes, identify patterns of maintenance issues, and contribute to proactive maintenance planning.
+
+2.  **Performance Monitoring:**
+
+    -   Understanding the performance metrics of specific planes, such as fuel efficiency, average speed, or altitude profiles, can provide insights into the overall efficiency of an airline's fleet. This information can be valuable for optimizing operations and reducing costs.
+
+3.  **Age and Model Effects:**
+
+    -   Different planes may have varying ages, models, or configurations. Analyzing data from planes allows you to explore how these factors impact performance, reliability, and operational outcomes.
+
+4.  **Tail Number-Specific Analysis:**
+
+    -   If your dataset includes tail numbers (unique identifiers for each plane), you can conduct tail number-specific analyses. This can involve tracking the performance, delays, or incidents associated with individual planes over time.
+
+5.  **Aircraft Utilization:**
+
+    -   Analyzing data from planes helps assess how well an airline utilizes its fleet. You can explore how often each plane is in use, the turnaround time between flights, and other utilization metrics.
+
+6.  **Route-specific Analysis:**
+
+    -   Different planes may be assigned to different routes based on their capacity, range, or other characteristics. Analyzing plane-specific data can provide insights into how aircraft types are distributed across the airline's route network.
+
+7.  **Incident and Accident Analysis:**
+
+    -   In the unfortunate event of an incident or accident, plane-specific data is crucial for investigating and understanding the circumstances. It allows for a detailed analysis of the specific aircraft involved.
+
+8.  **Regulatory Compliance:**
+
+    -   Plane-specific data can be used to ensure regulatory compliance, track adherence to maintenance schedules, and monitor other aspects of aviation regulations.
+
+9.  **Fleet Planning:**
+
+    -   When planning for future fleet expansions or replacements, analyzing the historical performance and characteristics of existing planes can inform strategic decisions.
+
+10. **Customer Experience:**
+
+    -   Understanding the type of aircraft used for specific routes can contribute to assessing the overall passenger experience. Different planes may offer varying amenities, seat configurations, and comfort levels.
+
+Incorporating plane-specific data can enhance the depth and breadth of your analysis, providing a more nuanced understanding of airline operations, performance, and overall efficiency. It allows you to move beyond aggregate statistics to explore patterns and trends associated with individual aircraft.
+
+```{r}
+# 2
+# My solution
+flights |> 
+  filter(
+    is.na(distance) == FALSE & 
+      is.na(air_time) == FALSE
+    ) |> 
+  group_by(dest) |> 
+  reframe(
+    speed = distance / air_time,
+    min_speed = min(speed, na.rm = TRUE),
+    max_speed = max(speed, na.rm = TRUE),
+    speed_range = max_speed - min_speed
+  ) |> 
+  arrange(desc(speed_range))
+```
+
+```{r}
+# ChatGPT solution
+# Filter out missing values in air_time and distance
+filtered_flights <- flights |>
+  filter(!is.na(air_time), !is.na(distance))
+```
+
+```{r}
+# Calculate the air speed and then standard deviation of air speed for each destination
+filtered_flights |> 
+  group_by(dest) |> 
+  reframe(
+    speed = distance / air_time,
+    sd_air_speed = sd(speed)
+  ) |> 
+  arrange(desc(sd_air_speed))
+```
+
+```{r}
+# 3
+flights |> 
+  group_by(origin, dest) |> 
+  summarize(
+    distance_sd = IQR(distance),
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  filter(distance_sd > 0)
+```
+
+-   There are no flights where EGE is the origin airport
+
+-   There are two origin airports for Eagle Co Rgnl (EGE) airport:
+
+    -   Newark Liberty Intl (EWR)
+
+    -   John F Kennedy Intl (JFK)
+
+```{r}
+ege_flights <- flights %>% 
+  filter(origin == "EGE" | dest == "EGE")
+ege_flights |> View()
+```
+
+```{r}
+airports |> 
+  filter(faa == "EGE" | 
+  faa == "EWR" | 
+  faa == "JFK") |> 
+  View()
+```
+
+-   There are two airlines that conducted flights to EGE airport:
+
+    -   American Airlines Inc
+
+    -   United Air Lines Inc
+
+-   In both cases distribution of delays have extreme values.
+
+```{r}
+# Create a boxplot to compare departure delays based on the airline
+ggplot(
+  ege_flights, 
+  aes(x = carrier, y = dep_delay)
+  ) +
+  geom_boxplot() +
+  labs(title = "Departure Delays for EGE Flights by Airline",
+       x = "Airline",
+       y = "Departure Delay") +
+  theme_minimal()
+```
+
+-   It is also case for the origin airports
+
+```{r}
+# Create a boxplot to compare departure delays based on the origin
+ggplot(
+  ege_flights, 
+  aes(x = origin, y = dep_delay)
+  ) +
+  geom_boxplot() +
+  labs(title = "Departure Delays for EGE Flights by Origin Airport",
+       x = "Origin",
+       y = "Departure Delay") +
+  theme_minimal()
+```
+
+```{r}
+ege_flights |> 
+  group_by(origin) |> 
+  summarize(
+    max_d = max(distance, na.rm = TRUE),
+    min_d = min(distance, na.rm = TRUE),
+    range_d = max_d - min_d,
+    avg_dist = mean(distance),
+    n = n()
+    )
+```
+
+```{r}
+ege_flights |> 
+  filter(origin == "EWR" & distance == 1726) |> 
+  count()
+```
+
+-   For 59 flights the maximum distance between EWR and EGE is 1726 miles and for 51 cases it is 1725.
+
+```{r}
+ege_flights |> 
+  filter(origin == "JFK" & distance == 1747) |> 
+  count()
+```
+
+-   For 59 flights the distance between JFK and EGE is 1747 miles while for the 44 flights it is 1746 miles.
+
+One possible answer can be related to the arrival path of the flights. As it is only 1 mile difference for the both origins, maybe path for arrival relocated.
+
+```{r}
+ege_flights |> 
+  ggplot(aes(x = distance, color = origin)) +
+  geom_freqpoly() +
+  facet_wrap(~origin, scales = "free")
+```

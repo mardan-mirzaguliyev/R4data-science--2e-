@@ -1,0 +1,115 @@
+---
+title: "Chapter 29 - Quarto fromats"
+author: "Mardan Mirzaguliyev"
+format: html
+editor: visual
+date: 2024/01/26
+---
+
+# Quarto formats
+
+There are two ways to set the output of a document:
+
+1.  Permanently, by modifying the YAML header:
+
+    ```         
+    title: "Diamond sizes"
+    format: html
+    ```
+
+2.  Transiently, by calling `quarto::quarto_render()` by hand:
+
+    ```         
+    quarto::quarto_render("diamond-sizes.qmd", output_format = "docx")
+    ```
+
+    This is useful if you want to programmatically produce multiple types of output since the `output_format` argument can also take a list of values.
+
+    ```         
+    quarto::quarto_render("diamond-sizes.qmd", output_format = c("docx", "pdf"))
+    ```
+
+## Output options
+
+Quarto offers a wide range of output formats. You can find the complete list at <https://quarto.org/docs/output-formats/all-formats.html>. Many formats share some output options (e.g., `toc: true` for including a table of contents), but others have options that are format specific (e.g., `code-fold: true` collapses code chunks into a `<details>` tag for HTML output so the user can display it on demand, it’s not applicable in a PDF or Word document).
+
+## Documents
+
+The previous chapter focused on the default `html` output. There are several basic variations on that theme, generating different types of documents. For example:
+
+-   `pdf` makes a PDF with LaTeX (an open-source document layout system), which you’ll need to install. RStudio will prompt you if you don’t already have it.
+
+-   `docx` for Microsoft Word (`.docx`) documents.
+
+-   `odt` for OpenDocument Text (`.odt`) documents.
+
+-   `rtf` for Rich Text Format (`.rtf`) documents.
+
+-   `gfm` for a GitHub Flavored Markdown (`.md`) document.
+
+-   `ipynb` for Jupyter Notebooks (`.ipynb`).
+
+## Presentations
+
+You can also use Quarto to produce presentations. You get less visual control than with a tool like Keynote or PowerPoint, but automatically inserting the results of your R code into a presentation can save a huge amount of time. Presentations work by dividing your content into slides, with a new slide beginning at each second (`##`) level header. Additionally, first (`#`) level headers indicate the beginning of a new section with a section title slide that is, by default, centered in the middle.
+
+## Interactivity
+
+Just like any HTML document, HTML documents created with Quarto can contain interactive components as well. Here we introduce two options for including interactivity in your Quarto documents: htmlwidgets and Shiny.
+
+### htmlwidgets
+
+HTML is an interactive format, and you can take advantage of that interactivity with **htmlwidgets**, R functions that produce interactive HTML visualizations. 
+
+```{r}
+library(leaflet)
+```
+
+```{r}
+leaflet() |> 
+  setView(174.764, -36.877, zoom = 16) |> 
+  addTiles() |> 
+  addMarkers(
+    174.764, 
+    -36877, 
+    popup = "Maungawhauw")
+```
+
+There are many packages that provide htmlwidgets, including:
+
+-   [**dygraphs**](https://rstudio.github.io/dygraphs)for interactive time series visualizations.
+
+-   [**DT**](https://rstudio.github.io/DT/)for interactive tables.
+
+-   [**threejs**](https://bwlewis.github.io/rthreejs)for interactive 3d plots.
+
+-   [**DiagrammeR**](https://rich-iannone.github.io/DiagrammeR)for diagrams (like flow charts and simple node-link diagrams).
+
+To learn more about htmlwidgets and see a complete list of packages that provide them visit [https://www.htmlwidgets.org](https://www.htmlwidgets.org/).
+
+### Shiny
+
+htmlwidgets provide **client-side** interactivity — all the interactivity happens in the browser, independently of R. On the one hand, that’s great because you can distribute the HTML file without any connection to R. However, that fundamentally limits what you can do to things that have been implemented in HTML and JavaScript. An alternative approach is to use **shiny**, a package that allows you to create interactivity using R code, not JavaScript.
+
+## Websites and books
+
+With a bit of additional infrastructure, you can use Quarto to generate a complete website or book:
+
+-   Put your `.qmd` files in a single directory. `index.qmd` will become the home page.
+
+-   Add a YAML file named `_quarto.yml` that provides the navigation for the site. In this file, set the `project` type to either `book` or `website`, e.g.:
+
+    ```         
+    project:
+      type: book
+    ```
+
+## Other formats
+
+Quarto offers even more output formats:
+
+-   You can write journal articles using Quarto Journal Templates: <https://quarto.org/docs/journals/templates.html>.
+
+-   You can output Quarto documents to Jupyter Notebooks with `format: ipynb`: [https://quarto.org/docs/reference/formats/ipynb.html](#0).
+
+See [https://quarto.org/docs/output-formats/all-formats.html](#0) for a list of even more formats.
